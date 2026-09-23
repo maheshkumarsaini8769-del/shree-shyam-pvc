@@ -24,18 +24,39 @@ export const ContactPage = () => {
     message: ''
   });
   const [submitting, setSubmitting] = useState(false);
-  const [successNotice, setSuccessNotice] = useState(null);
+  const [submittedWaUrl, setSubmittedWaUrl] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.name.trim() || !formData.phone.trim()) return;
     setSubmitting(true);
+
+    const waMsg = 
+`*New Enquiry from Website - Shree Shyam PVC Interior*
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+👤 *Customer Name:* ${formData.name}
+📞 *Phone Number:* ${formData.phone}
+🏠 *Service Interested:* ${formData.service}
+${formData.message ? `💬 *Requirement:* ${formData.message}\n` : ''}━━━━━━━━━━━━━━━━━━━━━━━━━━
+_Sent via Shree Shyam PVC Website_`;
+
+    const waUrl = `https://wa.me/918209836370?text=${encodeURIComponent(waMsg)}`;
+    setSubmittedWaUrl(waUrl);
+
     try {
       await api.submitEnquiry(formData);
-      setSuccessNotice('Thank you! Your enquiry has been received. Our team will contact you shortly.');
+      setSuccessNotice('Your enquiry has been received! Our workshop engineer will contact you shortly.');
+
+      // Automatically launch WhatsApp so owner receives lead immediately
+      setTimeout(() => {
+        window.open(waUrl, '_blank');
+      }, 800);
+
       setFormData({ name: '', phone: '', service: 'PVC Modular Kitchen', message: '' });
     } catch (err) {
-      alert('Error sending message');
+      // Even if backend fails, still open WhatsApp lead
+      window.open(waUrl, '_blank');
+      setSuccessNotice('Redirecting to WhatsApp to send your enquiry directly to the workshop owner.');
     } finally {
       setSubmitting(false);
     }
@@ -136,15 +157,28 @@ export const ContactPage = () => {
           </p>
 
           {successNotice ? (
-            <div className="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 space-y-3">
+            <div className="p-5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 space-y-3.5">
               <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
-                <span className="font-bold text-sm">Message Sent Successfully!</span>
+                <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                <span className="font-bold text-sm">Enquiry Sent Successfully!</span>
               </div>
               <p className="text-xs leading-relaxed">{successNotice}</p>
+              
+              {submittedWaUrl && (
+                <a
+                  href={submittedWaUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full py-3 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold flex items-center justify-center gap-2 shadow-sm transition-all"
+                >
+                  <MessageCircle className="w-4 h-4 fill-white" />
+                  <span>Open WhatsApp to Confirm Lead With Workshop</span>
+                </a>
+              )}
+
               <button
                 onClick={() => setSuccessNotice(null)}
-                className="text-xs font-bold text-emerald-700 dark:text-emerald-400 underline"
+                className="text-xs font-bold text-emerald-700 dark:text-emerald-400 underline block pt-1"
               >
                 Send Another Message
               </button>

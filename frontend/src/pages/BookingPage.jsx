@@ -143,6 +143,28 @@ export const BookingPage = () => {
       const res = await api.createBooking(formData);
       if (res.success && res.booking) {
         setConfirmedBooking(res.booking);
+
+        const waMsg = 
+`*New Site Visit Booking Request - Shree Shyam PVC Interior*
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+📋 *Booking ID:* ${res.booking.bookingId}
+👤 *Customer Name:* ${formData.name}
+📞 *Contact Number:* ${formData.phone}
+🏠 *Service:* ${formData.serviceName}
+📅 *Preferred Date:* ${formData.preferredDate}
+⏰ *Time Slot:* ${formData.preferredTime}
+📍 *Address:* ${formData.address}
+📌 *Area / City:* ${formData.area || 'Vastral'}, ${formData.city || 'Ahmedabad'} (Pincode: ${formData.pincode || '382418'})
+${formData.landmark ? `🏢 *Landmark:* ${formData.landmark}\n` : ''}${formData.message ? `💬 *Requirement:* ${formData.message}\n` : ''}━━━━━━━━━━━━━━━━━━━━━━━━━━
+_Lead from Shree Shyam PVC Website_`;
+
+        const waUrl = `https://wa.me/918209836370?text=${encodeURIComponent(waMsg)}`;
+
+        // Auto-open WhatsApp after 1 second
+        setTimeout(() => {
+          window.open(waUrl, '_blank');
+        }, 1200);
+
         try {
           confetti({
             particleCount: 120,
@@ -160,12 +182,28 @@ export const BookingPage = () => {
     }
   };
 
-  // Confirmation screen
+  // Confirmation screen with instant WhatsApp lead dispatch
   if (confirmedBooking) {
+    const waMsg = 
+`*New Site Visit Booking Request - Shree Shyam PVC Interior*
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+📋 *Booking ID:* ${confirmedBooking.bookingId}
+👤 *Customer Name:* ${confirmedBooking.name}
+📞 *Contact Number:* ${confirmedBooking.phone}
+🏠 *Service:* ${confirmedBooking.serviceName || formData.serviceName}
+📅 *Preferred Date:* ${confirmedBooking.preferredDate || formData.preferredDate}
+⏰ *Time Slot:* ${confirmedBooking.preferredTime || formData.preferredTime}
+📍 *Address:* ${confirmedBooking.address || formData.address}
+📌 *Area / City:* ${formData.area || 'Vastral'}, ${formData.city || 'Ahmedabad'} (Pincode: ${formData.pincode || '382418'})
+${formData.landmark ? `🏢 *Landmark:* ${formData.landmark}\n` : ''}${formData.message ? `💬 *Requirement:* ${formData.message}\n` : ''}━━━━━━━━━━━━━━━━━━━━━━━━━━
+_Lead from Shree Shyam PVC Website_`;
+
+    const waUrl = `https://wa.me/918209836370?text=${encodeURIComponent(waMsg)}`;
+
     return (
-      <div className="max-w-xl mx-auto px-4 py-10 md:py-16 text-center space-y-6 animate-fade-in-up">
-        <div className="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200 shadow-floating space-y-6">
-          <div className="w-16 h-16 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center mx-auto shadow-inner animate-bounce">
+      <div className="max-w-xl mx-auto px-4 py-8 md:py-14 text-center space-y-6 animate-fade-in-up">
+        <div className="bg-white dark:bg-[#1A1918] rounded-3xl p-6 sm:p-10 border border-stone-200 dark:border-white/10 shadow-floating space-y-6">
+          <div className="w-16 h-16 bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 rounded-full flex items-center justify-center mx-auto shadow-inner animate-bounce">
             <CheckCircle2 className="w-10 h-10" />
           </div>
 
@@ -176,13 +214,14 @@ export const BookingPage = () => {
             <h1 className="text-2xl sm:text-3xl font-serif font-bold text-obsidian dark:text-white mt-3">
               Booking Confirmed
             </h1>
-            <p className="text-xs sm:text-sm text-charcoal-muted dark:text-slate-300 mt-1.5 leading-relaxed">
+            <p className="text-xs sm:text-sm text-stone-600 dark:text-stone-300 mt-1.5 leading-relaxed">
               Thank you, <strong className="text-obsidian dark:text-white">{confirmedBooking.name}</strong>. Our specialist engineer will contact you on <strong className="text-obsidian dark:text-white">{confirmedBooking.phone}</strong>.
             </p>
           </div>
 
-          <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-white/10 text-left space-y-1">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-charcoal-muted dark:text-slate-400 block">
+          {/* Reference ID Pill */}
+          <div className="p-4 rounded-2xl bg-stone-50 dark:bg-stone-900 border border-stone-200 dark:border-white/10 text-left space-y-1">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-stone-500 dark:text-stone-400 block">
               Reference Booking Tracking ID
             </span>
             <span className="text-2xl font-mono font-black text-luxury-goldDark dark:text-luxury-gold">
@@ -190,40 +229,36 @@ export const BookingPage = () => {
             </span>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+          {/* INSTANT WHATSAPP ALERT BUTTON TO OWNER (HIGH PRIORITY) */}
+          <div className="space-y-2 pt-1">
+            <a
+              href={waUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full py-3.5 px-6 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white font-extrabold text-xs sm:text-sm flex items-center justify-center gap-2.5 shadow-lg shadow-emerald-500/20 transition-all active:scale-95 group"
+            >
+              <MessageCircle className="w-4 h-4 fill-white" />
+              <span>Send to WhatsApp (Instant 15-Min Confirmation)</span>
+            </a>
+            <p className="text-[10px] text-stone-500 dark:text-stone-400">
+              ⚡ Directly connects with workshop owner in Vastral, Ahmedabad
+            </p>
+          </div>
+
+          {/* Secondary Action Links */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-stone-100 dark:border-white/10">
             <Link
               to={`/booking/${confirmedBooking.bookingId}`}
-              className="py-3 px-4 rounded-xl bg-obsidian hover:bg-charcoal text-white text-xs font-bold transition-all shadow-md active:scale-95"
+              className="py-3 px-4 rounded-xl bg-stone-900 dark:bg-white/10 hover:bg-black dark:hover:bg-white/15 text-white text-xs font-bold transition-all shadow-sm active:scale-95"
             >
               Track Live Status
             </Link>
             <Link
               to="/"
-              className="py-3 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-obsidian dark:text-white text-xs font-bold border border-slate-200 dark:border-white/10 transition-all"
+              className="py-3 px-4 rounded-xl bg-stone-100 hover:bg-stone-200 dark:bg-white/5 dark:hover:bg-white/10 text-stone-800 dark:text-white text-xs font-bold border border-stone-200 dark:border-white/10 transition-all"
             >
               Back to Home
             </Link>
-          </div>
-
-          <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100 dark:border-white/10">
-            <a
-              href={`tel:${settings.phone1}`}
-              className="py-2.5 rounded-xl bg-white hover:bg-slate-50 dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-200 dark:border-white/10 text-xs font-bold text-obsidian dark:text-white flex items-center justify-center gap-1.5"
-            >
-              <PhoneCall className="w-3.5 h-3.5 text-luxury-gold" />
-              <span>Call Hotline</span>
-            </a>
-            <a
-              href={`https://wa.me/${settings.whatsappNumber}?text=${encodeURIComponent(
-                `Hello Shree Shyam PVC Interior, I booked a free visit. ID: ${confirmedBooking.bookingId}`
-              )}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="py-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/40 dark:hover:bg-emerald-900/50 border border-emerald-200 dark:border-emerald-800 text-xs font-bold text-emerald-700 dark:text-emerald-300 flex items-center justify-center gap-1.5"
-            >
-              <MessageCircle className="w-3.5 h-3.5 fill-emerald-600 text-white" />
-              <span>WhatsApp</span>
-            </a>
           </div>
         </div>
       </div>
