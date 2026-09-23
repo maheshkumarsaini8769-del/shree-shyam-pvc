@@ -28,7 +28,13 @@ import {
   MapPin,
   Sparkles,
   Check,
-  X
+  X,
+  Wrench,
+  HelpCircle,
+  Inbox,
+  Menu,
+  ChevronRight,
+  Edit2
 } from 'lucide-react';
 import { api } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
@@ -40,6 +46,7 @@ export const AdminDashboard = () => {
   const { refreshSettings } = useSettings();
 
   const [activeTab, setActiveTab] = useState('overview');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saveSuccess, setSaveSuccess] = useState('');
   const [saveError, setSaveError] = useState('');
@@ -109,19 +116,38 @@ export const AdminDashboard = () => {
   const [passwordChangeId, setPasswordChangeId] = useState(null);
   const [newPasswordVal, setNewPasswordVal] = useState('');
 
-  // 6. New Brand input
+  // 6. Services State
+  const [services, setServices] = useState([]);
+  const [newServiceName, setNewServiceName] = useState('');
+  const [newServicePrice, setNewServicePrice] = useState('480');
+  const [newServiceDesc, setNewServiceDesc] = useState('');
+
+  // 7. Enquiries State
+  const [enquiries, setEnquiries] = useState([]);
+  const [enquiryFilter, setEnquiryFilter] = useState('all');
+
+  // 8. FAQs State
+  const [faqs, setFaqs] = useState([]);
+  const [newFaqQuestion, setNewFaqQuestion] = useState('');
+  const [newFaqAnswer, setNewFaqAnswer] = useState('');
+  const [newFaqCategory, setNewFaqCategory] = useState('Materials & Durability');
+
+  // 9. Brand Input
   const [newBrandInput, setNewBrandInput] = useState('');
 
   // Load all initial admin data
   const loadData = async () => {
     setLoading(true);
     try {
-      const [statsRes, settingsRes, bookingsRes, reviewsRes, authRes] = await Promise.all([
+      const [statsRes, settingsRes, bookingsRes, reviewsRes, authRes, servicesRes, enquiriesRes, faqsRes] = await Promise.all([
         api.adminGetDashboardStats().catch(() => null),
         api.getSettings().catch(() => ({})),
         api.adminGetBookings().catch(() => []),
         api.adminGetReviews().catch(() => []),
-        api.adminGetEmailAuthorities().catch(() => [])
+        api.adminGetEmailAuthorities().catch(() => []),
+        api.adminGetServices().catch(() => []),
+        api.adminGetEnquiries().catch(() => []),
+        api.adminGetFaqs().catch(() => [])
       ]);
 
       if (statsRes) setStats(statsRes);
@@ -139,6 +165,9 @@ export const AdminDashboard = () => {
       if (Array.isArray(bookingsRes)) setBookings(bookingsRes);
       if (Array.isArray(reviewsRes)) setReviews(reviewsRes);
       if (Array.isArray(authRes)) setAuthorities(authRes);
+      if (Array.isArray(servicesRes)) setServices(servicesRes);
+      if (Array.isArray(enquiriesRes)) setEnquiries(enquiriesRes);
+      if (Array.isArray(faqsRes)) setFaqs(faqsRes);
     } catch (err) {
       console.error('Error loading dashboard data', err);
     } finally {
@@ -166,7 +195,7 @@ export const AdminDashboard = () => {
     try {
       await api.adminUpdateSettings(settingsData);
       await refreshSettings();
-      showNotification('Settings updated successfully in MongoDB!');
+      showNotification('Settings saved to MongoDB successfully!');
     } catch (err) {
       showNotification(err.message || 'Error updating settings', true);
     }
@@ -177,7 +206,7 @@ export const AdminDashboard = () => {
     try {
       await api.adminUpdateBookingStatus(id, { status: newStatus });
       setBookings(prev => prev.map(b => (b.id === id || b.bookingId === id ? { ...b, status: newStatus } : b)));
-      showNotification(`Booking status changed to ${newStatus}`);
+      showNotification(`Booking status updated to ${newStatus}`);
     } catch (err) {
       showNotification(err.message || 'Error updating status', true);
     }
@@ -185,7 +214,7 @@ export const AdminDashboard = () => {
 
   // Booking delete
   const handleDeleteBooking = async (id) => {
-    if (!window.confirm('Are you sure you want to permanently delete this booking?')) return;
+    if (!window.confirm('Delete this booking permanently?')) return;
     try {
       await api.adminDeleteBooking(id);
       setBookings(prev => prev.filter(b => b.id !== id && b.bookingId !== id));
@@ -217,7 +246,7 @@ export const AdminDashboard = () => {
       setReplyModalOpen(false);
       setReplyText('');
       setActiveReviewForReply(null);
-      showNotification('Official reply published! It is now live on the public website.');
+      showNotification('Official response published live on website!');
     } catch (err) {
       showNotification(err.message || 'Error publishing reply', true);
     }
@@ -225,7 +254,7 @@ export const AdminDashboard = () => {
 
   // Review Delete
   const handleDeleteReview = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this customer review permanently?')) return;
+    if (!window.confirm('Delete this customer review permanently?')) return;
     try {
       await api.adminDeleteReview(id);
       setReviews(prev => prev.filter(r => r.id !== id && r._id !== id));
@@ -235,7 +264,90 @@ export const AdminDashboard = () => {
     }
   };
 
-  // Email Authority: Add new authorized email with password
+  // Service Management
+  const handleCreateService = async (e) => {
+    e.preventDefault();
+    if (!newServiceName.trim()) return;
+    try {
+      const created = await api.adminCreateService({
+        name: newServiceName.trim(),
+        startingPrice: Number(newServicePrice) || 450,
+        shortDescription: newServiceDesc.trim() || 'Custom PVC Interior service with 10-year warranty.',
+        status: 'Active'
+      });
+      setServices(prev => [created, ...prev]);
+      setNewServiceName('');
+      setNewServiceDesc('');
+      showNotification('New PVC service created successfully!');
+    } catch (err) {
+      showNotification(err.message || 'Error creating service', true);
+    }
+  };
+
+  const handleDeleteService = async (id) => {
+    if (!window.confirm('Delete this service?')) return;
+    try {
+      await api.adminDeleteService(id);
+      setServices(prev => prev.filter(s => s.id !== id && s._id !== id));
+      showNotification('Service removed');
+    } catch (err) {
+      showNotification(err.message || 'Error deleting service', true);
+    }
+  };
+
+  // Enquiry status
+  const handleUpdateEnquiryStatus = async (id, newStatus) => {
+    try {
+      await api.adminUpdateEnquiry(id, { status: newStatus });
+      setEnquiries(prev => prev.map(e => (e.id === id || e._id === id ? { ...e, status: newStatus } : e)));
+      showNotification(`Enquiry marked as ${newStatus}`);
+    } catch (err) {
+      showNotification(err.message || 'Error updating enquiry', true);
+    }
+  };
+
+  const handleDeleteEnquiry = async (id) => {
+    if (!window.confirm('Delete this enquiry?')) return;
+    try {
+      await api.adminDeleteEnquiry(id);
+      setEnquiries(prev => prev.filter(e => e.id !== id && e._id !== id));
+      showNotification('Enquiry removed');
+    } catch (err) {
+      showNotification(err.message || 'Error deleting enquiry', true);
+    }
+  };
+
+  // FAQ Management
+  const handleCreateFaq = async (e) => {
+    e.preventDefault();
+    if (!newFaqQuestion.trim() || !newFaqAnswer.trim()) return;
+    try {
+      const created = await api.adminCreateFaq({
+        question: newFaqQuestion.trim(),
+        answer: newFaqAnswer.trim(),
+        category: newFaqCategory
+      });
+      setFaqs(prev => [...prev, created]);
+      setNewFaqQuestion('');
+      setNewFaqAnswer('');
+      showNotification('New FAQ added successfully!');
+    } catch (err) {
+      showNotification(err.message || 'Error adding FAQ', true);
+    }
+  };
+
+  const handleDeleteFaq = async (id) => {
+    if (!window.confirm('Delete this FAQ?')) return;
+    try {
+      await api.adminDeleteFaq(id);
+      setFaqs(prev => prev.filter(f => f.id !== id && f._id !== id));
+      showNotification('FAQ deleted');
+    } catch (err) {
+      showNotification(err.message || 'Error deleting FAQ', true);
+    }
+  };
+
+  // Email Authority: Add new authorized admin email with password
   const handleAddAuthority = async (e) => {
     e.preventDefault();
     if (!newAdminEmail || !newAdminPassword) return;
@@ -268,13 +380,12 @@ export const AdminDashboard = () => {
       await api.adminUpdateEmailAuthority(id, { newPassword: newPasswordVal });
       setPasswordChangeId(null);
       setNewPasswordVal('');
-      showNotification('Password successfully updated for this admin!');
+      showNotification('Password updated for this admin!');
     } catch (err) {
       showNotification(err.message || 'Error updating password', true);
     }
   };
 
-  // Email Authority: Toggle active/inactive
   const handleToggleAdminStatus = async (id, currentStatus) => {
     const nextStatus = currentStatus === 'active' ? 'inactive' : 'active';
     try {
@@ -286,7 +397,6 @@ export const AdminDashboard = () => {
     }
   };
 
-  // Email Authority: Delete
   const handleDeleteAuthority = async (id, email) => {
     if (email === 'maheshkumarsaini8769@gmail.com') {
       alert('Primary superadmin cannot be deleted.');
@@ -343,13 +453,21 @@ export const AdminDashboard = () => {
     return r.status?.toLowerCase() === reviewFilter.toLowerCase();
   });
 
+  const filteredEnquiries = enquiries.filter(e => {
+    if (enquiryFilter === 'all') return true;
+    return e.status?.toLowerCase() === enquiryFilter.toLowerCase();
+  });
+
   const navItems = [
     { id: 'overview', label: 'Dashboard Overview', icon: LayoutDashboard },
-    { id: 'header', label: 'Header & Announcement CMS', icon: Megaphone },
-    { id: 'contact', label: 'Contact & Socials CMS', icon: PhoneCall },
+    { id: 'header', label: 'Header & Announcements', icon: Megaphone },
+    { id: 'contact', label: 'Contact & Socials', icon: PhoneCall },
     { id: 'about', label: 'About Us CMS', icon: Info },
+    { id: 'services', label: `Services (${services.length})`, icon: Wrench },
     { id: 'bookings', label: `Bookings (${bookings.length})`, icon: CalendarCheck },
     { id: 'reviews', label: `Reviews & Replies (${reviews.length})`, icon: Star },
+    { id: 'enquiries', label: `Enquiries (${enquiries.length})`, icon: Inbox },
+    { id: 'faqs', label: `FAQs (${faqs.length})`, icon: HelpCircle },
     { id: 'brands', label: 'PVC Brands & Materials', icon: Layers },
     { id: 'authority', label: `Email Authority (${authorities.length})`, icon: KeyRound }
   ];
@@ -370,16 +488,58 @@ export const AdminDashboard = () => {
         </div>
       )}
 
-      {/* Sidebar Navigation */}
-      <aside className="w-full md:w-72 bg-[#141B28] border-r border-white/5 flex flex-col shrink-0">
-        <div className="p-5 border-b border-white/5 flex items-center justify-between">
+      {/* Mobile Top Header */}
+      <div className="md:hidden bg-[#141B28] border-b border-white/5 p-4 flex items-center justify-between sticky top-0 z-40">
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-lg bg-luxury-gold/15 border border-luxury-gold/30 flex items-center justify-center text-luxury-gold">
+            <Shield className="w-4 h-4" />
+          </div>
+          <div>
+            <h2 className="font-serif font-bold text-xs text-white">SSPI Admin Panel</h2>
+            <p className="text-[10px] text-luxury-gold font-mono truncate max-w-[170px]">{user?.email || 'Superadmin'}</p>
+          </div>
+        </div>
+
+        <button
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          className="p-2 rounded-xl bg-white/5 border border-white/10 text-stone-300 hover:text-white"
+        >
+          {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+        </button>
+      </div>
+
+      {/* Mobile Horizontal Quick Navigation */}
+      <div className="md:hidden bg-[#111722] border-b border-white/5 px-3 py-2 flex gap-1.5 overflow-x-auto scrollbar-none sticky top-[65px] z-30">
+        {navItems.map(item => (
+          <button
+            key={item.id}
+            onClick={() => {
+              setActiveTab(item.id);
+              setMobileMenuOpen(false);
+            }}
+            className={`px-3 py-1 rounded-lg text-[11px] font-bold whitespace-nowrap transition-colors ${
+              activeTab === item.id
+                ? 'bg-luxury-gold text-obsidian shadow'
+                : 'bg-white/5 text-stone-300'
+            }`}
+          >
+            {item.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Sidebar Navigation (Desktop) */}
+      <aside className={`w-full md:w-72 bg-[#141B28] border-r border-white/5 flex flex-col shrink-0 ${
+        mobileMenuOpen ? 'block' : 'hidden md:flex'
+      }`}>
+        <div className="p-5 border-b border-white/5 hidden md:flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-luxury-gold/15 border border-luxury-gold/30 flex items-center justify-center text-luxury-gold">
               <Shield className="w-5 h-5" />
             </div>
             <div>
               <h2 className="font-serif font-bold text-sm text-white tracking-wide">SSPI Control Center</h2>
-              <p className="text-[11px] text-stone-400 font-mono">Superadmin Portal</p>
+              <p className="text-[11px] text-stone-400 font-mono">MongoDB Atlas CMS</p>
             </div>
           </div>
         </div>
@@ -403,7 +563,10 @@ export const AdminDashboard = () => {
             return (
               <button
                 key={item.id}
-                onClick={() => setActiveTab(item.id)}
+                onClick={() => {
+                  setActiveTab(item.id);
+                  setMobileMenuOpen(false);
+                }}
                 className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all ${
                   isActive
                     ? 'bg-luxury-gold text-obsidian shadow-md font-bold'
@@ -441,12 +604,12 @@ export const AdminDashboard = () => {
       {/* Main Content Area */}
       <main className="flex-1 flex flex-col min-w-0 bg-[#0B0F17]">
         {/* Top Header */}
-        <header className="px-6 py-4 bg-[#141B28]/60 backdrop-blur-md border-b border-white/5 flex items-center justify-between sticky top-0 z-30">
+        <header className="px-6 py-4 bg-[#141B28]/60 backdrop-blur-md border-b border-white/5 flex items-center justify-between sticky top-0 z-20">
           <div>
             <h1 className="text-base sm:text-lg font-bold text-white capitalize font-serif">
               {navItems.find(n => n.id === activeTab)?.label || 'Admin Panel'}
             </h1>
-            <p className="text-[11px] text-stone-400">All data automatically persisted in MongoDB Atlas</p>
+            <p className="text-[11px] text-stone-400">All data stored in real-time MongoDB Atlas</p>
           </div>
 
           <div className="flex items-center gap-2.5">
@@ -477,69 +640,81 @@ export const AdminDashboard = () => {
           {activeTab === 'overview' && (
             <div className="space-y-6">
               {/* Metrics Grid */}
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                <div className="bg-[#141B28] p-5 rounded-2xl border border-white/5">
-                  <p className="text-xs text-stone-400 font-medium">Total Site Consultations</p>
-                  <p className="text-2xl sm:text-3xl font-black text-white mt-1">{stats?.metrics?.totalBookings || bookings.length}</p>
-                  <p className="text-[11px] text-amber-400 mt-2 flex items-center gap-1">
-                    <Clock className="w-3 h-3" />
-                    <span>{stats?.metrics?.pending || bookings.filter(b => b.status === 'Pending').length} Pending review</span>
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
+                <div className="bg-[#141B28] p-4 rounded-2xl border border-white/5">
+                  <p className="text-[11px] text-stone-400 font-medium">Bookings</p>
+                  <p className="text-xl sm:text-2xl font-black text-white mt-1">{bookings.length}</p>
+                  <p className="text-[10px] text-amber-400 mt-1 flex items-center gap-1">
+                    <Clock className="w-2.5 h-2.5" />
+                    <span>{bookings.filter(b => b.status === 'Pending').length} Pending</span>
                   </p>
                 </div>
 
-                <div className="bg-[#141B28] p-5 rounded-2xl border border-white/5">
-                  <p className="text-xs text-stone-400 font-medium">Public Reviews</p>
-                  <p className="text-2xl sm:text-3xl font-black text-white mt-1">{reviews.length}</p>
-                  <p className="text-[11px] text-emerald-400 mt-2 flex items-center gap-1">
-                    <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
-                    <span>Average {stats?.metrics?.avgRating || '5.0'} / 5.0</span>
+                <div className="bg-[#141B28] p-4 rounded-2xl border border-white/5">
+                  <p className="text-[11px] text-stone-400 font-medium">Reviews</p>
+                  <p className="text-xl sm:text-2xl font-black text-white mt-1">{reviews.length}</p>
+                  <p className="text-[10px] text-emerald-400 mt-1 flex items-center gap-1">
+                    <Star className="w-2.5 h-2.5 fill-amber-400 text-amber-400" />
+                    <span>{stats?.metrics?.avgRating || '5.0'} / 5.0</span>
                   </p>
                 </div>
 
-                <div className="bg-[#141B28] p-5 rounded-2xl border border-white/5">
-                  <p className="text-xs text-stone-400 font-medium">Authorized Admins</p>
-                  <p className="text-2xl sm:text-3xl font-black text-white mt-1">{authorities.length}</p>
-                  <p className="text-[11px] text-luxury-gold mt-2 flex items-center gap-1">
-                    <KeyRound className="w-3 h-3" />
-                    <span>Whitelist Protected</span>
-                  </p>
+                <div className="bg-[#141B28] p-4 rounded-2xl border border-white/5">
+                  <p className="text-[11px] text-stone-400 font-medium">Enquiries</p>
+                  <p className="text-xl sm:text-2xl font-black text-white mt-1">{enquiries.length}</p>
+                  <p className="text-[10px] text-cyan-400 mt-1">Lead inquiries</p>
                 </div>
 
-                <div className="bg-[#141B28] p-5 rounded-2xl border border-white/5">
-                  <p className="text-xs text-stone-400 font-medium">Primary Guarantee</p>
-                  <p className="text-2xl sm:text-3xl font-black text-white mt-1">{settingsData.warrantyYears || 10} Years</p>
-                  <p className="text-[11px] text-cyan-400 mt-2 flex items-center gap-1">
-                    <CheckCircle2 className="w-3 h-3" />
-                    <span>100% Waterproof & Termite</span>
-                  </p>
+                <div className="bg-[#141B28] p-4 rounded-2xl border border-white/5">
+                  <p className="text-[11px] text-stone-400 font-medium">Services</p>
+                  <p className="text-xl sm:text-2xl font-black text-white mt-1">{services.length}</p>
+                  <p className="text-[10px] text-stone-400 mt-1">PVC solutions</p>
+                </div>
+
+                <div className="bg-[#141B28] p-4 rounded-2xl border border-white/5">
+                  <p className="text-[11px] text-stone-400 font-medium">FAQs</p>
+                  <p className="text-xl sm:text-2xl font-black text-white mt-1">{faqs.length}</p>
+                  <p className="text-[10px] text-stone-400 mt-1">Client answers</p>
+                </div>
+
+                <div className="bg-[#141B28] p-4 rounded-2xl border border-white/5">
+                  <p className="text-[11px] text-stone-400 font-medium">Admins</p>
+                  <p className="text-xl sm:text-2xl font-black text-white mt-1">{authorities.length}</p>
+                  <p className="text-[10px] text-luxury-gold mt-1">Whitelisted</p>
                 </div>
               </div>
 
-              {/* Quick actions card */}
-              <div className="bg-gradient-to-r from-luxury-gold/15 to-transparent border border-luxury-gold/20 rounded-2xl p-6">
+              {/* Quick shortcut banner */}
+              <div className="bg-gradient-to-r from-luxury-gold/15 to-transparent border border-luxury-gold/20 rounded-2xl p-5">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                   <div>
-                    <h3 className="font-serif font-bold text-lg text-white">Quick Control Shortcuts</h3>
-                    <p className="text-xs text-stone-300 mt-1">
-                      Edit announcement bar, manage customer reviews, assign admin authority, or track bookings.
+                    <h3 className="font-serif font-bold text-base text-white">Full Website CMS & Controls Active</h3>
+                    <p className="text-xs text-stone-300 mt-0.5">
+                      Header announcement, contact details, reviews replies, services prices, bookings, and email authority.
                     </p>
                   </div>
                   <div className="flex flex-wrap gap-2">
                     <button
                       onClick={() => setActiveTab('header')}
-                      className="px-3 py-1.5 rounded-lg bg-luxury-gold text-obsidian text-xs font-bold hover:bg-luxury-goldDark transition-colors"
+                      className="px-3 py-1.5 rounded-lg bg-luxury-gold text-obsidian text-xs font-bold hover:bg-luxury-goldDark"
                     >
-                      Update Header Announcement
+                      Header Bar
+                    </button>
+                    <button
+                      onClick={() => setActiveTab('services')}
+                      className="px-3 py-1.5 rounded-lg bg-white/10 text-white text-xs font-bold hover:bg-white/20"
+                    >
+                      PVC Services
                     </button>
                     <button
                       onClick={() => setActiveTab('reviews')}
-                      className="px-3 py-1.5 rounded-lg bg-white/10 text-white text-xs font-bold hover:bg-white/20 transition-colors"
+                      className="px-3 py-1.5 rounded-lg bg-white/10 text-white text-xs font-bold hover:bg-white/20"
                     >
-                      Reply to Reviews
+                      Reply Reviews
                     </button>
                     <button
                       onClick={() => setActiveTab('authority')}
-                      className="px-3 py-1.5 rounded-lg bg-white/10 text-white text-xs font-bold hover:bg-white/20 transition-colors"
+                      className="px-3 py-1.5 rounded-lg bg-white/10 text-white text-xs font-bold hover:bg-white/20"
                     >
                       Add Admin Email
                     </button>
@@ -547,18 +722,15 @@ export const AdminDashboard = () => {
                 </div>
               </div>
 
-              {/* Recent Bookings & Reviews split */}
+              {/* Recent Bookings & Reviews */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div className="bg-[#141B28] border border-white/5 rounded-2xl p-5">
                   <div className="flex justify-between items-center mb-4">
                     <h4 className="font-bold text-sm text-white flex items-center gap-2">
                       <CalendarCheck className="w-4 h-4 text-luxury-gold" />
-                      <span>Latest Consultation Bookings</span>
+                      <span>Latest Site Visit Bookings</span>
                     </h4>
-                    <button
-                      onClick={() => setActiveTab('bookings')}
-                      className="text-xs text-luxury-gold hover:underline"
-                    >
+                    <button onClick={() => setActiveTab('bookings')} className="text-xs text-luxury-gold hover:underline">
                       View all ({bookings.length})
                     </button>
                   </div>
@@ -566,7 +738,7 @@ export const AdminDashboard = () => {
                     {bookings.slice(0, 4).map(b => (
                       <div key={b.id || b.bookingId} className="p-3 rounded-xl bg-black/20 border border-white/5 flex justify-between items-center">
                         <div>
-                          <p className="text-xs font-bold text-white">{b.name} <span className="text-[10px] text-stone-400 font-normal font-mono">({b.bookingId})</span></p>
+                          <p className="text-xs font-bold text-white">{b.name} <span className="text-[10px] text-stone-400 font-mono">({b.bookingId})</span></p>
                           <p className="text-[11px] text-stone-400">{b.serviceName} • {b.area || 'Ahmedabad'}</p>
                           <p className="text-[10px] text-stone-500 font-mono mt-0.5">{b.preferredDate} at {b.preferredTime}</p>
                         </div>
@@ -580,9 +752,6 @@ export const AdminDashboard = () => {
                         </span>
                       </div>
                     ))}
-                    {bookings.length === 0 && (
-                      <p className="text-xs text-stone-500 text-center py-4">No bookings yet.</p>
-                    )}
                   </div>
                 </div>
 
@@ -592,10 +761,7 @@ export const AdminDashboard = () => {
                       <Star className="w-4 h-4 text-luxury-gold" />
                       <span>Recent Public Reviews</span>
                     </h4>
-                    <button
-                      onClick={() => setActiveTab('reviews')}
-                      className="text-xs text-luxury-gold hover:underline"
-                    >
+                    <button onClick={() => setActiveTab('reviews')} className="text-xs text-luxury-gold hover:underline">
                       Manage ({reviews.length})
                     </button>
                   </div>
@@ -619,9 +785,6 @@ export const AdminDashboard = () => {
                         )}
                       </div>
                     ))}
-                    {reviews.length === 0 && (
-                      <p className="text-xs text-stone-500 text-center py-4">No reviews yet.</p>
-                    )}
                   </div>
                 </div>
               </div>
@@ -634,12 +797,9 @@ export const AdminDashboard = () => {
               <div className="bg-[#141B28] border border-white/5 rounded-2xl p-6 space-y-5">
                 <div className="border-b border-white/5 pb-4">
                   <h3 className="font-serif font-bold text-base text-white">Top Announcement Bar & Header CMS</h3>
-                  <p className="text-xs text-stone-400 mt-1">
-                    Control what thousands of visitors see in the top gold bar of your website.
-                  </p>
+                  <p className="text-xs text-stone-400 mt-1">Control top notification bar, hero badges, and emergency alerts.</p>
                 </div>
 
-                {/* Announcement Live Preview */}
                 <div>
                   <label className="text-xs font-bold text-stone-300 block mb-2">Live Bar Preview</label>
                   <div className="p-3 rounded-xl bg-gradient-to-r from-[#121212] via-[#2A2318] to-[#121212] border border-luxury-gold/30 text-stone-200 text-xs flex items-center justify-between gap-2 shadow-inner">
@@ -666,35 +826,27 @@ export const AdminDashboard = () => {
                 </div>
 
                 <div>
-                  <label className="text-xs font-bold text-stone-300 block mb-1">
-                    Announcement Bar Message
-                  </label>
+                  <label className="text-xs font-bold text-stone-300 block mb-1">Announcement Message</label>
                   <textarea
                     rows="2"
                     value={settingsData.announcementText}
                     onChange={(e) => setSettingsData(prev => ({ ...prev, announcementText: e.target.value }))}
-                    placeholder="All Company PVC Material Work Available • KAKA, TAASA & All Major Brands • 10-Yr Guarantee..."
                     className="w-full p-3 rounded-xl bg-[#0B0F17] border border-white/10 text-white text-xs focus:ring-2 focus:ring-luxury-gold/50 focus:outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="text-xs font-bold text-stone-300 block mb-1">
-                    Hero Section Badge Text (Above Title)
-                  </label>
+                  <label className="text-xs font-bold text-stone-300 block mb-1">Hero Section Badge Tag</label>
                   <input
                     type="text"
                     value={settingsData.heroBadgeText}
                     onChange={(e) => setSettingsData(prev => ({ ...prev, heroBadgeText: e.target.value }))}
-                    placeholder="Ahmedabad Direct: All Companies PVC Material Work Available (KAKA, TAASA & Major Brands)"
                     className="w-full p-3 rounded-xl bg-[#0B0F17] border border-white/10 text-white text-xs focus:ring-2 focus:ring-luxury-gold/50 focus:outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="text-xs font-bold text-stone-300 block mb-1">
-                    Emergency Alert / Notification (Optional)
-                  </label>
+                  <label className="text-xs font-bold text-stone-300 block mb-1">Emergency Notice Banner (Optional)</label>
                   <input
                     type="text"
                     value={settingsData.emergencyNotice}
@@ -707,7 +859,7 @@ export const AdminDashboard = () => {
                 <div className="pt-3">
                   <button
                     onClick={handleSaveSettings}
-                    className="px-5 py-2.5 rounded-xl bg-luxury-gold hover:bg-luxury-goldDark text-obsidian text-xs font-bold transition-all shadow-md flex items-center gap-2"
+                    className="px-5 py-2.5 rounded-xl bg-luxury-gold hover:bg-luxury-goldDark text-obsidian text-xs font-bold shadow-md flex items-center gap-2"
                   >
                     <Save className="w-4 h-4" />
                     <span>Save Header Settings</span>
@@ -723,9 +875,7 @@ export const AdminDashboard = () => {
               <div className="bg-[#141B28] border border-white/5 rounded-2xl p-6 space-y-5">
                 <div className="border-b border-white/5 pb-4">
                   <h3 className="font-serif font-bold text-base text-white">Contact Details & Social Media Channels</h3>
-                  <p className="text-xs text-stone-400 mt-1">
-                    Update phone numbers, WhatsApp, physical address, and official social accounts.
-                  </p>
+                  <p className="text-xs text-stone-400 mt-1">Update phone numbers, WhatsApp, physical address, and social links.</p>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -735,7 +885,6 @@ export const AdminDashboard = () => {
                       type="text"
                       value={settingsData.primaryPhone}
                       onChange={(e) => setSettingsData(prev => ({ ...prev, primaryPhone: e.target.value }))}
-                      placeholder="+91 8209836370"
                       className="w-full p-3 rounded-xl bg-[#0B0F17] border border-white/10 text-white text-xs focus:ring-2 focus:ring-luxury-gold/50 focus:outline-none"
                     />
                   </div>
@@ -746,7 +895,6 @@ export const AdminDashboard = () => {
                       type="text"
                       value={settingsData.secondaryPhone}
                       onChange={(e) => setSettingsData(prev => ({ ...prev, secondaryPhone: e.target.value }))}
-                      placeholder="+91 9828448936"
                       className="w-full p-3 rounded-xl bg-[#0B0F17] border border-white/10 text-white text-xs focus:ring-2 focus:ring-luxury-gold/50 focus:outline-none"
                     />
                   </div>
@@ -757,7 +905,6 @@ export const AdminDashboard = () => {
                       type="text"
                       value={settingsData.whatsappNumber}
                       onChange={(e) => setSettingsData(prev => ({ ...prev, whatsappNumber: e.target.value }))}
-                      placeholder="918209836370"
                       className="w-full p-3 rounded-xl bg-[#0B0F17] border border-white/10 text-white text-xs focus:ring-2 focus:ring-luxury-gold/50 focus:outline-none"
                     />
                   </div>
@@ -768,7 +915,6 @@ export const AdminDashboard = () => {
                       type="email"
                       value={settingsData.email}
                       onChange={(e) => setSettingsData(prev => ({ ...prev, email: e.target.value }))}
-                      placeholder="maheshkumarsaini8769@gmail.com"
                       className="w-full p-3 rounded-xl bg-[#0B0F17] border border-white/10 text-white text-xs focus:ring-2 focus:ring-luxury-gold/50 focus:outline-none"
                     />
                   </div>
@@ -780,7 +926,6 @@ export const AdminDashboard = () => {
                     rows="2"
                     value={settingsData.address}
                     onChange={(e) => setSettingsData(prev => ({ ...prev, address: e.target.value }))}
-                    placeholder="Yogeshwar Residency, Opp. Ashutosh Tenament, Moti Canal Road, Vastral, Ahmedabad - 382418"
                     className="w-full p-3 rounded-xl bg-[#0B0F17] border border-white/10 text-white text-xs focus:ring-2 focus:ring-luxury-gold/50 focus:outline-none"
                   />
                 </div>
@@ -792,7 +937,6 @@ export const AdminDashboard = () => {
                       type="text"
                       value={settingsData.workingHours}
                       onChange={(e) => setSettingsData(prev => ({ ...prev, workingHours: e.target.value }))}
-                      placeholder="Monday - Sunday: 9:00 AM – 9:00 PM"
                       className="w-full p-3 rounded-xl bg-[#0B0F17] border border-white/10 text-white text-xs focus:ring-2 focus:ring-luxury-gold/50 focus:outline-none"
                     />
                   </div>
@@ -803,7 +947,6 @@ export const AdminDashboard = () => {
                       type="text"
                       value={settingsData.googleMapsUrl}
                       onChange={(e) => setSettingsData(prev => ({ ...prev, googleMapsUrl: e.target.value }))}
-                      placeholder="https://maps.google.com/..."
                       className="w-full p-3 rounded-xl bg-[#0B0F17] border border-white/10 text-white text-xs focus:ring-2 focus:ring-luxury-gold/50 focus:outline-none"
                     />
                   </div>
@@ -811,9 +954,7 @@ export const AdminDashboard = () => {
 
                 {/* Social media links */}
                 <div className="pt-4 border-t border-white/5">
-                  <h4 className="text-xs font-bold text-luxury-gold uppercase tracking-wider mb-3">
-                    Social Media Channels
-                  </h4>
+                  <h4 className="text-xs font-bold text-luxury-gold uppercase tracking-wider mb-3">Social Media Channels</h4>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="text-xs font-bold text-stone-300 block mb-1">Instagram URL</label>
@@ -824,7 +965,6 @@ export const AdminDashboard = () => {
                           ...prev,
                           socialChannels: { ...prev.socialChannels, instagram: e.target.value }
                         }))}
-                        placeholder="https://instagram.com/..."
                         className="w-full p-3 rounded-xl bg-[#0B0F17] border border-white/10 text-white text-xs focus:ring-2 focus:ring-luxury-gold/50 focus:outline-none"
                       />
                     </div>
@@ -838,7 +978,6 @@ export const AdminDashboard = () => {
                           ...prev,
                           socialChannels: { ...prev.socialChannels, facebook: e.target.value }
                         }))}
-                        placeholder="https://facebook.com/..."
                         className="w-full p-3 rounded-xl bg-[#0B0F17] border border-white/10 text-white text-xs focus:ring-2 focus:ring-luxury-gold/50 focus:outline-none"
                       />
                     </div>
@@ -852,7 +991,6 @@ export const AdminDashboard = () => {
                           ...prev,
                           socialChannels: { ...prev.socialChannels, youtube: e.target.value }
                         }))}
-                        placeholder="https://youtube.com/@..."
                         className="w-full p-3 rounded-xl bg-[#0B0F17] border border-white/10 text-white text-xs focus:ring-2 focus:ring-luxury-gold/50 focus:outline-none"
                       />
                     </div>
@@ -866,7 +1004,6 @@ export const AdminDashboard = () => {
                           ...prev,
                           socialChannels: { ...prev.socialChannels, whatsapp: e.target.value }
                         }))}
-                        placeholder="https://wa.me/918209836370"
                         className="w-full p-3 rounded-xl bg-[#0B0F17] border border-white/10 text-white text-xs focus:ring-2 focus:ring-luxury-gold/50 focus:outline-none"
                       />
                     </div>
@@ -876,7 +1013,7 @@ export const AdminDashboard = () => {
                 <div className="pt-3">
                   <button
                     onClick={handleSaveSettings}
-                    className="px-5 py-2.5 rounded-xl bg-luxury-gold hover:bg-luxury-goldDark text-obsidian text-xs font-bold transition-all shadow-md flex items-center gap-2"
+                    className="px-5 py-2.5 rounded-xl bg-luxury-gold hover:bg-luxury-goldDark text-obsidian text-xs font-bold shadow-md flex items-center gap-2"
                   >
                     <Save className="w-4 h-4" />
                     <span>Save Contact & Socials</span>
@@ -892,9 +1029,7 @@ export const AdminDashboard = () => {
               <div className="bg-[#141B28] border border-white/5 rounded-2xl p-6 space-y-5">
                 <div className="border-b border-white/5 pb-4">
                   <h3 className="font-serif font-bold text-base text-white">About Us CMS & Credentials</h3>
-                  <p className="text-xs text-stone-400 mt-1">
-                    Manage company background, metrics (years, projects, clients), mission & vision statements.
-                  </p>
+                  <p className="text-xs text-stone-400 mt-1">Manage company background, metrics (years, projects, clients), mission & vision statements.</p>
                 </div>
 
                 <div>
@@ -995,7 +1130,7 @@ export const AdminDashboard = () => {
                 <div className="pt-3">
                   <button
                     onClick={handleSaveSettings}
-                    className="px-5 py-2.5 rounded-xl bg-luxury-gold hover:bg-luxury-goldDark text-obsidian text-xs font-bold transition-all shadow-md flex items-center gap-2"
+                    className="px-5 py-2.5 rounded-xl bg-luxury-gold hover:bg-luxury-goldDark text-obsidian text-xs font-bold shadow-md flex items-center gap-2"
                   >
                     <Save className="w-4 h-4" />
                     <span>Save About Us CMS</span>
@@ -1005,21 +1140,102 @@ export const AdminDashboard = () => {
             </div>
           )}
 
-          {/* TAB 5: BOOKINGS MANAGER */}
+          {/* TAB 5: SERVICES CMS */}
+          {activeTab === 'services' && (
+            <div className="space-y-6">
+              {/* Add New Service Form */}
+              <div className="bg-[#141B28] border border-white/5 rounded-2xl p-6">
+                <h3 className="font-serif font-bold text-base text-white mb-1">Add New PVC Interior Service</h3>
+                <p className="text-xs text-stone-400 mb-4">Add or manage services displayed on the website.</p>
+
+                <form onSubmit={handleCreateService} className="grid grid-cols-1 sm:grid-cols-3 gap-3 items-end">
+                  <div>
+                    <label className="text-xs font-bold text-stone-300 block mb-1">Service Name *</label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. PVC False Ceiling"
+                      value={newServiceName}
+                      onChange={(e) => setNewServiceName(e.target.value)}
+                      className="w-full p-2.5 rounded-xl bg-[#0B0F17] border border-white/10 text-white text-xs focus:ring-2 focus:ring-luxury-gold/50 focus:outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-bold text-stone-300 block mb-1">Starting Price (₹ / sq.ft)</label>
+                    <input
+                      type="number"
+                      placeholder="480"
+                      value={newServicePrice}
+                      onChange={(e) => setNewServicePrice(e.target.value)}
+                      className="w-full p-2.5 rounded-xl bg-[#0B0F17] border border-white/10 text-white text-xs focus:ring-2 focus:ring-luxury-gold/50 focus:outline-none font-bold"
+                    />
+                  </div>
+
+                  <div>
+                    <button
+                      type="submit"
+                      className="w-full py-2.5 rounded-xl bg-luxury-gold hover:bg-luxury-goldDark text-obsidian text-xs font-black shadow-md flex items-center justify-center gap-1.5 transition-all"
+                    >
+                      <Plus className="w-4 h-4" />
+                      <span>Add Service</span>
+                    </button>
+                  </div>
+                </form>
+              </div>
+
+              {/* Existing Services List */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {services.map(svc => (
+                  <div key={svc.id || svc._id} className="bg-[#141B28] border border-white/5 rounded-2xl p-5 flex flex-col justify-between">
+                    <div>
+                      <div className="flex justify-between items-start gap-2 mb-2">
+                        <h4 className="font-bold text-sm text-white">{svc.name}</h4>
+                        <span className="text-xs font-mono font-bold text-luxury-gold px-2 py-0.5 rounded bg-luxury-gold/10">
+                          ₹{svc.startingPrice || 450}/{svc.priceUnit || 'sq.ft'}
+                        </span>
+                      </div>
+                      <p className="text-xs text-stone-400 mb-3">{svc.shortDescription}</p>
+                      {svc.features && svc.features.length > 0 && (
+                        <div className="flex flex-wrap gap-1 mb-3">
+                          {svc.features.slice(0, 3).map((f, i) => (
+                            <span key={i} className="text-[10px] bg-white/5 px-2 py-0.5 rounded text-stone-300">
+                              ✓ {f}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="pt-3 border-t border-white/5 flex justify-between items-center text-xs">
+                      <span className="text-[11px] text-emerald-400 font-semibold">Active on website</span>
+                      <button
+                        onClick={() => handleDeleteService(svc.id || svc._id)}
+                        className="text-red-400 hover:text-red-300 p-1.5 rounded-lg bg-red-950/20"
+                        title="Delete service"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* TAB 6: BOOKINGS MANAGER */}
           {activeTab === 'bookings' && (
             <div className="space-y-5">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                <div className="flex items-center gap-2">
-                  <div className="relative">
-                    <Search className="w-4 h-4 text-stone-400 absolute left-3 top-1/2 -translate-y-1/2" />
-                    <input
-                      type="text"
-                      placeholder="Search bookings by name, phone, area..."
-                      value={bookingSearch}
-                      onChange={(e) => setBookingSearch(e.target.value)}
-                      className="pl-9 pr-4 py-2 rounded-xl bg-[#141B28] border border-white/10 text-xs text-white placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-luxury-gold/50 w-64 sm:w-72"
-                    />
-                  </div>
+                <div className="relative">
+                  <Search className="w-4 h-4 text-stone-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="text"
+                    placeholder="Search bookings by name, phone, area..."
+                    value={bookingSearch}
+                    onChange={(e) => setBookingSearch(e.target.value)}
+                    className="pl-9 pr-4 py-2 rounded-xl bg-[#141B28] border border-white/10 text-xs text-white placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-luxury-gold/50 w-64 sm:w-72"
+                  />
                 </div>
 
                 <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
@@ -1043,7 +1259,7 @@ export const AdminDashboard = () => {
               <div className="bg-[#141B28] border border-white/5 rounded-2xl overflow-hidden shadow-xl">
                 <div className="divide-y divide-white/5">
                   {filteredBookings.map(b => (
-                    <div key={b.id || b.bookingId} className="p-4 sm:p-5 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 hover:bg-white/[0.02] transition-colors">
+                    <div key={b.id || b.bookingId} className="p-4 sm:p-5 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 hover:bg-white/[0.02]">
                       <div className="space-y-1">
                         <div className="flex items-center gap-2">
                           <span className="text-xs font-mono font-bold text-luxury-gold px-2 py-0.5 rounded bg-luxury-gold/10 border border-luxury-gold/20">
@@ -1062,6 +1278,11 @@ export const AdminDashboard = () => {
                         {b.message && (
                           <p className="text-[11px] text-stone-400 italic bg-black/20 p-2 rounded-lg mt-1">
                             "{b.message}"
+                          </p>
+                        )}
+                        {b.adminNotes && (
+                          <p className="text-[11px] text-luxury-gold mt-1 font-mono">
+                            Admin Note: {b.adminNotes}
                           </p>
                         )}
                       </div>
@@ -1119,7 +1340,7 @@ export const AdminDashboard = () => {
             </div>
           )}
 
-          {/* TAB 6: REVIEWS & REPLIES CMS */}
+          {/* TAB 7: REVIEWS & REPLIES CMS */}
           {activeTab === 'reviews' && (
             <div className="space-y-5">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -1176,7 +1397,7 @@ export const AdminDashboard = () => {
 
                       {/* Actions */}
                       <div className="flex items-center gap-2 shrink-0">
-                        {/* Status badge & toggle */}
+                        {/* Status dropdown */}
                         <select
                           value={r.status || 'Approved'}
                           onChange={(e) => handleUpdateReviewStatus(r.id || r._id, e.target.value)}
@@ -1232,12 +1453,6 @@ export const AdminDashboard = () => {
                     )}
                   </div>
                 ))}
-
-                {filteredReviews.length === 0 && (
-                  <div className="p-8 text-center text-stone-500 text-xs bg-[#141B28] rounded-2xl border border-white/5">
-                    No reviews in this category.
-                  </div>
-                )}
               </div>
 
               {/* Reply Modal */}
@@ -1249,10 +1464,7 @@ export const AdminDashboard = () => {
                         <Reply className="w-4 h-4 text-luxury-gold" />
                         <span>Reply to {activeReviewForReply?.customerName}</span>
                       </h4>
-                      <button
-                        onClick={() => setReplyModalOpen(false)}
-                        className="text-stone-400 hover:text-white"
-                      >
+                      <button onClick={() => setReplyModalOpen(false)} className="text-stone-400 hover:text-white">
                         <X className="w-4 h-4" />
                       </button>
                     </div>
@@ -1298,15 +1510,193 @@ export const AdminDashboard = () => {
             </div>
           )}
 
-          {/* TAB 7: PVC BRANDS & MATERIALS */}
+          {/* TAB 8: ENQUIRIES / LEADS */}
+          {activeTab === 'enquiries' && (
+            <div className="space-y-5">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  <h3 className="font-serif font-bold text-base text-white">Customer Enquiries & Callback Leads</h3>
+                  <p className="text-xs text-stone-400 mt-0.5">Leads submitted via the website contact and quotation forms.</p>
+                </div>
+
+                <div className="flex items-center gap-1.5">
+                  {['all', 'New', 'Contacted', 'Closed'].map(st => (
+                    <button
+                      key={st}
+                      onClick={() => setEnquiryFilter(st)}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-bold capitalize transition-all ${
+                        enquiryFilter.toLowerCase() === st.toLowerCase()
+                          ? 'bg-luxury-gold text-obsidian shadow'
+                          : 'bg-[#141B28] text-stone-300 hover:bg-white/5'
+                      }`}
+                    >
+                      {st}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                {filteredEnquiries.map(enq => (
+                  <div key={enq.id || enq._id} className="bg-[#141B28] border border-white/5 rounded-2xl p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <h4 className="text-sm font-bold text-white">{enq.name}</h4>
+                        <span className="text-xs text-luxury-gold font-mono font-bold">({enq.phone})</span>
+                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                          enq.status === 'New' ? 'bg-amber-500/20 text-amber-400' :
+                          enq.status === 'Contacted' ? 'bg-blue-500/20 text-blue-400' :
+                          'bg-emerald-500/20 text-emerald-400'
+                        }`}>
+                          {enq.status}
+                        </span>
+                      </div>
+                      <p className="text-xs text-stone-300">
+                        Inquiry for: <strong className="text-white">{enq.service || 'General PVC Interior'}</strong>
+                      </p>
+                      {enq.message && (
+                        <p className="text-xs text-stone-400 italic bg-black/20 p-2.5 rounded-lg">
+                          "{enq.message}"
+                        </p>
+                      )}
+                      <p className="text-[10px] text-stone-500 font-mono">
+                        Received: {new Date(enq.createdAt).toLocaleDateString()}
+                      </p>
+                    </div>
+
+                    <div className="flex items-center gap-2 shrink-0">
+                      <a
+                        href={`https://wa.me/${enq.phone.replace(/[^0-9]/g, '').startsWith('91') ? enq.phone.replace(/[^0-9]/g, '') : `91${enq.phone.replace(/[^0-9]/g, '')}`}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="px-3 py-1.5 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-bold flex items-center gap-1"
+                      >
+                        <MessageCircle className="w-3.5 h-3.5" />
+                        <span>Chat</span>
+                      </a>
+
+                      <select
+                        value={enq.status}
+                        onChange={(e) => handleUpdateEnquiryStatus(enq.id || enq._id, e.target.value)}
+                        className="text-xs font-bold px-2.5 py-1.5 rounded-xl bg-[#0B0F17] border border-white/10 text-white focus:outline-none cursor-pointer"
+                      >
+                        <option value="New">New</option>
+                        <option value="Contacted">Contacted</option>
+                        <option value="Converted">Converted</option>
+                        <option value="Closed">Closed</option>
+                      </select>
+
+                      <button
+                        onClick={() => handleDeleteEnquiry(enq.id || enq._id)}
+                        className="p-2 rounded-xl bg-red-950/20 text-red-400 border border-red-800/40"
+                        title="Delete enquiry"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+
+                {filteredEnquiries.length === 0 && (
+                  <div className="p-8 text-center text-stone-500 text-xs bg-[#141B28] rounded-2xl border border-white/5">
+                    No customer enquiries in this category.
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* TAB 9: FAQS CMS */}
+          {activeTab === 'faqs' && (
+            <div className="space-y-6">
+              {/* Add FAQ form */}
+              <div className="bg-[#141B28] border border-white/5 rounded-2xl p-6">
+                <h3 className="font-serif font-bold text-base text-white mb-1">Add New FAQ to Website</h3>
+                <p className="text-xs text-stone-400 mb-4">Questions and answers shown on the customer FAQ page.</p>
+
+                <form onSubmit={handleCreateFaq} className="space-y-3">
+                  <div>
+                    <label className="text-xs font-bold text-stone-300 block mb-1">Question *</label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. Is PVC safe for modular kitchen heat and fire?"
+                      value={newFaqQuestion}
+                      onChange={(e) => setNewFaqQuestion(e.target.value)}
+                      className="w-full p-2.5 rounded-xl bg-[#0B0F17] border border-white/10 text-white text-xs focus:ring-2 focus:ring-luxury-gold/50 focus:outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-bold text-stone-300 block mb-1">Answer *</label>
+                    <textarea
+                      rows="3"
+                      required
+                      placeholder="e.g. Yes, heavy-duty KAKA and TAASA PVC profiles have flame retardant properties..."
+                      value={newFaqAnswer}
+                      onChange={(e) => setNewFaqAnswer(e.target.value)}
+                      className="w-full p-2.5 rounded-xl bg-[#0B0F17] border border-white/10 text-white text-xs focus:ring-2 focus:ring-luxury-gold/50 focus:outline-none"
+                    />
+                  </div>
+
+                  <div className="flex justify-between items-center pt-2">
+                    <select
+                      value={newFaqCategory}
+                      onChange={(e) => setNewFaqCategory(e.target.value)}
+                      className="p-2 rounded-xl bg-[#0B0F17] border border-white/10 text-xs text-white"
+                    >
+                      <option>Materials & Durability</option>
+                      <option>Brands & Choice</option>
+                      <option>Warranty</option>
+                      <option>Installation Speed</option>
+                      <option>Pricing & Payment</option>
+                    </select>
+
+                    <button
+                      type="submit"
+                      className="px-5 py-2 rounded-xl bg-luxury-gold hover:bg-luxury-goldDark text-obsidian text-xs font-black shadow-md flex items-center gap-1.5"
+                    >
+                      <Plus className="w-4 h-4" />
+                      <span>Add FAQ</span>
+                    </button>
+                  </div>
+                </form>
+              </div>
+
+              {/* FAQs list */}
+              <div className="space-y-3">
+                {faqs.map(faq => (
+                  <div key={faq.id || faq._id} className="bg-[#141B28] border border-white/5 rounded-2xl p-5">
+                    <div className="flex justify-between items-start gap-3">
+                      <div>
+                        <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-luxury-gold/15 text-luxury-gold border border-luxury-gold/20 mb-2 inline-block">
+                          {faq.category || 'General'}
+                        </span>
+                        <h4 className="text-sm font-bold text-white mb-1.5">{faq.question}</h4>
+                        <p className="text-xs text-stone-300 leading-relaxed">{faq.answer}</p>
+                      </div>
+
+                      <button
+                        onClick={() => handleDeleteFaq(faq.id || faq._id)}
+                        className="text-red-400 hover:text-red-300 p-2 rounded-xl bg-red-950/20 shrink-0"
+                        title="Delete FAQ"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* TAB 10: PVC BRANDS & MATERIALS */}
           {activeTab === 'brands' && (
             <div className="max-w-4xl space-y-6">
               <div className="bg-[#141B28] border border-white/5 rounded-2xl p-6 space-y-5">
                 <div className="border-b border-white/5 pb-4">
                   <h3 className="font-serif font-bold text-base text-white">All Companies PVC Material Work Available</h3>
-                  <p className="text-xs text-stone-400 mt-1">
-                    Manage the certified brands offered (KAKA PVC, TAASA, etc.) and warranty guarantees displayed across the website.
-                  </p>
+                  <p className="text-xs text-stone-400 mt-1">Manage certified brands offered (KAKA, TAASA, etc.) and warranty guarantees.</p>
                 </div>
 
                 <div>
@@ -1315,7 +1705,6 @@ export const AdminDashboard = () => {
                     type="text"
                     value={settingsData.guaranteeDetails}
                     onChange={(e) => setSettingsData(prev => ({ ...prev, guaranteeDetails: e.target.value }))}
-                    placeholder="100% Termite Proof & 100% Waterproof with 10 Years Warranty"
                     className="w-full p-3 rounded-xl bg-[#0B0F17] border border-white/10 text-white text-xs focus:ring-2 focus:ring-luxury-gold/50 focus:outline-none"
                   />
                 </div>
@@ -1326,12 +1715,10 @@ export const AdminDashboard = () => {
                     rows="3"
                     value={settingsData.materialsDescription}
                     onChange={(e) => setSettingsData(prev => ({ ...prev, materialsDescription: e.target.value }))}
-                    placeholder="We work with all top certified brands including KAKA PVC, TAASA, Greenply PVC, and Alstone..."
                     className="w-full p-3 rounded-xl bg-[#0B0F17] border border-white/10 text-white text-xs focus:ring-2 focus:ring-luxury-gold/50 focus:outline-none"
                   />
                 </div>
 
-                {/* Available brands list */}
                 <div>
                   <label className="text-xs font-bold text-stone-300 block mb-2">Available PVC Brands & Profiles</label>
                   <div className="flex flex-wrap gap-2 mb-3">
@@ -1345,7 +1732,6 @@ export const AdminDashboard = () => {
                           type="button"
                           onClick={() => handleRemoveBrand(brand)}
                           className="hover:text-red-400 transition-colors"
-                          title="Remove brand"
                         >
                           <X className="w-3.5 h-3.5" />
                         </button>
@@ -1376,7 +1762,7 @@ export const AdminDashboard = () => {
                 <div className="pt-3">
                   <button
                     onClick={handleSaveSettings}
-                    className="px-5 py-2.5 rounded-xl bg-luxury-gold hover:bg-luxury-goldDark text-obsidian text-xs font-bold transition-all shadow-md flex items-center gap-2"
+                    className="px-5 py-2.5 rounded-xl bg-luxury-gold hover:bg-luxury-goldDark text-obsidian text-xs font-bold shadow-md flex items-center gap-2"
                   >
                     <Save className="w-4 h-4" />
                     <span>Save Brand Settings</span>
@@ -1386,7 +1772,7 @@ export const AdminDashboard = () => {
             </div>
           )}
 
-          {/* TAB 8: EMAIL AUTHORITY & ACCESS WHITELIST */}
+          {/* TAB 11: EMAIL AUTHORITY & ACCESS WHITELIST */}
           {activeTab === 'authority' && (
             <div className="space-y-6">
               {/* Add New Authorized Admin Card */}
@@ -1504,7 +1890,6 @@ export const AdminDashboard = () => {
 
                       {/* Actions */}
                       <div className="flex items-center gap-2 shrink-0">
-                        {/* Change password button */}
                         <button
                           onClick={() => {
                             setPasswordChangeId(passwordChangeId === (admin.id || admin._id) ? null : (admin.id || admin._id));
@@ -1515,7 +1900,6 @@ export const AdminDashboard = () => {
                           Change Password
                         </button>
 
-                        {/* Active / Inactive status */}
                         <button
                           onClick={() => handleToggleAdminStatus(admin.id || admin._id, admin.status)}
                           className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition-colors ${
@@ -1527,7 +1911,6 @@ export const AdminDashboard = () => {
                           {admin.status === 'active' ? 'Active' : 'Inactive'}
                         </button>
 
-                        {/* Revoke / Delete */}
                         {admin.email !== 'maheshkumarsaini8769@gmail.com' && (
                           <button
                             onClick={() => handleDeleteAuthority(admin.id || admin._id, admin.email)}

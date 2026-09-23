@@ -6,6 +6,9 @@ const Settings = require('../models/Settings');
 const Service = require('../models/Service');
 const Review = require('../models/Review');
 const Faq = require('../models/Faq');
+const Booking = require('../models/Booking');
+const Enquiry = require('../models/Enquiry');
+const Gallery = require('../models/Gallery');
 
 const seedData = async () => {
   try {
@@ -195,6 +198,122 @@ const seedData = async () => {
         }
       ]);
       console.log('[Seed] Default reviews with replies created in MongoDB');
+    }
+
+    // 5. Seed Initial Bookings
+    const bookingCount = await Booking.countDocuments();
+    if (bookingCount === 0) {
+      await Booking.create([
+        {
+          bookingId: 'SSPI-782194',
+          name: 'Jignesh Prajapati',
+          phone: '+91 9825123456',
+          serviceName: 'PVC Modular Kitchen',
+          preferredDate: '2026-09-26',
+          preferredTime: '11:00 AM - 01:00 PM',
+          city: 'Ahmedabad',
+          area: 'Vastral',
+          address: 'A-402, Shivam Greens, Near Moti Canal Road',
+          message: 'L-shape kitchen design quotation chahiye with KAKA profile and hydraulic fittings.',
+          status: 'Confirmed',
+          adminNotes: 'Site visit confirmed with master carpenter. Samples carried.',
+          statusHistory: [
+            { status: 'Pending', note: 'Booking received online' },
+            { status: 'Confirmed', note: 'Client called and site visit time confirmed.' }
+          ]
+        },
+        {
+          bookingId: 'SSPI-419823',
+          name: 'Pooja Trivedi',
+          phone: '+91 9428567890',
+          serviceName: 'Master Sliding Wardrobe',
+          preferredDate: '2026-09-27',
+          preferredTime: '03:00 PM - 05:00 PM',
+          city: 'Ahmedabad',
+          area: 'Maninagar',
+          address: 'B-12, Radhe Krishna Bungalows, Near Railway Station',
+          message: 'Bedroom sliding wardrobe 10ft height with lofts and mirror finish panel.',
+          status: 'Pending',
+          adminNotes: '',
+          statusHistory: [{ status: 'Pending', note: 'Booking request received online' }]
+        },
+        {
+          bookingId: 'SSPI-904312',
+          name: 'Hardik Vaghela',
+          phone: '+91 9726345678',
+          serviceName: 'TV Unit & Acoustic Louvers',
+          preferredDate: '2026-09-24',
+          preferredTime: '10:00 AM - 12:00 PM',
+          city: 'Ahmedabad',
+          area: 'Nikol',
+          address: 'C-204, Devnandan Heights, SP Ring Road',
+          message: 'Living room wall louver panel with LED strips and floating console.',
+          status: 'Completed',
+          adminNotes: 'Work completed and customer fully satisfied. Full payment received.',
+          statusHistory: [
+            { status: 'Pending', note: 'Online lead' },
+            { status: 'Confirmed', note: 'Measurement taken' },
+            { status: 'Completed', note: 'Installation completed in 5 days' }
+          ]
+        }
+      ]);
+      console.log('[Seed] Default bookings created in MongoDB');
+    }
+
+    // 6. Seed Initial Enquiries
+    const enquiryCount = await Enquiry.countDocuments();
+    if (enquiryCount === 0) {
+      await Enquiry.create([
+        {
+          name: 'Sunil Thakor',
+          phone: '+91 9924112233',
+          service: 'Full Home PVC Interior (3BHK)',
+          message: 'New flat in Vastral, complete interior quote required including kitchen, wardrobes & doors.',
+          status: 'New',
+          notes: ''
+        },
+        {
+          name: 'Alka Mehta',
+          phone: '+91 9825445566',
+          service: 'PVC Bathroom Doors',
+          message: 'Need 4 waterproof PVC doors replacement for bungalow.',
+          status: 'Contacted',
+          notes: 'Quotation sent via WhatsApp. Client will confirm on Sunday.'
+        }
+      ]);
+      console.log('[Seed] Default enquiries created in MongoDB');
+    }
+
+    // 7. Seed Initial FAQs
+    const faqCount = await Faq.countDocuments();
+    if (faqCount === 0) {
+      await Faq.create([
+        {
+          question: 'Are PVC interiors really 100% waterproof and termite proof?',
+          answer: 'Yes, absolutely. Unlike wood or MDF which absorbs water and rots, certified KAKA and TAASA PVC profiles have zero organic matter, making them completely immune to water soaking, warping, and termite infestation for decades.',
+          category: 'Materials & Durability',
+          order: 1
+        },
+        {
+          question: 'Which PVC profile brands do you work with?',
+          answer: 'We provide certified work using KAKA PVC PROFILE, TAASA, Greenply PVC, Alstone, and Century PVC. Customers can choose their preferred brand and thickness according to their budget.',
+          category: 'Brands & Choice',
+          order: 2
+        },
+        {
+          question: 'What is the warranty period for PVC modular kitchens & wardrobes?',
+          answer: 'We offer an official 10-year warranty against termites, borer infestation, and water swelling, backed by professional craftsmanship and genuine hardware.',
+          category: 'Warranty',
+          order: 3
+        },
+        {
+          question: 'How fast can you complete a modular kitchen or full flat interior?',
+          answer: 'A standard PVC modular kitchen is typically fabricated and installed within 4 to 7 working days, minimizing disruption to your daily routine.',
+          category: 'Installation Speed',
+          order: 4
+        }
+      ]);
+      console.log('[Seed] Default FAQs created in MongoDB');
     }
 
     console.log('[Seed] MongoDB initialization completed successfully.');
