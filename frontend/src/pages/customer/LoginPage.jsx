@@ -26,12 +26,8 @@ export const LoginPage = () => {
     setErrorMsg(null);
 
     try {
-      const user = await login(identifier, password);
-      if (user.role === 'admin') {
-        navigate('/admin');
-      } else {
-        navigate(from);
-      }
+      await login(identifier, password);
+      navigate(from);
     } catch (err) {
       setErrorMsg(err.message || 'Invalid credentials.');
     } finally {

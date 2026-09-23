@@ -138,10 +138,6 @@ export const Footer = () => {
         <div className="pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-slate-500">
           <p>© {new Date().getFullYear()} Shree Shyam PVC Interior. All rights reserved.</p>
           <div className="flex items-center gap-4">
-            <Link to="/admin" className="hover:text-slate-400 transition-colors">
-              Admin Portal
-            </Link>
-            <span>•</span>
             <Link to="/faq" className="hover:text-slate-400 transition-colors">
               FAQ
             </Link>

@@ -14,19 +14,16 @@ import {
   FileText,
   RotateCcw,
   MessageCircle,
-  ExternalLink,
   Sparkles,
   Sun,
   Moon
 } from 'lucide-react';
 import { BrandLogo } from './BrandLogo';
 import { useSettings } from '../context/SettingsContext';
-import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 
 export const SideDrawer = ({ isOpen, onClose }) => {
   const { settings } = useSettings();
-  const { isAdmin } = useAuth();
   const { theme, toggleTheme, isDark } = useTheme();
   const navigate = useNavigate();
 
@@ -97,16 +94,6 @@ export const SideDrawer = ({ isOpen, onClose }) => {
               </button>
             );
           })}
-
-          <div className="pt-2 border-t border-white/10">
-            <button
-              onClick={() => handleLinkClick(isAdmin ? '/admin' : '/admin/login')}
-              className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs text-slate-400 hover:text-white hover:bg-white/5"
-            >
-              <span>{isAdmin ? 'Admin Dashboard' : 'Admin Portal Login'}</span>
-              <ExternalLink className="w-3.5 h-3.5 opacity-60" />
-            </button>
-          </div>
         </div>
 
         {/* Bottom Contact Help Box */}
