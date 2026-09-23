@@ -12,6 +12,10 @@ const AuthorizedAdminSchema = new mongoose.Schema({
     type: String,
     default: 'Administrator'
   },
+  phone: {
+    type: String,
+    default: '+91 8209836370'
+  },
   password: {
     type: String,
     required: true

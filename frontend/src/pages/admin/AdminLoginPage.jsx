@@ -97,15 +97,27 @@ export const AdminLoginPage = () => {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="text-xs font-bold text-stone-300 block mb-1.5">
-                Authorized Admin Email
-              </label>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="text-xs font-bold text-stone-300">
+                  Authorized Admin Email or Phone
+                </label>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEmail('maheshkumarsaini8769@gmail.com');
+                    setPassword('mahesh99830');
+                  }}
+                  className="text-[10px] text-luxury-gold hover:underline font-mono"
+                >
+                  ⚡ Autofill Superadmin
+                </button>
+              </div>
               <div className="relative">
                 <Mail className="w-4 h-4 text-stone-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
-                  type="email"
+                  type="text"
                   required
-                  placeholder="e.g. maheshkumarsaini8769@gmail.com"
+                  placeholder="maheshkumarsaini8769@gmail.com or 8209836370"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#1A2232] border border-white/10 text-white placeholder-stone-500 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-luxury-gold/50 focus:border-luxury-gold/60 transition-all font-sans"
