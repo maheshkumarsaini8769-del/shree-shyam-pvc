@@ -67,6 +67,8 @@ const deleteFaq = async (req, res) => {
 
 module.exports = {
   getAllFaqs,
+  getActiveFaqs: getAllFaqs,
+  getAllFaqsAdmin: getAllFaqs,
   createFaq,
   updateFaq,
   deleteFaq
