@@ -106,15 +106,15 @@ export const Header = () => {
             <div className="flex items-center gap-3">
               <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-luxury-gold/15 text-luxury-gold font-bold border border-luxury-gold/30">
                 <Sparkles className="w-3 h-3 text-luxury-gold" />
-                <span>KAKA PVC PROFILE</span>
+                <span>All Company PVC Material Work Available</span>
               </span>
               <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 font-bold border border-emerald-500/30 text-[10px]">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                Workshop Live: Vastral, Ahmedabad
+                KAKA, TAASA &amp; All Major Brands
               </span>
               <span className="text-white/20">•</span>
               <span className="text-stone-300">
-                Authorized Fabrication &amp; Free Laser Measurement
+                Vastral Workshop &amp; Free Laser Measurement
               </span>
             </div>
             <div className="flex items-center gap-4 text-stone-300">

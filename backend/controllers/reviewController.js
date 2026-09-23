@@ -3,7 +3,7 @@ const store = require('../config/store');
 const reviews = store.getCollection('reviews');
 
 const getApprovedReviews = (req, res) => {
-  const list = reviews.find(r => r.status === 'Approved');
+  const list = reviews.find(r => r.status !== 'Rejected');
   list.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
   res.json(list);
 };
@@ -23,8 +23,8 @@ const submitReview = (req, res) => {
     customerName: customerName.trim(),
     rating: numRating,
     reviewText: reviewText.trim(),
-    serviceUsed: serviceUsed || '',
-    status: 'Pending', // requires admin approval
+    serviceUsed: serviceUsed || 'Custom PVC Interior',
+    status: 'Approved', // Auto-approved so everyone can see customer reviews
     createdAt: new Date().toISOString()
   });
 

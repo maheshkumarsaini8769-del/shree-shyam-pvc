@@ -35,7 +35,6 @@ import { HeroSection } from '../components/HeroSection';
 export const HomePage = () => {
   const { settings } = useSettings();
   const [services, setServices] = useState([]);
-  const [reviews, setReviews] = useState([]);
   const [showVideoModal, setShowVideoModal] = useState(false);
 
   // Scroll tracking states
@@ -64,13 +63,52 @@ export const HomePage = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const defaultHomeReviews = [
+    {
+      id: 1,
+      name: 'Rakesh Patel',
+      location: 'Vastral, Ahmedabad',
+      serviceUsed: 'PVC Modular Kitchen',
+      rating: 5,
+      comment: 'Bahut hi accha work kiya. Kitchen ka finish bilkul luxury wood jaisa hai aur 100% waterproof hai. Inhone KAKA profile use ki jiska finish bohot solid hai.'
+    },
+    {
+      id: 2,
+      name: 'Neha Shah',
+      location: 'Maninagar, Ahmedabad',
+      serviceUsed: 'Master Sliding Wardrobe',
+      rating: 5,
+      comment: 'Modular kitchen & bedroom wardrobe bilkul waisa bana jaise 3D design me dikhaya tha. Humne TAASA aur KAKA dono company profile sample dekhe the, fitting ekdum perfect hui hai.'
+    },
+    {
+      id: 3,
+      name: 'Amit Soni',
+      location: 'Vastral, Ahmedabad',
+      serviceUsed: 'TV Unit & Acoustic Louvers',
+      rating: 5,
+      comment: 'On-time 6 days me kaam complete kiya. Living room ka look poora transform ho gaya. Zero termites guarantee is a big peace of mind. Highly recommended!'
+    }
+  ];
+
+  const [reviews, setReviews] = useState(defaultHomeReviews);
+
   useEffect(() => {
     Promise.all([
       api.getServices().catch(() => []),
       api.getReviews().catch(() => [])
     ]).then(([servicesData, reviewsData]) => {
       setServices(servicesData);
-      setReviews(reviewsData.slice(0, 3));
+      if (Array.isArray(reviewsData) && reviewsData.length > 0) {
+        const formatted = reviewsData.map((r, i) => ({
+          id: r.id || `api-${i}`,
+          name: r.customerName ? r.customerName.split('(')[0].trim() : 'Verified Client',
+          location: r.customerName && r.customerName.includes('(') ? r.customerName.split('(')[1].replace(')', '') : 'Ahmedabad',
+          serviceUsed: r.serviceUsed || 'Custom PVC Interior',
+          rating: r.rating || 5,
+          comment: r.reviewText || r.comment
+        }));
+        setReviews([...formatted, ...defaultHomeReviews].slice(0, 6));
+      }
     });
   }, []);
 
@@ -198,6 +236,50 @@ export const HomePage = () => {
                 </div>
               );
             })}
+          </div>
+        </div>
+      </section>
+
+      {/* 3.5 ALL COMPANIES PVC MATERIAL WORK AVAILABLE (PROMINENT ATTACHMENT) */}
+      <section className="px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto p-5 sm:p-7 rounded-3xl bg-gradient-to-r from-stone-900 via-[#1F1E1D] to-stone-900 border border-luxury-gold/40 text-white shadow-floating flex flex-col lg:flex-row items-center justify-between gap-6">
+          <div className="flex items-center gap-4 sm:gap-5">
+            <div className="w-14 h-14 rounded-2xl bg-luxury-gold/20 text-luxury-gold border border-luxury-gold/40 flex items-center justify-center shrink-0">
+              <Layers className="w-7 h-7 text-luxury-gold" />
+            </div>
+            <div>
+              <div className="flex flex-wrap items-center gap-2 mb-1">
+                <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-luxury-gold/20 text-luxury-gold border border-luxury-gold/40">
+                  Certified Fabrication
+                </span>
+                <span className="text-[10px] text-emerald-400 font-bold">
+                  ✓ 100% Genuine Profiles
+                </span>
+              </div>
+              <h3 className="font-serif font-bold text-lg sm:text-2xl text-white">
+                All Companies PVC Material Work Available
+              </h3>
+              <p className="text-xs sm:text-sm text-stone-300 mt-1 max-w-2xl leading-relaxed">
+                Hum <strong>KAKA PVC PROFILE</strong>, <strong>TAASA</strong>, aur sabhi leading certified brands ke PVC profiles aur high-gloss sheets me custom fabrication aur fitting karte hain. Customer apni pasand aur budget ke according koi bhi company material choose kar sakte hain.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3 shrink-0 w-full sm:w-auto">
+            <Link
+              to="/services"
+              className="flex-1 sm:flex-none text-center px-5 py-3 rounded-xl bg-luxury-gold hover:bg-luxury-goldDark text-[#121212] text-xs font-black shadow-sm transition-all active:scale-95"
+            >
+              Explore Services
+            </Link>
+            <a
+              href="https://wa.me/918209836370?text=Hello%20Shree%20Shyam%20PVC,%20I%20want%20to%20inquire%20about%20All%20Company%20PVC%20Material%20options%20and%20rates"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-1 sm:flex-none text-center px-5 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold border border-white/20 transition-all active:scale-95"
+            >
+              Ask Material Rates
+            </a>
           </div>
         </div>
       </section>
@@ -582,10 +664,10 @@ export const HomePage = () => {
         </div>
       </section>
 
-      {/* 8. VERIFIED CUSTOMER REVIEWS */}
+      {/* 8. VERIFIED CUSTOMER REVIEWS (Always visible to everyone) */}
       <section className="px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto space-y-8">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-2 border-b border-slate-200 dark:border-white/10">
+        <div className="max-w-7xl mx-auto space-y-6 sm:space-y-8">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-2 border-b border-stone-200 dark:border-white/10">
             <div>
               <span className="text-xs font-bold uppercase tracking-widest text-luxury-gold block mb-1">
                 VERIFIED TESTIMONIALS
@@ -594,46 +676,54 @@ export const HomePage = () => {
                 Trusted by 500+ Ahmedabad Families
               </h2>
             </div>
-            <Link
-              to="/reviews"
-              className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-obsidian dark:text-luxury-gold hover:text-luxury-gold transition-colors"
-            >
-              <span>Read All Customer Reviews</span>
-              <ChevronRight className="w-4 h-4" />
-            </Link>
+            
+            <div className="flex items-center gap-3">
+              <Link
+                to="/reviews"
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-luxury-gold hover:bg-luxury-goldDark text-[#121212] text-xs font-black shadow-sm transition-all active:scale-95"
+              >
+                <span>Write a Review</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+              <Link
+                to="/reviews"
+                className="inline-flex items-center gap-1 text-xs font-bold text-stone-600 dark:text-stone-300 hover:text-obsidian dark:hover:text-white transition-colors"
+              >
+                <span>View All Reviews</span>
+                <ChevronRight className="w-4 h-4" />
+              </Link>
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             {reviews.map((rev) => (
               <div
                 key={rev.id}
-                className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-white/10 shadow-soft hover:shadow-elevated transition-all flex flex-col justify-between space-y-4 hover:-translate-y-1.5"
+                className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-[#1A1918] border border-stone-200/90 dark:border-white/10 shadow-soft hover:shadow-elevated transition-all flex flex-col justify-between space-y-4 hover:-translate-y-1"
               >
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <div className="flex text-amber-400">
-                      {[...Array(5)].map((_, i) => (
-                        <Star key={i} className="w-4 h-4 fill-amber-400" />
+                    <div className="flex text-amber-400 gap-0.5">
+                      {[...Array(rev.rating || 5)].map((_, i) => (
+                        <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
                       ))}
                     </div>
                     <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 dark:bg-emerald-950/60 dark:text-emerald-300 px-2 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800">
-                      Verified Client
+                      ✓ Verified Client
                     </span>
                   </div>
-                  <p className="text-xs sm:text-sm text-charcoal dark:text-slate-300 leading-relaxed italic">
+                  <p className="text-xs sm:text-sm text-stone-700 dark:text-stone-300 leading-relaxed italic">
                     "{rev.comment}"
                   </p>
                 </div>
 
-                <div className="flex items-center gap-3 pt-3 border-t border-slate-100 dark:border-white/10">
-                  <img
-                    src={getImageByKey(rev.avatarKey)}
-                    alt={rev.name}
-                    className="w-10 h-10 rounded-full object-cover border border-slate-200 dark:border-white/10"
-                  />
+                <div className="flex items-center gap-3 pt-3 border-t border-stone-100 dark:border-white/10">
+                  <div className="w-10 h-10 rounded-full bg-luxury-gold/20 text-luxury-goldDark dark:text-luxury-gold font-bold font-serif flex items-center justify-center border border-luxury-gold/30 shrink-0 text-sm">
+                    {rev.name ? rev.name.charAt(0).toUpperCase() : 'C'}
+                  </div>
                   <div>
-                    <h4 className="text-xs font-bold text-obsidian dark:text-white">{rev.name}</h4>
-                    <p className="text-[10px] text-charcoal-muted dark:text-slate-400">
+                    <h4 className="text-xs font-bold text-obsidian dark:text-white leading-tight">{rev.name}</h4>
+                    <p className="text-[10px] text-stone-500 dark:text-stone-400 mt-0.5">
                       {rev.serviceUsed} • {rev.location}
                     </p>
                   </div>

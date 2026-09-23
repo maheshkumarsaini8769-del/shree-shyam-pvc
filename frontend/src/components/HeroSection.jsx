@@ -200,14 +200,14 @@ export const HeroSection = ({ onOpenShowreel }) => {
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-stone-100/90 dark:bg-white/5 border border-stone-200 dark:border-white/10 text-[11px] sm:text-xs font-semibold text-stone-700 dark:text-stone-300 shadow-sm">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
             <span>
-              <strong className="text-obsidian dark:text-white">Ahmedabad Direct:</strong> Free laser measurement &amp; finish samples
+              <strong className="text-obsidian dark:text-white">Ahmedabad Direct:</strong> All Companies PVC Material Work Available (KAKA, TAASA &amp; Major Brands)
             </span>
           </div>
 
           <div className="hidden md:flex items-center gap-4 text-xs font-semibold text-stone-600 dark:text-stone-400">
             <div className="flex items-center gap-1.5 text-luxury-gold">
               <ShieldCheck className="w-4 h-4 text-luxury-gold" />
-              <span className="text-obsidian dark:text-stone-200">100% Virgin KAKA Profile</span>
+              <span className="text-obsidian dark:text-stone-200">All Company Materials Work Available</span>
             </div>
             <span className="text-stone-300 dark:text-stone-700">•</span>
             <div className="flex items-center gap-1.5 text-luxury-gold">
