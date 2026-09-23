@@ -27,7 +27,7 @@ const searchablePages = [
   { name: 'Book Free Visit', path: '/book', keywords: ['book', 'visit', 'appointment', 'free', 'site visit'] },
 ];
 
-export const Header = ({ onOpenMenu }) => {
+export const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -44,7 +44,6 @@ export const Header = ({ onOpenMenu }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Focus input when search opens
   useEffect(() => {
     if (searchOpen && searchInputRef.current) {
       searchInputRef.current.focus();
@@ -55,12 +54,10 @@ export const Header = ({ onOpenMenu }) => {
     }
   }, [searchOpen]);
 
-  // Close search on route change
   useEffect(() => {
     setSearchOpen(false);
   }, [location.pathname]);
 
-  // Live search filter
   const handleSearchChange = (e) => {
     const q = e.target.value;
     setSearchQuery(q);
@@ -101,7 +98,7 @@ export const Header = ({ onOpenMenu }) => {
   return (
     <>
       <header className="sticky top-0 z-40 w-full transition-all duration-300">
-        {/* ANNOUNCEMENT BAR — Desktop only */}
+        {/* TOP ANNOUNCEMENT BAR — Desktop only */}
         <div className={`hidden md:block bg-[#161514] text-stone-300 text-[10.5px] font-medium py-1 px-4 transition-all duration-300 border-b border-white/5 ${
           isScrolled ? 'h-0 py-0 opacity-0 overflow-hidden border-none' : 'opacity-100'
         }`}>
@@ -117,24 +114,14 @@ export const Header = ({ onOpenMenu }) => {
               </span>
               <span className="text-white/20">•</span>
               <span className="text-stone-300">
-                Authorized Interior Fabrication &amp; Free Laser Measurement
+                Authorized Fabrication &amp; Free Laser Measurement
               </span>
             </div>
-            <div className="flex items-center gap-5 text-stone-300">
+            <div className="flex items-center gap-4 text-stone-300">
               <div className="flex items-center gap-1.5">
                 <Clock className="w-3 h-3 text-luxury-gold" />
                 <span>Mon - Sat: 9:00 AM - 8:30 PM</span>
               </div>
-              <span className="text-white/20">|</span>
-              <a
-                href="https://wa.me/918209836370?text=Hello%20Shree%20Shyam%20PVC,%20I%20am%20interested%20in%20PVC%20interior%20consultation"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-emerald-400 font-semibold flex items-center gap-1 transition-colors"
-              >
-                <MessageCircle className="w-3 h-3 text-emerald-400" />
-                <span>WhatsApp Chat</span>
-              </a>
               <span className="text-white/20">|</span>
               <a
                 href={`tel:${settings.phone1}`}
@@ -150,42 +137,41 @@ export const Header = ({ onOpenMenu }) => {
         {/* MAIN HEADER BAR */}
         <div className={`w-full transition-all duration-300 ${
           isScrolled
-            ? 'bg-white/95 dark:bg-[#161514]/95 backdrop-blur-xl shadow-elevated py-1.5 border-b border-stone-200/80 dark:border-white/10'
-            : 'bg-white/95 dark:bg-[#161514]/95 backdrop-blur-md py-2 border-b border-stone-200/80 dark:border-white/10 shadow-soft'
+            ? 'bg-white/95 dark:bg-[#161514]/95 backdrop-blur-xl shadow-sm py-2 border-b border-stone-200/80 dark:border-white/10'
+            : 'bg-white/95 dark:bg-[#161514]/95 backdrop-blur-md py-2.5 border-b border-stone-200/80 dark:border-white/10'
         }`}>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-            {/* ── MOBILE HEADER ── Logo (center) + Search + Theme */}
+            {/* ── MOBILE HEADER (Super clean, non-cluttered) ── */}
             <div className="flex items-center justify-between md:hidden">
-              {/* Brand Logo — centered via flex-1 trick */}
               <Link to="/" className="flex items-center active:scale-95 transition-transform">
                 <BrandLogo isDark={isDark} />
               </Link>
 
-              {/* Right: Search + Theme toggle only (no hamburger — BottomNav handles navigation) */}
+              {/* Right: Search & Theme Toggle with clean unified touch targets */}
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setSearchOpen(true)}
                   aria-label="Search"
-                  className="w-8 h-8 rounded-full bg-stone-100 dark:bg-white/10 text-stone-700 dark:text-stone-200 flex items-center justify-center border border-stone-200 dark:border-white/15 active:scale-90 transition-transform"
+                  className="w-9 h-9 rounded-xl bg-stone-100 hover:bg-stone-200 dark:bg-white/10 dark:hover:bg-white/15 text-stone-700 dark:text-stone-200 flex items-center justify-center border border-stone-200/80 dark:border-white/10 active:scale-90 transition-all"
                 >
-                  <Search className="w-3.5 h-3.5" />
+                  <Search className="w-4 h-4" />
                 </button>
 
                 <button
                   onClick={toggleTheme}
                   aria-label="Toggle Theme"
-                  className="w-8 h-8 rounded-full bg-stone-100 dark:bg-white/10 flex items-center justify-center border border-stone-200 dark:border-white/15 active:scale-90 transition-transform"
+                  className="w-9 h-9 rounded-xl bg-stone-100 hover:bg-stone-200 dark:bg-white/10 dark:hover:bg-white/15 flex items-center justify-center border border-stone-200/80 dark:border-white/10 active:scale-90 transition-all"
                 >
                   {isDark
-                    ? <Sun className="w-3.5 h-3.5 text-luxury-gold" />
-                    : <Moon className="w-3.5 h-3.5 text-stone-700" />
+                    ? <Sun className="w-4 h-4 text-luxury-gold" />
+                    : <Moon className="w-4 h-4 text-stone-700" />
                   }
                 </button>
               </div>
             </div>
 
-            {/* ── DESKTOP HEADER ── */}
+            {/* ── DESKTOP HEADER (Clean, balanced button CSS) ── */}
             <div className="hidden md:flex items-center justify-between">
               <Link to="/" className="flex items-center group">
                 <BrandLogo isDark={isDark} />
@@ -213,21 +199,24 @@ export const Header = ({ onOpenMenu }) => {
                 })}
               </nav>
 
-              <div className="flex items-center gap-2.5">
-                {/* Search Button Desktop */}
+              {/* Balanced, uniform action buttons on desktop */}
+              <div className="flex items-center gap-2">
+                {/* Search */}
                 <button
                   onClick={() => setSearchOpen(true)}
                   aria-label="Search"
-                  className="p-2 rounded-xl bg-stone-100 hover:bg-stone-200 dark:bg-white/10 dark:hover:bg-white/15 text-stone-700 dark:text-stone-300 border border-stone-200 dark:border-white/15 transition-all active:scale-90"
+                  title="Search website"
+                  className="w-9 h-9 rounded-xl bg-stone-100 hover:bg-stone-200 dark:bg-white/10 dark:hover:bg-white/15 text-stone-700 dark:text-stone-300 border border-stone-200/80 dark:border-white/10 flex items-center justify-center transition-all active:scale-90"
                 >
                   <Search className="w-4 h-4" />
                 </button>
 
-                {/* Theme Toggle Desktop */}
+                {/* Theme Toggle */}
                 <button
                   onClick={toggleTheme}
                   aria-label={isDark ? 'Switch to Light Theme' : 'Switch to Dark Theme'}
-                  className="p-2 rounded-xl bg-stone-100 hover:bg-stone-200 dark:bg-white/10 dark:hover:bg-white/15 border border-stone-200 dark:border-white/15 transition-all active:scale-90"
+                  title={isDark ? 'Switch to Light Theme' : 'Switch to Dark Theme'}
+                  className="w-9 h-9 rounded-xl bg-stone-100 hover:bg-stone-200 dark:bg-white/10 dark:hover:bg-white/15 border border-stone-200/80 dark:border-white/10 flex items-center justify-center transition-all active:scale-90"
                 >
                   {isDark
                     ? <Sun className="w-4 h-4 text-luxury-gold" />
@@ -235,27 +224,21 @@ export const Header = ({ onOpenMenu }) => {
                   }
                 </button>
 
+                {/* WhatsApp Quick Chat */}
                 <a
                   href="https://wa.me/918209836370?text=Hello%20Shree%20Shyam%20PVC,%20I%20am%20interested%20in%20PVC%20interior%20solutions"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 text-xs font-bold border border-emerald-200 dark:border-emerald-800 transition-all"
+                  className="h-9 px-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold flex items-center gap-1.5 shadow-sm transition-all active:scale-95"
                 >
-                  <MessageCircle className="w-3.5 h-3.5 fill-emerald-500 text-white" />
+                  <MessageCircle className="w-3.5 h-3.5 fill-white" />
                   <span>WhatsApp</span>
                 </a>
 
-                <a
-                  href={`tel:${settings.phone1}`}
-                  className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-stone-100 hover:bg-stone-200 dark:bg-white/10 dark:hover:bg-white/15 text-obsidian dark:text-white text-xs font-bold transition-all"
-                >
-                  <Phone className="w-3.5 h-3.5 text-luxury-gold" />
-                  <span>{settings.phone1}</span>
-                </a>
-
+                {/* Primary CTA Button */}
                 <Link
                   to="/book"
-                  className="inline-flex items-center gap-2 px-4.5 py-2 rounded-xl bg-luxury-gold hover:bg-luxury-goldDark text-[#121212] text-xs font-black shadow-sm transition-all active:scale-95 group"
+                  className="h-9 px-4.5 rounded-xl bg-luxury-gold hover:bg-luxury-goldDark text-[#121212] text-xs font-black flex items-center gap-1.5 shadow-sm transition-all active:scale-95 group"
                 >
                   <span>Book Free Visit</span>
                   <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
@@ -266,22 +249,21 @@ export const Header = ({ onOpenMenu }) => {
         </div>
       </header>
 
-      {/* ── SEARCH OVERLAY (Full-screen, works on both mobile & desktop) ── */}
+      {/* ── SEARCH OVERLAY ── */}
       {searchOpen && (
         <div
           className="fixed inset-0 z-50 flex flex-col bg-white/95 dark:bg-[#121212]/97 backdrop-blur-2xl"
           role="dialog"
           aria-label="Search"
         >
-          {/* Search Input Bar */}
-          <div className="flex items-center gap-3 px-4 sm:px-6 py-3 border-b border-stone-200 dark:border-white/10 bg-white dark:bg-[#161514] shadow-sm">
+          <div className="flex items-center gap-3 px-4 sm:px-6 py-3.5 border-b border-stone-200 dark:border-white/10 bg-white dark:bg-[#161514] shadow-sm">
             <Search className="w-5 h-5 text-luxury-gold shrink-0" />
             <input
               ref={searchInputRef}
               type="text"
               value={searchQuery}
               onChange={handleSearchChange}
-              placeholder="Search pages, services, gallery..."
+              placeholder="Search services, products, reviews, contact..."
               className="flex-1 bg-transparent text-sm sm:text-base text-obsidian dark:text-white placeholder-stone-400 dark:placeholder-stone-500 outline-none font-medium"
               autoComplete="off"
             />
@@ -294,7 +276,6 @@ export const Header = ({ onOpenMenu }) => {
             </button>
           </div>
 
-          {/* Search Results */}
           <div className="flex-1 overflow-y-auto px-4 sm:px-6 pt-4 pb-24">
             {searchQuery.trim() === '' ? (
               <div className="space-y-2">
@@ -335,7 +316,7 @@ export const Header = ({ onOpenMenu }) => {
               <div className="text-center py-16">
                 <Search className="w-10 h-10 text-stone-300 dark:text-stone-600 mx-auto mb-3" />
                 <p className="text-sm font-semibold text-stone-500 dark:text-stone-400">No results for "<span className="text-obsidian dark:text-white">{searchQuery}</span>"</p>
-                <p className="text-xs text-stone-400 dark:text-stone-500 mt-1">Try: services, gallery, book, contact</p>
+                <p className="text-xs text-stone-400 dark:text-stone-500 mt-1">Try: services, kitchen, wardrobe, book</p>
               </div>
             )}
           </div>

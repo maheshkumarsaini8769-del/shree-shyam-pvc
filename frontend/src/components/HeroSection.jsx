@@ -5,7 +5,6 @@ import {
   ArrowRight,
   ChevronLeft,
   ChevronRight,
-  Play,
   Phone,
   ShieldCheck,
   Droplets,
@@ -14,10 +13,7 @@ import {
   Compass,
   Flame,
   Zap,
-  Clock,
-  Check,
-  MessageCircle,
-  Eye
+  MessageCircle
 } from 'lucide-react';
 import { images } from '../data/images';
 import { useSettings } from '../context/SettingsContext';
@@ -31,7 +27,6 @@ export const HeroSection = ({ onOpenShowreel }) => {
 
   const [isAmbientNight, setIsAmbientNight] = useState(false);
   const [activeHotspot, setActiveHotspot] = useState(null);
-  const [quickEstimate, setQuickEstimate] = useState('tv');
 
   const slides = [
     {
@@ -43,7 +38,7 @@ export const HeroSection = ({ onOpenShowreel }) => {
       subtitle: 'Architectural charcoal & teak louvers with Italian Statuario marble PVC backings and floating consoles.',
       image: images.tvUnit || images.hero,
       statNumber: '150+',
-      statLabel: 'Installed in Ahmedabad',
+      statLabel: 'Ahmedabad Homes',
       badge: 'Bestseller in Ahmedabad',
       priceRange: '₹18,000 - ₹45,000',
       timeframe: '4-6 Days Delivery',
@@ -186,35 +181,26 @@ export const HeroSection = ({ onOpenShowreel }) => {
     setProgress(0);
   };
 
-  const estimatePresets = [
-    { key: 'tv', label: 'TV Unit', size: '8x7 ft', est: '₹18,000 - ₹35,000', days: '4-5 Days' },
-    { key: 'kitchen', label: 'Kitchen', size: '10x8 ft', est: '₹65,000 - ₹1.2L', days: '7-10 Days' },
-    { key: 'wardrobe', label: 'Wardrobe', size: '7x7 ft', est: '₹38,000 - ₹68,000', days: '5-7 Days' },
-    { key: 'wall', label: 'Louvers', size: '120 sq.ft', est: '₹8,500 - ₹16,000', days: '2-3 Days' }
-  ];
-
-  const activeEstimate = estimatePresets.find((p) => p.key === quickEstimate) || estimatePresets[0];
-
   return (
     <section
       className="relative w-full overflow-hidden bg-gradient-to-b from-[#FAF8F5] via-white to-[#F7F5F0] dark:from-[#121212] dark:via-[#161514] dark:to-[#121212] border-b border-stone-200/80 dark:border-white/10 transition-colors duration-300 !mt-0 !pt-0"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
-      {/* Background Architectural Grid Pattern */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#00000006_1px,transparent_1px),linear-gradient(to_bottom,#00000006_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,#ffffff04_1px,transparent_1px),linear-gradient(to_bottom,#ffffff04_1px,transparent_1px)] bg-[size:3rem_3rem] pointer-events-none" />
+      {/* Background Subtle Architectural Grid */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#00000005_1px,transparent_1px),linear-gradient(to_bottom,#00000005_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,#ffffff03_1px,transparent_1px),linear-gradient(to_bottom,#ffffff03_1px,transparent_1px)] bg-[size:3rem_3rem] pointer-events-none" />
 
       {/* Ambient Lighting Atmosphere */}
-      <div className="absolute top-12 left-1/2 -translate-x-1/2 w-[340px] sm:w-[600px] h-[340px] sm:h-[600px] bg-luxury-gold/10 dark:bg-luxury-gold/5 blur-[100px] sm:blur-[140px] rounded-full pointer-events-none" />
+      <div className="absolute top-12 left-1/2 -translate-x-1/2 w-[300px] sm:w-[500px] h-[300px] sm:h-[500px] bg-luxury-gold/10 dark:bg-luxury-gold/5 blur-[90px] sm:blur-[130px] rounded-full pointer-events-none" />
 
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 pt-4 pb-8 sm:py-10 lg:py-14">
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8 lg:py-12">
         
-        {/* TOP NOTICE: Mobile & Desktop Real-Time Consulting Signal */}
-        <div className="flex items-center justify-between gap-2 mb-3.5 sm:mb-6">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-stone-100/90 dark:bg-white/5 border border-stone-200 dark:border-white/10 text-[11px] sm:text-xs font-semibold text-stone-700 dark:text-stone-300 shadow-sm max-w-full">
+        {/* TOP NOTICE: Clean & compact */}
+        <div className="flex items-center justify-between gap-2 mb-3 sm:mb-6">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-stone-100/90 dark:bg-white/5 border border-stone-200 dark:border-white/10 text-[11px] sm:text-xs font-semibold text-stone-700 dark:text-stone-300 shadow-sm">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
-            <span className="truncate">
-              <strong className="text-obsidian dark:text-white">Ahmedabad Direct:</strong> Free laser measurement & finish samples
+            <span>
+              <strong className="text-obsidian dark:text-white">Ahmedabad Direct:</strong> Free laser measurement &amp; finish samples
             </span>
           </div>
 
@@ -231,19 +217,19 @@ export const HeroSection = ({ onOpenShowreel }) => {
           </div>
         </div>
 
-        {/* HERO CONTENT CONTAINER: Flex-col on mobile, 2-Col Grid on Desktop */}
+        {/* HERO GRID */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-8 lg:gap-12 items-center">
           
-          {/* TEXT & CTAS (Order 1 on mobile, left 6 cols on desktop) */}
-          <div className="lg:col-span-6 space-y-3.5 sm:space-y-5">
+          {/* LEFT COLUMN: Headings, Subtitle, CTAs, Trust */}
+          <div className="lg:col-span-6 space-y-3 sm:space-y-5">
             {/* Category Pill */}
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-luxury-gold/15 text-luxury-goldDark dark:text-luxury-gold text-[10px] sm:text-xs font-bold tracking-widest uppercase border border-luxury-gold/30">
               <Sparkles className="w-3 h-3 text-luxury-gold shrink-0" />
-              <span className="truncate">{current.category}</span>
+              <span>{current.category}</span>
             </div>
 
             {/* Headline */}
-            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-serif font-bold text-obsidian dark:text-white tracking-tight leading-[1.18] sm:leading-[1.14]">
+            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-serif font-bold text-obsidian dark:text-white tracking-tight leading-[1.2] sm:leading-[1.14]">
               {current.title.split('&').map((part, i) => (
                 <React.Fragment key={i}>
                   {i === 0 ? (
@@ -261,11 +247,11 @@ export const HeroSection = ({ onOpenShowreel }) => {
             </h1>
 
             {/* Subtitle */}
-            <p className="text-xs sm:text-base text-stone-600 dark:text-stone-300 font-normal leading-relaxed line-clamp-2 sm:line-clamp-none max-w-xl">
+            <p className="text-xs sm:text-base text-stone-600 dark:text-stone-300 font-normal leading-relaxed max-w-xl">
               {current.subtitle}
             </p>
 
-            {/* Feature Checklist (Desktop only or clean single row on mobile) */}
+            {/* Feature Checklist (Desktop only) */}
             <div className="hidden sm:grid grid-cols-2 gap-2 pt-1">
               {current.features.map((feat, i) => (
                 <div key={i} className="flex items-center gap-1.5 text-xs font-medium text-stone-700 dark:text-stone-300">
@@ -275,15 +261,15 @@ export const HeroSection = ({ onOpenShowreel }) => {
               ))}
             </div>
 
-            {/* MOBILE QUICK SHOWCASE CARD (Rendered here on Mobile, Hidden on Desktop) */}
-            <div className="block lg:hidden my-3">
+            {/* ── MOBILE-ONLY CLEAN SHOWCASE CARD (Unobstructed, light & spacious) ── */}
+            <div className="block lg:hidden my-2">
               <div className={`relative rounded-2xl overflow-hidden shadow-soft border transition-all duration-300 bg-stone-900 ${
                 isAmbientNight
-                  ? 'border-amber-400/60 shadow-[0_0_30px_rgba(217,119,6,0.3)]'
+                  ? 'border-amber-400/60 shadow-[0_0_25px_rgba(217,119,6,0.3)]'
                   : 'border-stone-200 dark:border-white/15'
               }`}>
-                {/* 16:10 / 4:3 Aspect Ratio Container for mobile perfection */}
-                <div className="relative aspect-[16/11] w-full overflow-hidden select-none">
+                {/* Clean Photo Container */}
+                <div className="relative aspect-[16/10] w-full overflow-hidden select-none">
                   <img
                     key={current.id}
                     src={current.image}
@@ -299,13 +285,12 @@ export const HeroSection = ({ onOpenShowreel }) => {
                     <div className="absolute inset-0 bg-gradient-to-t from-amber-950/70 via-amber-600/20 to-transparent mix-blend-color-dodge pointer-events-none transition-opacity duration-500" />
                   )}
 
-                  {/* Gentle Dark Bottom Vignette */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#121212]/95 via-transparent to-black/30 pointer-events-none" />
+                  {/* Gentle Bottom Vignette */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#121212]/90 via-transparent to-black/20 pointer-events-none" />
 
-                  {/* Mobile Top Bar: Badge + Ambient Toggle */}
+                  {/* Mobile Top Bar: Badge + LED Toggle */}
                   <div className="absolute top-2.5 left-2.5 right-2.5 z-20 flex items-center justify-between gap-1 pointer-events-auto">
-                    <span className="px-2.5 py-1 rounded-lg bg-black/60 backdrop-blur-md border border-white/20 text-white text-[10px] font-bold flex items-center gap-1.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+                    <span className="px-2.5 py-1 rounded-lg bg-black/60 backdrop-blur-md border border-white/20 text-white text-[10px] font-bold">
                       {current.badge}
                     </span>
 
@@ -330,11 +315,10 @@ export const HeroSection = ({ onOpenShowreel }) => {
                         {current.shortTitle}
                       </span>
                       <span className="text-[10px] text-luxury-gold font-medium block">
-                        {current.priceRange} • {current.timeframe}
+                        {current.priceRange}
                       </span>
                     </div>
 
-                    {/* Quick Slide Arrow Navigators */}
                     <div className="flex items-center gap-1 shrink-0">
                       <button
                         onClick={handlePrev}
@@ -357,126 +341,52 @@ export const HeroSection = ({ onOpenShowreel }) => {
                   </div>
                 </div>
 
-                {/* Mobile Material Swatches Ribbon (Neat & Clean Below Photo) */}
-                <div className="p-2.5 bg-stone-900 border-t border-white/10 flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
-                    {current.swatches.map((sw, sIdx) => (
-                      <button
-                        key={sIdx}
-                        onClick={() => setActiveSwatch(sIdx)}
-                        className={`w-5 h-5 rounded-full border transition-all shrink-0 ${
-                          activeSwatch === sIdx
-                            ? 'border-luxury-gold scale-125 ring-2 ring-luxury-gold/50'
-                            : 'border-white/30 opacity-70'
-                        }`}
-                        style={{ backgroundColor: sw.color }}
-                        title={sw.name}
-                      />
-                    ))}
-                    <span className="text-[10px] font-medium text-stone-300 ml-1.5 truncate max-w-[130px]">
-                      {current.swatches[activeSwatch]?.name}
-                    </span>
-                  </div>
-
-                  <span className="text-[9px] uppercase font-bold text-luxury-gold shrink-0">
-                    KAKA Profile
-                  </span>
+                {/* Mobile Slide Dot Indicators */}
+                <div className="p-2 bg-stone-900 border-t border-white/10 flex items-center justify-center gap-2">
+                  {slides.map((_, sIdx) => (
+                    <button
+                      key={sIdx}
+                      onClick={() => handleSelectSlide(sIdx)}
+                      className={`h-1.5 rounded-full transition-all ${
+                        activeSlide === sIdx
+                          ? 'w-6 bg-luxury-gold'
+                          : 'w-1.5 bg-white/30'
+                      }`}
+                      aria-label={`Go to slide ${sIdx + 1}`}
+                    />
+                  ))}
                 </div>
               </div>
             </div>
 
-            {/* CTAS: Mobile Optimized Full-Width Buttons */}
+            {/* CTAs: Clean & High Impact */}
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 pt-1">
               <Link
                 to="/book"
-                className="flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-luxury-gold hover:bg-luxury-goldDark text-[#121212] text-xs sm:text-sm font-black shadow-md transition-all active:scale-95 group text-center"
+                className="flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-luxury-gold hover:bg-luxury-goldDark text-[#121212] text-xs sm:text-sm font-black shadow-sm transition-all active:scale-95 group text-center"
               >
                 <span>Book Free Site Visit</span>
                 <ArrowRight className="w-4 h-4 text-[#121212] group-hover:translate-x-1 transition-transform" />
               </Link>
 
-              <div className="grid grid-cols-2 gap-2 sm:flex sm:items-center">
-                <a
-                  href={`https://wa.me/918209836370?text=Hello%20Shree%20Shyam%20PVC,%20I%20am%20interested%20in%20a%20free%20quote`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-1.5 px-3.5 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold transition-all active:scale-95"
-                >
-                  <MessageCircle className="w-3.5 h-3.5 fill-white" />
-                  <span>WhatsApp</span>
-                </a>
-
-                <button
-                  type="button"
-                  onClick={onOpenShowreel}
-                  className="flex items-center justify-center gap-1.5 px-3.5 py-3 rounded-xl bg-stone-100 hover:bg-stone-200 dark:bg-white/10 dark:hover:bg-white/15 text-obsidian dark:text-white border border-stone-200 dark:border-white/10 text-xs font-semibold transition-all active:scale-95"
-                >
-                  <Play className="w-3 h-3 fill-current text-luxury-gold" />
-                  <span>Showreel</span>
-                </button>
-              </div>
+              <a
+                href="https://wa.me/918209836370?text=Hello%20Shree%20Shyam%20PVC,%20I%20am%20interested%20in%20PVC%20interior%20solutions"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-1.5 px-4 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-xs sm:text-sm font-bold shadow-sm transition-all active:scale-95"
+              >
+                <MessageCircle className="w-4 h-4 fill-white" />
+                <span>WhatsApp Consultation</span>
+              </a>
             </div>
 
-            {/* INSTANT FABRICATION ESTIMATOR CAPSULE */}
-            <div className="p-3 sm:p-3.5 rounded-2xl bg-stone-100/90 dark:bg-[#1A1918]/90 border border-stone-200 dark:border-white/10 shadow-sm space-y-2">
-              <div className="flex items-center justify-between text-[10.5px] font-bold text-stone-600 dark:text-stone-300">
-                <span className="flex items-center gap-1 text-obsidian dark:text-white">
-                  <Clock className="w-3.5 h-3.5 text-luxury-gold" />
-                  Instant Factory Estimator
-                </span>
-                <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-0.5">
-                  <Check className="w-3 h-3 stroke-[2.5]" /> Direct Fitting
-                </span>
-              </div>
-
-              {/* Segmented Control Selector */}
-              <div className="grid grid-cols-4 gap-1 bg-stone-200/60 dark:bg-white/5 p-1 rounded-xl">
-                {estimatePresets.map((preset) => (
-                  <button
-                    key={preset.key}
-                    type="button"
-                    onClick={() => setQuickEstimate(preset.key)}
-                    className={`py-1.5 px-1 rounded-lg text-[10px] sm:text-[11px] font-bold transition-all text-center truncate ${
-                      quickEstimate === preset.key
-                        ? 'bg-white dark:bg-stone-800 text-obsidian dark:text-white shadow-sm ring-1 ring-black/5 dark:ring-white/10'
-                        : 'text-stone-600 dark:text-stone-400 hover:text-obsidian dark:hover:text-white'
-                    }`}
-                  >
-                    {preset.label}
-                  </button>
-                ))}
-              </div>
-
-              {/* Output Display & 1-Click WhatsApp Trigger */}
-              <div className="flex items-center justify-between gap-2 pt-1 border-t border-stone-200/80 dark:border-white/10">
-                <div className="truncate">
-                  <span className="text-xs sm:text-sm font-bold text-obsidian dark:text-white font-serif block">
-                    {activeEstimate.est}
-                  </span>
-                  <span className="text-[9.5px] sm:text-[10px] text-stone-500 dark:text-stone-400 block truncate">
-                    Ready in {activeEstimate.days} ({activeEstimate.size})
-                  </span>
-                </div>
-
-                <a
-                  href={`https://wa.me/918209836370?text=Hello%20Shree%20Shyam%20PVC,%20I%20want%20price%20details%20for%20${encodeURIComponent(activeEstimate.label)}%20(${encodeURIComponent(activeEstimate.size)})`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-luxury-gold hover:bg-luxury-goldDark text-[#121212] text-[10px] sm:text-[11px] font-black shrink-0 shadow-sm transition-all active:scale-95"
-                >
-                  <span>Get Estimate</span>
-                  <ArrowRight className="w-3 h-3" />
-                </a>
-              </div>
-            </div>
-
-            {/* Trust Mini-Bar (Compact for Mobile) */}
-            <div className="pt-2 flex items-center justify-between sm:justify-start gap-4 sm:gap-6 border-t border-stone-200/80 dark:border-white/10">
+            {/* Trust Mini-Bar (Clean single line on mobile) */}
+            <div className="pt-2 flex items-center gap-4 sm:gap-6 border-t border-stone-200/80 dark:border-white/10">
               <div>
-                <p className="text-lg sm:text-2xl font-serif font-black text-obsidian dark:text-white">{current.statNumber}</p>
+                <p className="text-base sm:text-2xl font-serif font-black text-obsidian dark:text-white">{current.statNumber}</p>
                 <p className="text-[10px] sm:text-[11px] text-stone-500 dark:text-stone-400 font-medium">{current.statLabel}</p>
               </div>
-              <div className="h-7 w-px bg-stone-200 dark:bg-white/10" />
+              <div className="h-6 w-px bg-stone-200 dark:bg-white/10" />
               <div>
                 <div className="flex items-center text-amber-400 gap-0.5">
                   {[...Array(5)].map((_, i) => (
@@ -488,15 +398,14 @@ export const HeroSection = ({ onOpenShowreel }) => {
             </div>
           </div>
 
-          {/* DESKTOP SHOWCASE DECK (Visible only on Large Screens lg:col-span-6) */}
+          {/* DESKTOP-ONLY SHOWCASE DECK (Visible only on lg:col-span-6) */}
           <div className="hidden lg:block lg:col-span-6 relative">
             <div className={`relative rounded-3xl overflow-hidden shadow-floating border transition-all duration-500 bg-stone-900 group ${
               isAmbientNight
                 ? 'border-amber-400/50 shadow-[0_0_50px_rgba(217,119,6,0.3)]'
                 : 'border-stone-200 dark:border-white/15'
             }`}>
-              {/* Dynamic Showcase Image */}
-              <div className="relative h-[490px] w-full overflow-hidden select-none">
+              <div className="relative h-[480px] w-full overflow-hidden select-none">
                 <img
                   key={current.id}
                   src={current.image}
@@ -507,15 +416,13 @@ export const HeroSection = ({ onOpenShowreel }) => {
                   loading="eager"
                 />
 
-                {/* Ambient Night Warm Cove Lighting Overlay */}
                 {isAmbientNight && (
                   <div className="absolute inset-0 bg-gradient-to-t from-amber-950/70 via-amber-600/20 to-amber-900/10 mix-blend-color-dodge pointer-events-none transition-opacity duration-700 animate-fade-in-up" />
                 )}
 
-                {/* Dark Smoked Gradient Vignette */}
                 <div className="absolute inset-0 bg-gradient-to-t from-[#121212]/95 via-[#121212]/30 to-transparent pointer-events-none" />
 
-                {/* TOP BAR OVERLAY: Quality Badge & Ambiance Toggle */}
+                {/* Top Bar: Quality Badge & Ambiance Toggle */}
                 <div className="absolute top-4 left-4 right-4 z-20 flex items-center justify-between gap-2 pointer-events-auto">
                   <div className="px-3 py-1.5 rounded-xl bg-black/65 backdrop-blur-md border border-white/20 text-white text-[11px] font-bold flex items-center gap-2 shadow-sm">
                     <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
@@ -552,7 +459,7 @@ export const HeroSection = ({ onOpenShowreel }) => {
                   </div>
                 </div>
 
-                {/* PULSING ARCHITECTURAL HOTSPOTS (Desktop Only) */}
+                {/* Pulsing Hotspots (Desktop only) */}
                 {current.hotspots.map((spot) => {
                   const isHovered = activeHotspot === spot.id;
                   return (
@@ -602,7 +509,7 @@ export const HeroSection = ({ onOpenShowreel }) => {
                   );
                 })}
 
-                {/* BOTTOM FLOATING BAR: Material Swatches & Navigation */}
+                {/* Bottom Bar: Swatches & Navigation */}
                 <div className="absolute bottom-4 left-4 right-4 z-20 flex flex-wrap items-center justify-between gap-3 bg-black/70 backdrop-blur-xl p-3.5 rounded-2xl border border-white/15 shadow-xl">
                   <div className="space-y-0.5">
                     <span className="text-[9.5px] font-bold uppercase tracking-wider text-stone-400 block">
@@ -651,28 +558,28 @@ export const HeroSection = ({ onOpenShowreel }) => {
             </div>
 
             {/* Floating Trust Card Overlay */}
-            <div className="absolute -bottom-4 -left-6 z-30 p-3.5 rounded-2xl bg-white dark:bg-[#1A1918] border border-stone-200 dark:border-white/15 shadow-floating flex items-center gap-3 max-w-[240px]">
-              <div className="w-10 h-10 rounded-xl bg-luxury-gold/15 text-luxury-gold flex items-center justify-center shrink-0">
-                <Compass className="w-5 h-5 text-luxury-gold" />
+            <div className="absolute -bottom-4 -left-6 z-30 p-3 rounded-2xl bg-white dark:bg-[#1A1918] border border-stone-200 dark:border-white/15 shadow-floating flex items-center gap-3 max-w-[230px]">
+              <div className="w-9 h-9 rounded-xl bg-luxury-gold/15 text-luxury-gold flex items-center justify-center shrink-0">
+                <Compass className="w-4.5 h-4.5 text-luxury-gold" />
               </div>
               <div className="text-[11px] leading-tight">
                 <span className="font-bold text-obsidian dark:text-white block">Custom 3D Layout</span>
-                <span className="text-stone-500 dark:text-stone-400 text-[10px]">Laser-accurate room measurements in Ahmedabad</span>
+                <span className="text-stone-500 dark:text-stone-400 text-[10px]">Laser-accurate room measurements</span>
               </div>
             </div>
           </div>
         </div>
 
-        {/* BOTTOM: Horizontal Slide Selector Tabs (Clean on Mobile, Tabs on Desktop) */}
-        <div className="mt-6 sm:mt-10 pt-4 sm:pt-6 border-t border-stone-200/80 dark:border-white/10">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3">
+        {/* BOTTOM: Horizontal Slide Selector Tabs (Desktop only: hidden md:grid) */}
+        <div className="hidden md:block mt-8 pt-5 border-t border-stone-200/80 dark:border-white/10">
+          <div className="grid grid-cols-4 gap-3">
             {slides.map((slide, idx) => {
               const isActive = activeSlide === idx;
               return (
                 <button
                   key={slide.id}
                   onClick={() => handleSelectSlide(idx)}
-                  className={`group relative text-left p-2.5 sm:p-3.5 rounded-xl sm:rounded-2xl transition-all duration-200 border ${
+                  className={`group relative text-left p-3 rounded-2xl transition-all duration-200 border ${
                     isActive
                       ? 'bg-white dark:bg-[#1A1918] border-luxury-gold shadow-soft ring-1 ring-luxury-gold/30'
                       : 'bg-stone-50/70 hover:bg-white dark:bg-white/5 dark:hover:bg-white/10 border-stone-200/80 dark:border-white/10'
@@ -680,7 +587,7 @@ export const HeroSection = ({ onOpenShowreel }) => {
                 >
                   {/* Linear Progress Bar */}
                   {isActive && (
-                    <div className="absolute top-0 left-0 right-0 h-1 bg-stone-200 dark:bg-white/10 rounded-t-xl sm:rounded-t-2xl overflow-hidden">
+                    <div className="absolute top-0 left-0 right-0 h-1 bg-stone-200 dark:bg-white/10 rounded-t-2xl overflow-hidden">
                       <div
                         className="h-full bg-luxury-gold transition-all duration-75 ease-linear"
                         style={{ width: `${progress}%` }}
@@ -688,18 +595,18 @@ export const HeroSection = ({ onOpenShowreel }) => {
                     </div>
                   )}
 
-                  <div className="flex items-center justify-between gap-1 mb-0.5 sm:mb-1">
-                    <span className={`text-[9.5px] sm:text-[10px] font-mono font-bold ${
+                  <div className="flex items-center justify-between gap-1 mb-1">
+                    <span className={`text-[10px] font-mono font-bold ${
                       isActive ? 'text-luxury-goldDark dark:text-luxury-gold' : 'text-stone-400'
                     }`}>
                       0{idx + 1}
                     </span>
-                    <span className="text-[8.5px] sm:text-[9px] font-bold uppercase tracking-wider text-stone-400 truncate">
+                    <span className="text-[9px] font-bold uppercase tracking-wider text-stone-400 truncate">
                       {slide.priceRange}
                     </span>
                   </div>
 
-                  <p className={`font-serif text-xs sm:text-sm font-bold truncate ${
+                  <p className={`font-serif text-xs font-bold truncate ${
                     isActive ? 'text-obsidian dark:text-white' : 'text-stone-700 dark:text-stone-300'
                   }`}>
                     {slide.shortTitle}

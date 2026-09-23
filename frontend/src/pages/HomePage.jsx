@@ -683,9 +683,9 @@ export const HomePage = () => {
         </div>
       </section>
 
-      {/* 10. SCROLL-TRIGGERED FLOATING BOTTOM ACTION BAR */}
+      {/* 10. SCROLL-TRIGGERED FLOATING BOTTOM ACTION BAR (Desktop only, mobile uses BottomNav) */}
       {showFloatingBar && (
-        <div className="fixed bottom-20 md:bottom-6 left-4 right-4 max-w-xl mx-auto z-40 animate-fade-in-up">
+        <div className="hidden md:block fixed md:bottom-6 left-4 right-4 max-w-xl mx-auto z-40 animate-fade-in-up">
           <div className="p-3 sm:p-3.5 rounded-2xl bg-obsidian/95 dark:bg-slate-900/95 backdrop-blur-xl border border-white/15 text-white shadow-floating flex items-center justify-between gap-3">
             <div className="flex items-center gap-2.5 min-w-0">
               <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping shrink-0" />
