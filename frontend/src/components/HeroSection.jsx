@@ -200,7 +200,7 @@ export const HeroSection = ({ onOpenShowreel }) => {
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-stone-100/90 dark:bg-white/5 border border-stone-200 dark:border-white/10 text-[11px] sm:text-xs font-semibold text-stone-700 dark:text-stone-300 shadow-sm">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
             <span>
-              <strong className="text-obsidian dark:text-white">Ahmedabad Direct:</strong> All Companies PVC Material Work Available (KAKA, TAASA &amp; Major Brands)
+              <strong className="text-obsidian dark:text-white">Ahmedabad Direct:</strong> {settings?.heroBadgeText || 'All Companies PVC Material Work Available (KAKA, TAASA & Major Brands)'}
             </span>
           </div>
 
@@ -365,18 +365,18 @@ export const HeroSection = ({ onOpenShowreel }) => {
                 to="/book"
                 className="flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-luxury-gold hover:bg-luxury-goldDark text-[#121212] text-xs sm:text-sm font-black shadow-sm transition-all active:scale-95 group text-center"
               >
-                <span>Book Free Site Visit</span>
+                <span>{settings?.heroCtaPrimary || 'Book Free Site Visit'}</span>
                 <ArrowRight className="w-4 h-4 text-[#121212] group-hover:translate-x-1 transition-transform" />
               </Link>
 
               <a
-                href="https://wa.me/918209836370?text=Hello%20Shree%20Shyam%20PVC,%20I%20am%20interested%20in%20PVC%20interior%20solutions"
+                href={`https://wa.me/${settings?.whatsappNumber || '918209836370'}?text=Hello%20Shree%20Shyam%20PVC,%20I%20am%20interested%20in%20PVC%20interior%20solutions`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-1.5 px-4 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-xs sm:text-sm font-bold shadow-sm transition-all active:scale-95"
               >
                 <MessageCircle className="w-4 h-4 fill-white" />
-                <span>WhatsApp Consultation</span>
+                <span>{settings?.heroCtaSecondary || 'WhatsApp Consultation'}</span>
               </a>
             </div>
 

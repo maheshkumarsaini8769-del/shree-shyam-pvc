@@ -13,6 +13,8 @@ import {
 import { images } from '../data/images';
 import { realWorkImages } from '../data/realWorkImages';
 
+import { api } from '../services/api';
+
 export const GalleryPage = () => {
   const [searchParams] = useSearchParams();
   const currentCat = searchParams.get('category') || 'All';
@@ -20,6 +22,7 @@ export const GalleryPage = () => {
   const [activeCategory, setActiveCategory] = useState(currentCat);
   const [selectedImageIndex, setSelectedImageIndex] = useState(null);
   const [zoomLevel, setZoomLevel] = useState(1);
+  const [dbGalleryItems, setDbGalleryItems] = useState([]);
 
   // Studio showroom items
   const showroomItems = [
@@ -31,8 +34,27 @@ export const GalleryPage = () => {
     { id: 'sh-06', title: 'Modern PVC Corporate Workstations', category: 'Office', img: images.office, description: 'Acoustic modular workstation partitions and desk dividers', isRealWork: false, tag: 'Studio Design' },
   ];
 
+  React.useEffect(() => {
+    api.getGallery().then(data => {
+      if (Array.isArray(data) && data.length > 0) {
+        const mapped = data.map((item, idx) => ({
+          id: item.id || item._id || `db-${idx}`,
+          title: item.title,
+          category: item.category,
+          img: item.imageUrl?.startsWith('/assets/real-work/') 
+            ? (realWorkImages.find(r => r.img.includes(item.imageUrl.split('/').pop().replace('.jpg', '')))?.img || item.imageUrl)
+            : item.imageUrl,
+          description: item.description || '',
+          isRealWork: item.isRealWork !== false,
+          tag: item.tag || 'On-Site Installation'
+        }));
+        setDbGalleryItems(mapped);
+      }
+    }).catch(() => {});
+  }, []);
+
   // Combine real work (priority) + studio items
-  const allGalleryItems = [...realWorkImages, ...showroomItems];
+  const allGalleryItems = dbGalleryItems.length > 0 ? [...dbGalleryItems, ...showroomItems] : [...realWorkImages, ...showroomItems];
 
   const categories = [
     { id: 'All', label: 'All Projects (34)' },

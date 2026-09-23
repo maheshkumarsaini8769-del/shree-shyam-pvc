@@ -75,6 +75,52 @@ const SettingsSchema = new mongoose.Schema({
     default: 'Ahmedabad Direct: All Companies PVC Material Work Available (KAKA, TAASA & Major Brands)'
   },
 
+  // Hero Section Customizer
+  heroHeading: {
+    type: String,
+    default: "Ahmedabad's #1 Certified KAKA PVC Modular Furniture"
+  },
+  heroSubheading: {
+    type: String,
+    default: "100% Waterproof, 100% Termite-Proof Modern Interiors Fabricated in Vastral"
+  },
+  heroCtaPrimary: {
+    type: String,
+    default: "Book Free Site Measurement"
+  },
+  heroCtaSecondary: {
+    type: String,
+    default: "Explore Real Works"
+  },
+
+  // Pricing Calculator Rates
+  pricingCalculator: {
+    tvUnitRate: { type: Number, default: 480 },
+    wardrobeRate: { type: Number, default: 520 },
+    kitchenRate: { type: Number, default: 550 },
+    fullHomeRate: { type: Number, default: 500 }
+  },
+
+  // Service Coverage Locations
+  serviceLocations: {
+    type: [String],
+    default: [
+      'Vastral', 'Maninagar', 'Nikol', 'Naroda',
+      'Chandkheda', 'SG Highway', 'Bopal', 'Gota',
+      'Satellite', 'Thaltej', 'Odhav', 'C.G. Road'
+    ]
+  },
+
+  // Registration & Legal
+  gstNumber: {
+    type: String,
+    default: '24AAAAA0000A1Z5'
+  },
+  footerCopyright: {
+    type: String,
+    default: '© 2026 Shree Shyam PVC Interior. All Rights Reserved. Crafted for Ahmedabad Homes.'
+  },
+
   // About Us Content
   aboutHeading: {
     type: String,

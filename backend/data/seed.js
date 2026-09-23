@@ -316,6 +316,238 @@ const seedData = async () => {
       console.log('[Seed] Default FAQs created in MongoDB');
     }
 
+    // 8. Seed Initial Gallery Real Work Items
+    const galleryCount = await Gallery.countDocuments();
+    if (galleryCount === 0) {
+      await Gallery.create([
+        {
+          title: "PVC Wardrobe Internal Storage & Drawers",
+          category: "Wardrobe",
+          imageUrl: "/assets/real-work/real_work_01.jpg",
+          description: "Internal view showing lockable drawers, deep shelving, and TAASA profile sheets",
+          isRealWork: true,
+          tag: "On-Site Installation"
+        },
+        {
+          title: "Glossy Turquoise & White Wardrobe with Dressing Mirror",
+          category: "Wardrobe",
+          imageUrl: "/assets/real-work/real_work_02.jpg",
+          description: "Modern dual-tone PVC wardrobe with attached dressing mirror and drawer unit",
+          isRealWork: true,
+          tag: "On-Site Installation"
+        },
+        {
+          title: "4-Door Glossy Turquoise PVC Wardrobe",
+          category: "Wardrobe",
+          imageUrl: "/assets/real-work/real_work_03.jpg",
+          description: "Seamless glossy finished bedroom wardrobe with sleek gold profile handles",
+          isRealWork: true,
+          tag: "On-Site Installation"
+        },
+        {
+          title: "Sky Blue Full Wall PVC Wardrobe with Upper Lofts",
+          category: "Wardrobe",
+          imageUrl: "/assets/real-work/real_work_04.jpg",
+          description: "Floor-to-ceiling storage with top loft cabinets (mala) touching ceiling",
+          isRealWork: true,
+          tag: "On-Site Installation"
+        },
+        {
+          title: "Fluted Louver & Marble PVC TV Unit",
+          category: "TV Unit",
+          imageUrl: "/assets/real-work/real_work_05.jpg",
+          description: "Vertical wooden fluted louvers paired with white Italian marble PVC sheet & floating console",
+          isRealWork: true,
+          tag: "On-Site Installation"
+        },
+        {
+          title: "Curved Woodgrain Accent TV Unit",
+          category: "TV Unit",
+          imageUrl: "/assets/real-work/real_work_06.jpg",
+          description: "Contemporary curved backboard with blush pink surround and 2-drawer floating console",
+          isRealWork: true,
+          tag: "On-Site Installation"
+        },
+        {
+          title: "Large Living Room TV Unit with Glass Display Tower",
+          category: "TV Unit",
+          imageUrl: "/assets/real-work/real_work_07.jpg",
+          description: "Black marble top floating unit with tall illuminated glass display tower",
+          isRealWork: true,
+          tag: "On-Site Installation"
+        },
+        {
+          title: "Full Wall Fluted Louver Paneling & TV Console",
+          category: "TV Unit",
+          imageUrl: "/assets/real-work/real_work_08.jpg",
+          description: "Grey and wood striped vertical louvers with floating dual-tone 4-drawer console",
+          isRealWork: true,
+          tag: "On-Site Installation"
+        },
+        {
+          title: "Warm Backlit Woodgrain TV Unit",
+          category: "TV Unit",
+          imageUrl: "/assets/real-work/real_work_09.jpg",
+          description: "Ambient LED spotlights, rich woodgrain PVC panels, and floating storage console",
+          isRealWork: true,
+          tag: "On-Site Installation"
+        },
+        {
+          title: "Black & Gold Marble PVC Wall Unit",
+          category: "TV Unit",
+          imageUrl: "/assets/real-work/real_work_10.jpg",
+          description: "High-gloss marble PVC paneling with protective film and floating 3-drawer console",
+          isRealWork: true,
+          tag: "On-Site Installation"
+        },
+        {
+          title: "Vertical Louver TV Wall with Display Rack",
+          category: "TV Unit",
+          imageUrl: "/assets/real-work/real_work_11.jpg",
+          description: "Textured acoustic louver wall with floating marble-top console and 5-tier side rack",
+          isRealWork: true,
+          tag: "On-Site Installation"
+        },
+        {
+          title: "Grand Living Room Wooden Showcase TV Unit",
+          category: "TV Unit",
+          imageUrl: "/assets/real-work/real_work_12.jpg",
+          description: "Full wall wooden finish entertainment unit with 6 drawers, false ceiling cove lights, and side towers",
+          isRealWork: true,
+          tag: "On-Site Installation"
+        },
+        {
+          title: "Charcoal Fluted Louver TV Unit with Glass Rack",
+          category: "TV Unit",
+          imageUrl: "/assets/real-work/real_work_13.jpg",
+          description: "Dark acoustic fluted louvers, white marble PVC backing, and 6-tier display tower",
+          isRealWork: true,
+          tag: "On-Site Installation"
+        },
+        {
+          title: "Minimalist Wood Louver TV Wall with Console",
+          category: "TV Unit",
+          imageUrl: "/assets/real-work/real_work_14.jpg",
+          description: "Clean vertical wood louver panel with white marble center TV mount",
+          isRealWork: true,
+          tag: "On-Site Installation"
+        },
+        {
+          title: "Luxury Backlit TV Console with Illuminated Tower",
+          category: "TV Unit",
+          imageUrl: "/assets/real-work/real_work_15.jpg",
+          description: "Warm under-glow LED lights, marble sheet backing, and illuminated glass showcase",
+          isRealWork: true,
+          tag: "On-Site Installation"
+        },
+        {
+          title: "Modern Grey Fluted Wall Panels with Glowing Cubbies",
+          category: "TV Unit",
+          imageUrl: "/assets/real-work/real_work_16.jpg",
+          description: "Sleek grey PVC wall panels, floating console, and 3 warm backlit display boxes",
+          isRealWork: true,
+          tag: "On-Site Installation"
+        },
+        {
+          title: "Classic Full Height TV Showcase with Glass Cabinet",
+          category: "TV Unit",
+          imageUrl: "/assets/real-work/real_work_17.jpg",
+          description: "Full height entertainment unit with tall glass showcase and storage drawers",
+          isRealWork: true,
+          tag: "On-Site Installation"
+        },
+        {
+          title: "Teak Finish TV Unit with Fluted Louver Accent",
+          category: "TV Unit",
+          imageUrl: "/assets/real-work/real_work_18.jpg",
+          description: "Vertical dark louvers, white TV panel, floating console, and 5-tier open shelf tower",
+          isRealWork: true,
+          tag: "On-Site Installation"
+        },
+        {
+          title: "Ocean Teal Full Wall PVC Wardrobe with Lofts",
+          category: "Wardrobe",
+          imageUrl: "/assets/real-work/real_work_19.jpg",
+          description: "Spacious 6-door teal blue PVC wardrobe with upper ceiling loft storage",
+          isRealWork: true,
+          tag: "On-Site Installation"
+        },
+        {
+          title: "Slate Grey PVC Wardrobe with Center Mirror",
+          category: "Wardrobe",
+          imageUrl: "/assets/real-work/real_work_20.jpg",
+          description: "3-door modern matte slate grey bedroom wardrobe with integrated dressing mirror",
+          isRealWork: true,
+          tag: "On-Site Installation"
+        },
+        {
+          title: "Rich Teak Woodgrain PVC Wardrobe with White Band",
+          category: "Wardrobe",
+          imageUrl: "/assets/real-work/real_work_21.jpg",
+          description: "Classic woodgrain texture PVC wardrobe with contrasting white accent band",
+          isRealWork: true,
+          tag: "On-Site Installation"
+        },
+        {
+          title: "Designer Off-White & Blush Pink Wardrobe with Curved Mirror",
+          category: "Wardrobe",
+          imageUrl: "/assets/real-work/real_work_22.jpg",
+          description: "Custom bedroom wardrobe with curved blush pink handles and semi-circular dressing mirror",
+          isRealWork: true,
+          tag: "On-Site Installation"
+        },
+        {
+          title: "Compact 3-Door Dual Tone PVC Wardrobe",
+          category: "Wardrobe",
+          imageUrl: "/assets/real-work/real_work_23.jpg",
+          description: "Space-efficient bedroom wardrobe with contrasting grey vertical stripe",
+          isRealWork: true,
+          tag: "On-Site Installation"
+        },
+        {
+          title: "Sliding 2-Door Dual Tone Wardrobe with Lofts",
+          category: "Wardrobe",
+          imageUrl: "/assets/real-work/real_work_24.jpg",
+          description: "Smooth sliding shutter PVC wardrobe (glossy white + textured grey) with 4 top lofts",
+          isRealWork: true,
+          tag: "On-Site Installation"
+        },
+        {
+          title: "Corner L-Shaped Glossy Pink PVC Wardrobe",
+          category: "Wardrobe",
+          imageUrl: "/assets/real-work/real_work_25.jpg",
+          description: "Floor-to-ceiling corner wardrobe with high-gloss pastel finish and top lofts",
+          isRealWork: true,
+          tag: "On-Site Installation"
+        },
+        {
+          title: "Inside View of 2-Door Wardrobe with Lockers",
+          category: "Wardrobe",
+          imageUrl: "/assets/real-work/real_work_26.jpg",
+          description: "Interior compartments with lockable drawers, clothes hanging space, and shelves",
+          isRealWork: true,
+          tag: "On-Site Installation"
+        },
+        {
+          title: "Minimalist Matte Grey 3-Door PVC Wardrobe",
+          category: "Wardrobe",
+          imageUrl: "/assets/real-work/real_work_27.jpg",
+          description: "Contemporary flat-panel slate grey PVC wardrobe with clean black handles",
+          isRealWork: true,
+          tag: "On-Site Installation"
+        },
+        {
+          title: "Full Room Glossy Nude Pink PVC Wardrobe Setup",
+          category: "Wardrobe",
+          imageUrl: "/assets/real-work/real_work_28.jpg",
+          description: "Large wall-to-wall glossy modular PVC wardrobe under final assembly in Ahmedabad",
+          isRealWork: true,
+          tag: "On-Site Installation"
+        }
+      ]);
+      console.log('[Seed] Default 28 real work gallery items created in MongoDB');
+    }
+
     console.log('[Seed] MongoDB initialization completed successfully.');
   } catch (err) {
     console.error('[Seed Error]', err);
@@ -323,3 +555,18 @@ const seedData = async () => {
 };
 
 module.exports = seedData;
+
+if (require.main === module) {
+  require('dotenv').config();
+  const mongoose = require('mongoose');
+  mongoose.connect(process.env.MONGODB_URI).then(() => {
+    seedData().then(() => {
+      console.log('Seeding finished, exiting.');
+      process.exit(0);
+    });
+  }).catch(e => {
+    console.error(e);
+    process.exit(1);
+  });
+}
+

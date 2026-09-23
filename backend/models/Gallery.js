@@ -13,6 +13,18 @@ const GallerySchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  description: {
+    type: String,
+    default: ''
+  },
+  isRealWork: {
+    type: Boolean,
+    default: true
+  },
+  tag: {
+    type: String,
+    default: 'On-Site Installation'
+  },
   featured: {
     type: Boolean,
     default: false

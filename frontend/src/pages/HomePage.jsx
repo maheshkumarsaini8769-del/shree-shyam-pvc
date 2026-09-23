@@ -113,10 +113,10 @@ export const HomePage = () => {
   }, []);
 
   const roomTypes = [
-    { id: 'tv-unit', name: 'TV Unit & Louvers', defaultSqft: 100, rate: 480, icon: '📺' },
-    { id: 'wardrobe', name: 'Wardrobe with Lofts', defaultSqft: 150, rate: 520, icon: '🚪' },
-    { id: 'kitchen', name: 'Modular Kitchen', defaultSqft: 120, rate: 550, icon: '🍳' },
-    { id: 'full-home', name: 'Full 2BHK/3BHK Flat', defaultSqft: 550, rate: 500, icon: '🏠' }
+    { id: 'tv-unit', name: 'TV Unit & Louvers', defaultSqft: 100, rate: settings?.pricingCalculator?.tvUnitRate || 480, icon: '📺' },
+    { id: 'wardrobe', name: 'Wardrobe with Lofts', defaultSqft: 150, rate: settings?.pricingCalculator?.wardrobeRate || 520, icon: '🚪' },
+    { id: 'kitchen', name: 'Modular Kitchen', defaultSqft: 120, rate: settings?.pricingCalculator?.kitchenRate || 550, icon: '🍳' },
+    { id: 'full-home', name: 'Full 2BHK/3BHK Flat', defaultSqft: 550, rate: settings?.pricingCalculator?.fullHomeRate || 500, icon: '🏠' }
   ];
 
   const finishTypes = [

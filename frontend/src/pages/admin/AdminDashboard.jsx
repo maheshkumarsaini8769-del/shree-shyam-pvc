@@ -34,7 +34,9 @@ import {
   Inbox,
   Menu,
   ChevronRight,
-  Edit2
+  Edit2,
+  Camera,
+  Calculator
 } from 'lucide-react';
 import { api } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
@@ -73,6 +75,19 @@ export const AdminDashboard = () => {
     announcementActive: true,
     emergencyNotice: '',
     heroBadgeText: '',
+    heroHeading: '',
+    heroSubheading: '',
+    heroCtaPrimary: '',
+    heroCtaSecondary: '',
+    pricingCalculator: {
+      tvUnitRate: 480,
+      wardrobeRate: 520,
+      kitchenRate: 550,
+      fullHomeRate: 500
+    },
+    serviceLocations: [],
+    gstNumber: '',
+    footerCopyright: '',
     aboutHeading: '',
     aboutSubheading: '',
     aboutStory: '',
@@ -132,14 +147,23 @@ export const AdminDashboard = () => {
   const [newFaqAnswer, setNewFaqAnswer] = useState('');
   const [newFaqCategory, setNewFaqCategory] = useState('Materials & Durability');
 
-  // 9. Brand Input
+  // 9. Gallery State
+  const [gallery, setGallery] = useState([]);
+  const [galleryCategoryFilter, setGalleryCategoryFilter] = useState('All');
+  const [newGalleryTitle, setNewGalleryTitle] = useState('');
+  const [newGalleryCategory, setNewGalleryCategory] = useState('TV Unit');
+  const [newGalleryImageUrl, setNewGalleryImageUrl] = useState('');
+  const [newGalleryDescription, setNewGalleryDescription] = useState('');
+
+  // 10. Brand & Location Inputs
   const [newBrandInput, setNewBrandInput] = useState('');
+  const [newLocationInput, setNewLocationInput] = useState('');
 
   // Load all initial admin data
   const loadData = async () => {
     setLoading(true);
     try {
-      const [statsRes, settingsRes, bookingsRes, reviewsRes, authRes, servicesRes, enquiriesRes, faqsRes] = await Promise.all([
+      const [statsRes, settingsRes, bookingsRes, reviewsRes, authRes, servicesRes, enquiriesRes, faqsRes, galleryRes] = await Promise.all([
         api.adminGetDashboardStats().catch(() => null),
         api.getSettings().catch(() => ({})),
         api.adminGetBookings().catch(() => []),
@@ -147,7 +171,8 @@ export const AdminDashboard = () => {
         api.adminGetEmailAuthorities().catch(() => []),
         api.adminGetServices().catch(() => []),
         api.adminGetEnquiries().catch(() => []),
-        api.adminGetFaqs().catch(() => [])
+        api.adminGetFaqs().catch(() => []),
+        api.getGallery().catch(() => [])
       ]);
 
       if (statsRes) setStats(statsRes);
@@ -155,6 +180,11 @@ export const AdminDashboard = () => {
         setSettingsData(prev => ({
           ...prev,
           ...settingsRes,
+          pricingCalculator: {
+            ...prev.pricingCalculator,
+            ...(settingsRes.pricingCalculator || {})
+          },
+          serviceLocations: settingsRes.serviceLocations || prev.serviceLocations || [],
           socialChannels: {
             ...prev.socialChannels,
             ...(settingsRes.socialChannels || {})
@@ -168,6 +198,7 @@ export const AdminDashboard = () => {
       if (Array.isArray(servicesRes)) setServices(servicesRes);
       if (Array.isArray(enquiriesRes)) setEnquiries(enquiriesRes);
       if (Array.isArray(faqsRes)) setFaqs(faqsRes);
+      if (Array.isArray(galleryRes)) setGallery(galleryRes);
     } catch (err) {
       console.error('Error loading dashboard data', err);
     } finally {
@@ -431,6 +462,62 @@ export const AdminDashboard = () => {
     }));
   };
 
+  // Gallery Management Handlers
+  const handleAddGalleryItem = async (e) => {
+    e.preventDefault();
+    if (!newGalleryTitle.trim() || !newGalleryImageUrl.trim()) {
+      showNotification('Title and Image URL are required', true);
+      return;
+    }
+    try {
+      const created = await api.adminCreateGalleryItem({
+        title: newGalleryTitle.trim(),
+        category: newGalleryCategory,
+        imageUrl: newGalleryImageUrl.trim(),
+        description: newGalleryDescription.trim(),
+        isRealWork: true,
+        tag: 'On-Site Installation'
+      });
+      setGallery(prev => [created, ...prev]);
+      setNewGalleryTitle('');
+      setNewGalleryImageUrl('');
+      setNewGalleryDescription('');
+      showNotification('Project photo added to Live Gallery!');
+    } catch (err) {
+      showNotification(err.message || 'Error adding project photo', true);
+    }
+  };
+
+  const handleDeleteGalleryItem = async (id, title) => {
+    if (!window.confirm(`Delete "${title}" from Gallery?`)) return;
+    try {
+      await api.adminDeleteGalleryItem(id);
+      setGallery(prev => prev.filter(g => g.id !== id && g._id !== id));
+      showNotification('Project photo removed from Gallery!');
+    } catch (err) {
+      showNotification(err.message || 'Error deleting project photo', true);
+    }
+  };
+
+  // Locations Handlers
+  const handleAddLocation = () => {
+    if (!newLocationInput.trim()) return;
+    const currentLocs = settingsData.serviceLocations || [];
+    if (currentLocs.includes(newLocationInput.trim())) return;
+    setSettingsData(prev => ({
+      ...prev,
+      serviceLocations: [...currentLocs, newLocationInput.trim()]
+    }));
+    setNewLocationInput('');
+  };
+
+  const handleRemoveLocation = (locToRemove) => {
+    setSettingsData(prev => ({
+      ...prev,
+      serviceLocations: (prev.serviceLocations || []).filter(l => l !== locToRemove)
+    }));
+  };
+
   const handleLogout = () => {
     localStorage.removeItem('sspi_token');
     if (logout) logout();
@@ -458,17 +545,27 @@ export const AdminDashboard = () => {
     return e.status?.toLowerCase() === enquiryFilter.toLowerCase();
   });
 
+  const filteredGallery = gallery.filter(g => {
+    if (galleryCategoryFilter === 'All') return true;
+    return g.category?.toLowerCase() === galleryCategoryFilter.toLowerCase();
+  });
+
   const navItems = [
     { id: 'overview', label: 'Dashboard Overview', icon: LayoutDashboard },
     { id: 'header', label: 'Header & Announcements', icon: Megaphone },
+    { id: 'hero', label: 'Hero Section CMS', icon: Sparkles },
     { id: 'contact', label: 'Contact & Socials', icon: PhoneCall },
     { id: 'about', label: 'About Us CMS', icon: Info },
     { id: 'services', label: `Services (${services.length})`, icon: Wrench },
+    { id: 'calculator', label: 'Pricing Calculator', icon: Calculator },
+    { id: 'gallery', label: `Gallery & Works (${gallery.length})`, icon: Camera },
     { id: 'bookings', label: `Bookings (${bookings.length})`, icon: CalendarCheck },
     { id: 'reviews', label: `Reviews & Replies (${reviews.length})`, icon: Star },
     { id: 'enquiries', label: `Enquiries (${enquiries.length})`, icon: Inbox },
     { id: 'faqs', label: `FAQs (${faqs.length})`, icon: HelpCircle },
+    { id: 'locations', label: `Service Areas (${(settingsData.serviceLocations || []).length})`, icon: MapPin },
     { id: 'brands', label: 'PVC Brands & Materials', icon: Layers },
+    { id: 'legal', label: 'Business & Legal', icon: Building },
     { id: 'authority', label: `Email Authority (${authorities.length})`, icon: KeyRound }
   ];
 
@@ -622,7 +719,7 @@ export const AdminDashboard = () => {
               <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
             </button>
 
-            {['header', 'contact', 'about', 'brands'].includes(activeTab) && (
+            {['header', 'hero', 'calculator', 'contact', 'about', 'brands', 'locations', 'legal'].includes(activeTab) && (
               <button
                 onClick={handleSaveSettings}
                 className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-luxury-gold hover:bg-luxury-goldDark text-obsidian text-xs font-black transition-all shadow-md active:scale-95"
@@ -640,46 +737,58 @@ export const AdminDashboard = () => {
           {activeTab === 'overview' && (
             <div className="space-y-6">
               {/* Metrics Grid */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
-                <div className="bg-[#141B28] p-4 rounded-2xl border border-white/5">
+              <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3 sm:gap-3.5">
+                <div className="bg-[#141B28] p-3.5 rounded-2xl border border-white/5">
                   <p className="text-[11px] text-stone-400 font-medium">Bookings</p>
-                  <p className="text-xl sm:text-2xl font-black text-white mt-1">{bookings.length}</p>
-                  <p className="text-[10px] text-amber-400 mt-1 flex items-center gap-1">
-                    <Clock className="w-2.5 h-2.5" />
+                  <p className="text-xl font-black text-white mt-0.5">{bookings.length}</p>
+                  <p className="text-[10px] text-amber-400 mt-1 flex items-center gap-1 truncate">
+                    <Clock className="w-2.5 h-2.5 shrink-0" />
                     <span>{bookings.filter(b => b.status === 'Pending').length} Pending</span>
                   </p>
                 </div>
 
-                <div className="bg-[#141B28] p-4 rounded-2xl border border-white/5">
+                <div className="bg-[#141B28] p-3.5 rounded-2xl border border-white/5">
                   <p className="text-[11px] text-stone-400 font-medium">Reviews</p>
-                  <p className="text-xl sm:text-2xl font-black text-white mt-1">{reviews.length}</p>
+                  <p className="text-xl font-black text-white mt-0.5">{reviews.length}</p>
                   <p className="text-[10px] text-emerald-400 mt-1 flex items-center gap-1">
                     <Star className="w-2.5 h-2.5 fill-amber-400 text-amber-400" />
-                    <span>{stats?.metrics?.avgRating || '5.0'} / 5.0</span>
+                    <span>{stats?.metrics?.avgRating || '5.0'}/5</span>
                   </p>
                 </div>
 
-                <div className="bg-[#141B28] p-4 rounded-2xl border border-white/5">
+                <div className="bg-[#141B28] p-3.5 rounded-2xl border border-white/5">
                   <p className="text-[11px] text-stone-400 font-medium">Enquiries</p>
-                  <p className="text-xl sm:text-2xl font-black text-white mt-1">{enquiries.length}</p>
+                  <p className="text-xl font-black text-white mt-0.5">{enquiries.length}</p>
                   <p className="text-[10px] text-cyan-400 mt-1">Lead inquiries</p>
                 </div>
 
-                <div className="bg-[#141B28] p-4 rounded-2xl border border-white/5">
+                <div className="bg-[#141B28] p-3.5 rounded-2xl border border-white/5">
                   <p className="text-[11px] text-stone-400 font-medium">Services</p>
-                  <p className="text-xl sm:text-2xl font-black text-white mt-1">{services.length}</p>
-                  <p className="text-[10px] text-stone-400 mt-1">PVC solutions</p>
+                  <p className="text-xl font-black text-white mt-0.5">{services.length}</p>
+                  <p className="text-[10px] text-stone-400 mt-1">Active services</p>
                 </div>
 
-                <div className="bg-[#141B28] p-4 rounded-2xl border border-white/5">
+                <div className="bg-[#141B28] p-3.5 rounded-2xl border border-white/5">
+                  <p className="text-[11px] text-stone-400 font-medium">Gallery</p>
+                  <p className="text-xl font-black text-white mt-0.5">{gallery.length}</p>
+                  <p className="text-[10px] text-luxury-gold mt-1">Real projects</p>
+                </div>
+
+                <div className="bg-[#141B28] p-3.5 rounded-2xl border border-white/5">
                   <p className="text-[11px] text-stone-400 font-medium">FAQs</p>
-                  <p className="text-xl sm:text-2xl font-black text-white mt-1">{faqs.length}</p>
+                  <p className="text-xl font-black text-white mt-0.5">{faqs.length}</p>
                   <p className="text-[10px] text-stone-400 mt-1">Client answers</p>
                 </div>
 
-                <div className="bg-[#141B28] p-4 rounded-2xl border border-white/5">
+                <div className="bg-[#141B28] p-3.5 rounded-2xl border border-white/5">
+                  <p className="text-[11px] text-stone-400 font-medium">Areas</p>
+                  <p className="text-xl font-black text-white mt-0.5">{(settingsData.serviceLocations || []).length}</p>
+                  <p className="text-[10px] text-indigo-400 mt-1">Ahmedabad</p>
+                </div>
+
+                <div className="bg-[#141B28] p-3.5 rounded-2xl border border-white/5">
                   <p className="text-[11px] text-stone-400 font-medium">Admins</p>
-                  <p className="text-xl sm:text-2xl font-black text-white mt-1">{authorities.length}</p>
+                  <p className="text-xl font-black text-white mt-0.5">{authorities.length}</p>
                   <p className="text-[10px] text-luxury-gold mt-1">Whitelisted</p>
                 </div>
               </div>
@@ -688,35 +797,59 @@ export const AdminDashboard = () => {
               <div className="bg-gradient-to-r from-luxury-gold/15 to-transparent border border-luxury-gold/20 rounded-2xl p-5">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                   <div>
-                    <h3 className="font-serif font-bold text-base text-white">Full Website CMS & Controls Active</h3>
+                    <h3 className="font-serif font-bold text-base text-white">100% Comprehensive Website Controls</h3>
                     <p className="text-xs text-stone-300 mt-0.5">
-                      Header announcement, contact details, reviews replies, services prices, bookings, and email authority.
+                      Header announcement, Hero banners, Calculator rates, Gallery photos, Bookings, Reviews, Areas & Email authority.
                     </p>
                   </div>
                   <div className="flex flex-wrap gap-2">
                     <button
                       onClick={() => setActiveTab('header')}
-                      className="px-3 py-1.5 rounded-lg bg-luxury-gold text-obsidian text-xs font-bold hover:bg-luxury-goldDark"
+                      className="px-2.5 py-1 rounded-lg bg-luxury-gold text-obsidian text-xs font-bold hover:bg-luxury-goldDark"
                     >
                       Header Bar
                     </button>
                     <button
-                      onClick={() => setActiveTab('services')}
-                      className="px-3 py-1.5 rounded-lg bg-white/10 text-white text-xs font-bold hover:bg-white/20"
+                      onClick={() => setActiveTab('hero')}
+                      className="px-2.5 py-1 rounded-lg bg-white/10 text-white text-xs font-bold hover:bg-white/20"
                     >
-                      PVC Services
+                      Hero Banners
+                    </button>
+                    <button
+                      onClick={() => setActiveTab('calculator')}
+                      className="px-2.5 py-1 rounded-lg bg-white/10 text-white text-xs font-bold hover:bg-white/20"
+                    >
+                      Calculator Rates
+                    </button>
+                    <button
+                      onClick={() => setActiveTab('gallery')}
+                      className="px-2.5 py-1 rounded-lg bg-white/10 text-white text-xs font-bold hover:bg-white/20"
+                    >
+                      Gallery ({gallery.length})
+                    </button>
+                    <button
+                      onClick={() => setActiveTab('services')}
+                      className="px-2.5 py-1 rounded-lg bg-white/10 text-white text-xs font-bold hover:bg-white/20"
+                    >
+                      Services
+                    </button>
+                    <button
+                      onClick={() => setActiveTab('bookings')}
+                      className="px-2.5 py-1 rounded-lg bg-white/10 text-white text-xs font-bold hover:bg-white/20"
+                    >
+                      Bookings
                     </button>
                     <button
                       onClick={() => setActiveTab('reviews')}
-                      className="px-3 py-1.5 rounded-lg bg-white/10 text-white text-xs font-bold hover:bg-white/20"
+                      className="px-2.5 py-1 rounded-lg bg-white/10 text-white text-xs font-bold hover:bg-white/20"
                     >
-                      Reply Reviews
+                      Reviews
                     </button>
                     <button
                       onClick={() => setActiveTab('authority')}
-                      className="px-3 py-1.5 rounded-lg bg-white/10 text-white text-xs font-bold hover:bg-white/20"
+                      className="px-2.5 py-1 rounded-lg bg-white/10 text-white text-xs font-bold hover:bg-white/20"
                     >
-                      Add Admin Email
+                      Email Authority
                     </button>
                   </div>
                 </div>
@@ -863,6 +996,106 @@ export const AdminDashboard = () => {
                   >
                     <Save className="w-4 h-4" />
                     <span>Save Header Settings</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* TAB: HERO SECTION CMS */}
+          {activeTab === 'hero' && (
+            <div className="max-w-4xl space-y-6">
+              <div className="bg-[#141B28] border border-white/5 rounded-2xl p-6 space-y-5">
+                <div className="border-b border-white/5 pb-4">
+                  <h3 className="font-serif font-bold text-base text-white">Hero Section & Headline CMS</h3>
+                  <p className="text-xs text-stone-400 mt-1">Configure the main homepage banner headlines, subtitle, badges, and CTA action buttons.</p>
+                </div>
+
+                {/* Live Preview Card */}
+                <div>
+                  <label className="text-xs font-bold text-stone-300 block mb-2">Live Hero Preview</label>
+                  <div className="p-5 rounded-2xl bg-gradient-to-br from-[#1c2333] to-[#0F141E] border border-luxury-gold/30 space-y-3">
+                    <span className="inline-block px-3 py-1 rounded-full bg-luxury-gold/15 border border-luxury-gold/30 text-luxury-gold text-[10px] font-bold uppercase tracking-wider">
+                      ✨ {settingsData.heroBadgeText || 'Ahmedabad Direct: All Companies PVC Material Work Available'}
+                    </span>
+                    <h2 className="text-lg sm:text-2xl font-serif font-bold text-white leading-tight">
+                      {settingsData.heroHeading || "Ahmedabad's #1 Certified KAKA PVC Modular Furniture"}
+                    </h2>
+                    <p className="text-xs text-stone-300 leading-relaxed max-w-xl">
+                      {settingsData.heroSubheading || "100% Waterproof, 100% Termite-Proof Modern Interiors Fabricated in Vastral"}
+                    </p>
+                    <div className="flex items-center gap-3 pt-2">
+                      <span className="px-4 py-2 rounded-xl bg-luxury-gold text-obsidian text-xs font-black shadow">
+                        {settingsData.heroCtaPrimary || 'Book Free Site Measurement'}
+                      </span>
+                      <span className="px-4 py-2 rounded-xl bg-emerald-600 text-white text-xs font-bold shadow flex items-center gap-1.5">
+                        <MessageCircle className="w-3.5 h-3.5" />
+                        <span>{settingsData.heroCtaSecondary || 'WhatsApp Consultation'}</span>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 gap-4 pt-2">
+                  <div>
+                    <label className="text-xs font-bold text-stone-300 block mb-1">Hero Badge Tag (Top Pill)</label>
+                    <input
+                      type="text"
+                      value={settingsData.heroBadgeText}
+                      onChange={(e) => setSettingsData(prev => ({ ...prev, heroBadgeText: e.target.value }))}
+                      className="w-full p-3 rounded-xl bg-[#0B0F17] border border-white/10 text-white text-xs focus:ring-2 focus:ring-luxury-gold/50 focus:outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-bold text-stone-300 block mb-1">Main Hero Headline</label>
+                    <input
+                      type="text"
+                      value={settingsData.heroHeading}
+                      onChange={(e) => setSettingsData(prev => ({ ...prev, heroHeading: e.target.value }))}
+                      className="w-full p-3 rounded-xl bg-[#0B0F17] border border-white/10 text-white text-xs font-bold focus:ring-2 focus:ring-luxury-gold/50 focus:outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-bold text-stone-300 block mb-1">Hero Subtitle / Description</label>
+                    <textarea
+                      rows="2"
+                      value={settingsData.heroSubheading}
+                      onChange={(e) => setSettingsData(prev => ({ ...prev, heroSubheading: e.target.value }))}
+                      className="w-full p-3 rounded-xl bg-[#0B0F17] border border-white/10 text-white text-xs focus:ring-2 focus:ring-luxury-gold/50 focus:outline-none"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-xs font-bold text-stone-300 block mb-1">Primary CTA Button Label</label>
+                      <input
+                        type="text"
+                        value={settingsData.heroCtaPrimary}
+                        onChange={(e) => setSettingsData(prev => ({ ...prev, heroCtaPrimary: e.target.value }))}
+                        className="w-full p-3 rounded-xl bg-[#0B0F17] border border-white/10 text-white text-xs focus:ring-2 focus:ring-luxury-gold/50 focus:outline-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs font-bold text-stone-300 block mb-1">Secondary CTA Button Label</label>
+                      <input
+                        type="text"
+                        value={settingsData.heroCtaSecondary}
+                        onChange={(e) => setSettingsData(prev => ({ ...prev, heroCtaSecondary: e.target.value }))}
+                        className="w-full p-3 rounded-xl bg-[#0B0F17] border border-white/10 text-white text-xs focus:ring-2 focus:ring-luxury-gold/50 focus:outline-none"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="pt-3">
+                  <button
+                    onClick={handleSaveSettings}
+                    className="px-5 py-2.5 rounded-xl bg-luxury-gold hover:bg-luxury-goldDark text-obsidian text-xs font-bold shadow-md flex items-center gap-2"
+                  >
+                    <Save className="w-4 h-4" />
+                    <span>Save Hero Settings</span>
                   </button>
                 </div>
               </div>
@@ -1219,6 +1452,260 @@ export const AdminDashboard = () => {
                     </div>
                   </div>
                 ))}
+              </div>
+            </div>
+          )}
+
+          {/* TAB: PRICING CALCULATOR CMS */}
+          {activeTab === 'calculator' && (
+            <div className="max-w-4xl space-y-6">
+              <div className="bg-[#141B28] border border-white/5 rounded-2xl p-6 space-y-5">
+                <div className="border-b border-white/5 pb-4">
+                  <h3 className="font-serif font-bold text-base text-white">Livspace-Style Pricing Calculator Rates</h3>
+                  <p className="text-xs text-stone-400 mt-1">Configure base rates (₹ per sq.ft) for the interactive room and finish estimator on the homepage.</p>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="p-4 rounded-xl bg-[#0B0F17] border border-white/5">
+                    <label className="text-xs font-bold text-white block mb-1">
+                      📺 TV Unit & Acoustic Louvers
+                    </label>
+                    <p className="text-[11px] text-stone-400 mb-2">Base price per sq.ft</p>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-bold text-luxury-gold">₹</span>
+                      <input
+                        type="number"
+                        value={settingsData.pricingCalculator?.tvUnitRate || 480}
+                        onChange={(e) => setSettingsData(prev => ({
+                          ...prev,
+                          pricingCalculator: { ...prev.pricingCalculator, tvUnitRate: Number(e.target.value) }
+                        }))}
+                        className="w-full p-2.5 rounded-lg bg-[#141B28] border border-white/10 text-white text-xs font-bold focus:ring-1 focus:ring-luxury-gold focus:outline-none"
+                      />
+                      <span className="text-xs text-stone-400">/ sq.ft</span>
+                    </div>
+                  </div>
+
+                  <div className="p-4 rounded-xl bg-[#0B0F17] border border-white/5">
+                    <label className="text-xs font-bold text-white block mb-1">
+                      🚪 Sliding Wardrobe & Lofts
+                    </label>
+                    <p className="text-[11px] text-stone-400 mb-2">Base price per sq.ft</p>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-bold text-luxury-gold">₹</span>
+                      <input
+                        type="number"
+                        value={settingsData.pricingCalculator?.wardrobeRate || 520}
+                        onChange={(e) => setSettingsData(prev => ({
+                          ...prev,
+                          pricingCalculator: { ...prev.pricingCalculator, wardrobeRate: Number(e.target.value) }
+                        }))}
+                        className="w-full p-2.5 rounded-lg bg-[#141B28] border border-white/10 text-white text-xs font-bold focus:ring-1 focus:ring-luxury-gold focus:outline-none"
+                      />
+                      <span className="text-xs text-stone-400">/ sq.ft</span>
+                    </div>
+                  </div>
+
+                  <div className="p-4 rounded-xl bg-[#0B0F17] border border-white/5">
+                    <label className="text-xs font-bold text-white block mb-1">
+                      🍳 PVC Modular Kitchen
+                    </label>
+                    <p className="text-[11px] text-stone-400 mb-2">Base price per sq.ft</p>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-bold text-luxury-gold">₹</span>
+                      <input
+                        type="number"
+                        value={settingsData.pricingCalculator?.kitchenRate || 550}
+                        onChange={(e) => setSettingsData(prev => ({
+                          ...prev,
+                          pricingCalculator: { ...prev.pricingCalculator, kitchenRate: Number(e.target.value) }
+                        }))}
+                        className="w-full p-2.5 rounded-lg bg-[#141B28] border border-white/10 text-white text-xs font-bold focus:ring-1 focus:ring-luxury-gold focus:outline-none"
+                      />
+                      <span className="text-xs text-stone-400">/ sq.ft</span>
+                    </div>
+                  </div>
+
+                  <div className="p-4 rounded-xl bg-[#0B0F17] border border-white/5">
+                    <label className="text-xs font-bold text-white block mb-1">
+                      🏠 Full Home (2BHK / 3BHK Flat)
+                    </label>
+                    <p className="text-[11px] text-stone-400 mb-2">Base price per sq.ft</p>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-bold text-luxury-gold">₹</span>
+                      <input
+                        type="number"
+                        value={settingsData.pricingCalculator?.fullHomeRate || 500}
+                        onChange={(e) => setSettingsData(prev => ({
+                          ...prev,
+                          pricingCalculator: { ...prev.pricingCalculator, fullHomeRate: Number(e.target.value) }
+                        }))}
+                        className="w-full p-2.5 rounded-lg bg-[#141B28] border border-white/10 text-white text-xs font-bold focus:ring-1 focus:ring-luxury-gold focus:outline-none"
+                      />
+                      <span className="text-xs text-stone-400">/ sq.ft</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-4 rounded-xl bg-luxury-gold/10 border border-luxury-gold/20 text-xs text-stone-300">
+                  💡 <strong>Formula Note:</strong> Final estimates calculated dynamically: <code>[Area in Sq.Ft] × [Room Base Rate] × [Finish Multiplier (Fluted Louver: 1.2x, Marble Sheet: 1.15x, Teak: 1.05x, Charcoal: 1.1x)]</code>
+                </div>
+
+                <div className="pt-3">
+                  <button
+                    onClick={handleSaveSettings}
+                    className="px-5 py-2.5 rounded-xl bg-luxury-gold hover:bg-luxury-goldDark text-obsidian text-xs font-bold shadow-md flex items-center gap-2"
+                  >
+                    <Save className="w-4 h-4" />
+                    <span>Save Calculator Rates</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* TAB: GALLERY & REAL WORK CMS */}
+          {activeTab === 'gallery' && (
+            <div className="space-y-6">
+              {/* Add New Project Photo Form */}
+              <div className="bg-[#141B28] border border-white/5 rounded-2xl p-6">
+                <div className="border-b border-white/5 pb-4 mb-5">
+                  <h3 className="font-serif font-bold text-base text-white">Add New Real Work Photo to Live Gallery</h3>
+                  <p className="text-xs text-stone-400">Photos added here appear immediately on the public website's Gallery page and portfolio showcases.</p>
+                </div>
+
+                <form onSubmit={handleAddGalleryItem} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 items-end">
+                  <div>
+                    <label className="text-xs font-bold text-stone-300 block mb-1">Project Title *</label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. Modern TV Unit with Louvers"
+                      value={newGalleryTitle}
+                      onChange={(e) => setNewGalleryTitle(e.target.value)}
+                      className="w-full p-2.5 rounded-xl bg-[#0B0F17] border border-white/10 text-white text-xs focus:ring-2 focus:ring-luxury-gold/50 focus:outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-bold text-stone-300 block mb-1">Category *</label>
+                    <select
+                      value={newGalleryCategory}
+                      onChange={(e) => setNewGalleryCategory(e.target.value)}
+                      className="w-full p-2.5 rounded-xl bg-[#0B0F17] border border-white/10 text-white text-xs focus:ring-2 focus:ring-luxury-gold/50 focus:outline-none"
+                    >
+                      <option value="TV Unit">📺 TV Unit</option>
+                      <option value="Wardrobe">🚪 Wardrobe</option>
+                      <option value="Kitchen">🍳 Kitchen</option>
+                      <option value="Doors">🚪 Doors</option>
+                      <option value="Office">🏢 Office</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-bold text-stone-300 block mb-1">Image URL / Path *</label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="/assets/real-work/real_work_01.jpg or URL"
+                      value={newGalleryImageUrl}
+                      onChange={(e) => setNewGalleryImageUrl(e.target.value)}
+                      className="w-full p-2.5 rounded-xl bg-[#0B0F17] border border-white/10 text-white text-xs focus:ring-2 focus:ring-luxury-gold/50 focus:outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <button
+                      type="submit"
+                      className="w-full py-2.5 rounded-xl bg-luxury-gold hover:bg-luxury-goldDark text-obsidian text-xs font-black shadow-md flex items-center justify-center gap-1.5"
+                    >
+                      <Plus className="w-4 h-4" />
+                      <span>Upload to Gallery</span>
+                    </button>
+                  </div>
+
+                  <div className="sm:col-span-2 lg:col-span-4">
+                    <label className="text-xs font-bold text-stone-300 block mb-1">Short Description / Specs (Optional)</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. High gloss acrylic finish with gold profile handles"
+                      value={newGalleryDescription}
+                      onChange={(e) => setNewGalleryDescription(e.target.value)}
+                      className="w-full p-2.5 rounded-xl bg-[#0B0F17] border border-white/10 text-white text-xs focus:ring-2 focus:ring-luxury-gold/50 focus:outline-none"
+                    />
+                  </div>
+                </form>
+              </div>
+
+              {/* Gallery Filter & Grid */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between gap-3 flex-wrap">
+                  <h4 className="text-sm font-bold text-white flex items-center gap-2">
+                    <Camera className="w-4 h-4 text-luxury-gold" />
+                    <span>Real Work Projects Gallery ({gallery.length})</span>
+                  </h4>
+
+                  <div className="flex gap-1.5 overflow-x-auto pb-1">
+                    {['All', 'TV Unit', 'Wardrobe', 'Kitchen', 'Doors', 'Office'].map(cat => (
+                      <button
+                        key={cat}
+                        onClick={() => setGalleryCategoryFilter(cat)}
+                        className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+                          galleryCategoryFilter.toLowerCase() === cat.toLowerCase()
+                            ? 'bg-luxury-gold text-obsidian shadow'
+                            : 'bg-[#141B28] text-stone-300 hover:bg-white/5'
+                        }`}
+                      >
+                        {cat}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  {filteredGallery.map((item, idx) => (
+                    <div key={item.id || item._id || idx} className="bg-[#141B28] border border-white/5 rounded-2xl overflow-hidden group">
+                      <div className="aspect-[4/3] bg-black/40 relative overflow-hidden">
+                        <img
+                          src={item.imageUrl}
+                          alt={item.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=600&q=80';
+                          }}
+                        />
+                        <span className="absolute top-2 left-2 px-2 py-0.5 rounded bg-black/70 backdrop-blur-md text-[10px] font-bold text-luxury-gold border border-white/10">
+                          {item.category}
+                        </span>
+                        <span className="absolute bottom-2 left-2 px-2 py-0.5 rounded bg-emerald-950/80 backdrop-blur-md text-[9px] font-bold text-emerald-300 border border-emerald-500/20">
+                          🔨 On-Site Work
+                        </span>
+                      </div>
+
+                      <div className="p-3.5 space-y-2">
+                        <h5 className="text-xs font-bold text-white truncate" title={item.title}>
+                          {item.title}
+                        </h5>
+                        {item.description && (
+                          <p className="text-[11px] text-stone-400 line-clamp-2 leading-relaxed">
+                            {item.description}
+                          </p>
+                        )}
+                        <div className="pt-2 border-t border-white/5 flex items-center justify-between text-xs">
+                          <span className="text-[10px] text-stone-500 font-mono">ID: {String(item.id || item._id).slice(-6)}</span>
+                          <button
+                            onClick={() => handleDeleteGalleryItem(item.id || item._id, item.title)}
+                            className="text-red-400 hover:text-red-300 p-1.5 rounded-lg bg-red-950/20 hover:bg-red-950/40"
+                            title="Delete photo"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           )}
@@ -1690,7 +2177,70 @@ export const AdminDashboard = () => {
             </div>
           )}
 
-          {/* TAB 10: PVC BRANDS & MATERIALS */}
+          {/* TAB: SERVICE COVERAGE AREAS CMS */}
+          {activeTab === 'locations' && (
+            <div className="max-w-4xl space-y-6">
+              <div className="bg-[#141B28] border border-white/5 rounded-2xl p-6 space-y-5">
+                <div className="border-b border-white/5 pb-4">
+                  <h3 className="font-serif font-bold text-base text-white">Ahmedabad Service Coverage Areas</h3>
+                  <p className="text-xs text-stone-400 mt-1">Manage all local areas where Shree Shyam PVC Interior provides on-site measurement and installation.</p>
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold text-stone-300 block mb-2">Active Service Localities ({(settingsData.serviceLocations || []).length})</label>
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {(settingsData.serviceLocations || []).map(loc => (
+                      <span
+                        key={loc}
+                        className="px-3 py-1.5 rounded-xl bg-luxury-gold/15 border border-luxury-gold/30 text-luxury-gold text-xs font-bold flex items-center gap-2"
+                      >
+                        <MapPin className="w-3 h-3" />
+                        <span>{loc}</span>
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveLocation(loc)}
+                          className="hover:text-red-400 transition-colors"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      placeholder="Add new locality (e.g. Science City, Prahlad Nagar, Chandkheda)"
+                      value={newLocationInput}
+                      onChange={(e) => setNewLocationInput(e.target.value)}
+                      onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddLocation(); } }}
+                      className="p-2.5 rounded-xl bg-[#0B0F17] border border-white/10 text-white text-xs focus:ring-2 focus:ring-luxury-gold/50 focus:outline-none flex-1 max-w-sm"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleAddLocation}
+                      className="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold flex items-center gap-1.5 transition-colors"
+                    >
+                      <Plus className="w-4 h-4" />
+                      <span>Add Locality</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div className="pt-3">
+                  <button
+                    onClick={handleSaveSettings}
+                    className="px-5 py-2.5 rounded-xl bg-luxury-gold hover:bg-luxury-goldDark text-obsidian text-xs font-bold shadow-md flex items-center gap-2"
+                  >
+                    <Save className="w-4 h-4" />
+                    <span>Save Service Localities</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* TAB: PVC BRANDS & MATERIALS */}
           {activeTab === 'brands' && (
             <div className="max-w-4xl space-y-6">
               <div className="bg-[#141B28] border border-white/5 rounded-2xl p-6 space-y-5">
@@ -1766,6 +2316,61 @@ export const AdminDashboard = () => {
                   >
                     <Save className="w-4 h-4" />
                     <span>Save Brand Settings</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* TAB: BUSINESS & LEGAL CMS */}
+          {activeTab === 'legal' && (
+            <div className="max-w-4xl space-y-6">
+              <div className="bg-[#141B28] border border-white/5 rounded-2xl p-6 space-y-5">
+                <div className="border-b border-white/5 pb-4">
+                  <h3 className="font-serif font-bold text-base text-white">Business Registration & Legal Details</h3>
+                  <p className="text-xs text-stone-400 mt-1">Configure official registration numbers, GST, and copyright notices shown in the website footer.</p>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-xs font-bold text-stone-300 block mb-1">GSTIN / MSME Registration Number</label>
+                    <input
+                      type="text"
+                      value={settingsData.gstNumber}
+                      onChange={(e) => setSettingsData(prev => ({ ...prev, gstNumber: e.target.value }))}
+                      placeholder="e.g. 24AAAAA0000A1Z5"
+                      className="w-full p-3 rounded-xl bg-[#0B0F17] border border-white/10 text-white text-xs focus:ring-2 focus:ring-luxury-gold/50 focus:outline-none font-mono"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-bold text-stone-300 block mb-1">State & Jurisdiction</label>
+                    <input
+                      type="text"
+                      value={settingsData.state}
+                      onChange={(e) => setSettingsData(prev => ({ ...prev, state: e.target.value }))}
+                      className="w-full p-3 rounded-xl bg-[#0B0F17] border border-white/10 text-white text-xs focus:ring-2 focus:ring-luxury-gold/50 focus:outline-none"
+                    />
+                  </div>
+
+                  <div className="sm:col-span-2">
+                    <label className="text-xs font-bold text-stone-300 block mb-1">Footer Copyright Text</label>
+                    <input
+                      type="text"
+                      value={settingsData.footerCopyright}
+                      onChange={(e) => setSettingsData(prev => ({ ...prev, footerCopyright: e.target.value }))}
+                      className="w-full p-3 rounded-xl bg-[#0B0F17] border border-white/10 text-white text-xs focus:ring-2 focus:ring-luxury-gold/50 focus:outline-none"
+                    />
+                  </div>
+                </div>
+
+                <div className="pt-3">
+                  <button
+                    onClick={handleSaveSettings}
+                    className="px-5 py-2.5 rounded-xl bg-luxury-gold hover:bg-luxury-goldDark text-obsidian text-xs font-bold shadow-md flex items-center gap-2"
+                  >
+                    <Save className="w-4 h-4" />
+                    <span>Save Legal Settings</span>
                   </button>
                 </div>
               </div>
