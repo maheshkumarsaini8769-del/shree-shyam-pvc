@@ -39,7 +39,7 @@ export const AdminLoginPage = () => {
       // Save token and login in AuthContext
       localStorage.setItem('sspi_token', data.token);
       if (login) {
-        login(data.user, data.token);
+        await login(data.user, data.token);
       }
       
       const destination = location.state?.from?.pathname || '/admin';

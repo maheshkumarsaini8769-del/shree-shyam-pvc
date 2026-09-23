@@ -24,8 +24,13 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  const login = async (identifier, password) => {
-    const data = await api.login({ identifier, password });
+  const login = async (identifierOrUser, passwordOrToken) => {
+    if (typeof identifierOrUser === 'object' && identifierOrUser !== null) {
+      if (passwordOrToken) localStorage.setItem('sspi_token', passwordOrToken);
+      setUser(identifierOrUser);
+      return identifierOrUser;
+    }
+    const data = await api.login({ identifier: identifierOrUser, password: passwordOrToken });
     localStorage.setItem('sspi_token', data.token);
     setUser(data.user);
     return data.user;
