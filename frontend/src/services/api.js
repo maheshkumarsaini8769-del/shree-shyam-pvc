@@ -99,6 +99,12 @@ export const api = {
       body: JSON.stringify(updateData)
     }).then(handleResponse),
 
+  adminDeleteBooking: (id) =>
+    fetch(`${API_BASE}/bookings/admin/${id}`, {
+      method: 'DELETE',
+      headers: getHeaders()
+    }).then(handleResponse),
+
   // Gallery
   getGallery: (category) => {
     const url = category && category !== 'all' ? `${API_BASE}/gallery?category=${encodeURIComponent(category)}` : `${API_BASE}/gallery`;
@@ -180,6 +186,13 @@ export const api = {
       headers: getHeaders()
     }).then(handleResponse),
 
+  adminReplyReview: (id, replyText) =>
+    fetch(`${API_BASE}/reviews/admin/${id}/reply`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify({ replyText })
+    }).then(handleResponse),
+
   // FAQs
   getFaqs: (category) => {
     const url = category && category !== 'all' ? `${API_BASE}/faqs?category=${encodeURIComponent(category)}` : `${API_BASE}/faqs`;
@@ -230,6 +243,30 @@ export const api = {
   adminMarkNotificationRead: (id) =>
     fetch(`${API_BASE}/dashboard/notifications/${id}/read`, {
       method: 'PATCH',
+      headers: getHeaders()
+    }).then(handleResponse),
+
+  // Email Authority Whitelist Management
+  adminGetEmailAuthorities: () =>
+    fetch(`${API_BASE}/auth/admin/authorities`, { headers: getHeaders() }).then(handleResponse),
+
+  adminAddEmailAuthority: (data) =>
+    fetch(`${API_BASE}/auth/admin/authorities`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify(data)
+    }).then(handleResponse),
+
+  adminUpdateEmailAuthority: (id, data) =>
+    fetch(`${API_BASE}/auth/admin/authorities/${id}`, {
+      method: 'PATCH',
+      headers: getHeaders(),
+      body: JSON.stringify(data)
+    }).then(handleResponse),
+
+  adminDeleteEmailAuthority: (id) =>
+    fetch(`${API_BASE}/auth/admin/authorities/${id}`, {
+      method: 'DELETE',
       headers: getHeaders()
     }).then(handleResponse)
 };

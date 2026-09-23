@@ -1,74 +1,99 @@
-const store = require('../config/store');
+const connectDB = require('../config/db');
+const Booking = require('../models/Booking');
+const Enquiry = require('../models/Enquiry');
+const Review = require('../models/Review');
+const AuthorizedAdmin = require('../models/AuthorizedAdmin');
 
-const bookingsCollection = store.getCollection('bookings');
-const enquiriesCollection = store.getCollection('enquiries');
-const servicesCollection = store.getCollection('services');
-const notificationsCollection = store.getCollection('notifications');
-
-const getDashboardStats = (req, res) => {
-  const bookings = bookingsCollection.find();
-  const enquiries = enquiriesCollection.find();
-
-  const totalBookings = bookings.length;
-  const pending = bookings.filter(b => b.status === 'Pending').length;
-  const confirmed = bookings.filter(b => b.status === 'Confirmed').length;
-  const siteVisits = bookings.filter(b => b.status === 'Site Visit Scheduled').length;
-  const completed = bookings.filter(b => b.status === 'Completed').length;
-  const cancelled = bookings.filter(b => b.status === 'Cancelled').length;
-
-  const newEnquiries = enquiries.filter(e => e.status === 'New').length;
-
-  const todayStr = new Date().toISOString().split('T')[0];
-  const todaysVisits = bookings.filter(b => b.preferredDate === todayStr || b.scheduledDate === todayStr).length;
-
-  // Status breakdown
-  const statusCounts = {
-    Pending: pending,
-    Confirmed: confirmed,
-    'Site Visit Scheduled': siteVisits,
-    'In Discussion': bookings.filter(b => b.status === 'In Discussion').length,
-    'Work Started': bookings.filter(b => b.status === 'Work Started').length,
-    Completed: completed,
-    Cancelled: cancelled
-  };
-
-  // Recent 5 bookings
-  const recentBookings = [...bookings]
-    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-    .slice(0, 5);
-
-  // Recent 5 enquiries
-  const recentEnquiries = [...enquiries]
-    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-    .slice(0, 5);
-
-  res.json({
-    metrics: {
+const getDashboardStats = async (req, res) => {
+  try {
+    await connectDB();
+    const [
       totalBookings,
-      pending,
-      confirmed,
-      siteVisits,
-      completed,
-      cancelled,
+      pendingBookings,
+      confirmedBookings,
+      completedBookings,
+      totalEnquiries,
       newEnquiries,
-      todaysVisits
-    },
-    statusCounts,
-    recentBookings,
-    recentEnquiries
-  });
+      totalReviews,
+      approvedReviews,
+      totalAdmins,
+      recentBookings,
+      recentReviews
+    ] = await Promise.all([
+      Booking.countDocuments(),
+      Booking.countDocuments({ status: 'Pending' }),
+      Booking.countDocuments({ status: 'Confirmed' }),
+      Booking.countDocuments({ status: 'Completed' }),
+      Enquiry.countDocuments(),
+      Enquiry.countDocuments({ status: 'New' }),
+      Review.countDocuments(),
+      Review.countDocuments({ status: 'Approved' }),
+      AuthorizedAdmin.countDocuments({ status: 'active' }),
+      Booking.find().sort({ createdAt: -1 }).limit(5),
+      Review.find().sort({ createdAt: -1 }).limit(5)
+    ]);
+
+    // Average rating
+    const reviews = await Review.find({ status: 'Approved' }).select('rating');
+    const avgRating = reviews.length > 0 
+      ? (reviews.reduce((acc, r) => acc + r.rating, 0) / reviews.length).toFixed(1) 
+      : '5.0';
+
+    res.json({
+      metrics: {
+        totalBookings,
+        pending: pendingBookings,
+        confirmed: confirmedBookings,
+        completed: completedBookings,
+        totalEnquiries,
+        newEnquiries,
+        totalReviews,
+        approvedReviews,
+        totalAdmins,
+        avgRating
+      },
+      recentBookings,
+      recentReviews
+    });
+  } catch (err) {
+    res.status(500).json({ message: 'Error retrieving dashboard stats', error: err.message });
+  }
 };
 
-const getNotifications = (req, res) => {
-  const list = notificationsCollection.find();
-  list.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-  res.json(list);
+const getNotifications = async (req, res) => {
+  try {
+    await connectDB();
+    // Return newest pending bookings and new enquiries as notifications
+    const [pendingBookings, newEnquiries] = await Promise.all([
+      Booking.find({ status: 'Pending' }).sort({ createdAt: -1 }).limit(5),
+      Enquiry.find({ status: 'New' }).sort({ createdAt: -1 }).limit(5)
+    ]);
+
+    const notifs = [
+      ...pendingBookings.map(b => ({
+        id: b._id,
+        title: 'New Site Visit Request',
+        message: `${b.name} (${b.phone}) booked ${b.serviceName}`,
+        date: b.createdAt,
+        type: 'booking'
+      })),
+      ...newEnquiries.map(e => ({
+        id: e._id,
+        title: 'New Website Enquiry',
+        message: `${e.name} enquired about ${e.service}`,
+        date: e.createdAt,
+        type: 'enquiry'
+      }))
+    ].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    res.json(notifs);
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching notifications', error: err.message });
+  }
 };
 
 const markNotificationRead = (req, res) => {
-  const { id } = req.params;
-  const updated = notificationsCollection.findByIdAndUpdate(id, { read: true });
-  res.json(updated || { success: true });
+  res.json({ success: true });
 };
 
 module.exports = {

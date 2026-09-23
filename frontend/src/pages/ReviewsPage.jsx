@@ -84,6 +84,7 @@ export const ReviewsPage = () => {
             service: r.serviceUsed || 'Custom PVC Interior',
             rating: r.rating || 5,
             comment: r.reviewText || r.comment,
+            adminReply: r.adminReply || null,
             date: r.createdAt ? new Date(r.createdAt).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Recently',
             likes: Math.floor(Math.random() * 8) + 3
           }));
@@ -337,6 +338,24 @@ _Visible live on Shree Shyam PVC Website_`;
             <p className="text-xs sm:text-sm text-stone-700 dark:text-stone-300 leading-relaxed">
               "{rev.comment}"
             </p>
+
+            {/* Official Team Response if present */}
+            {rev.adminReply?.text && (
+              <div className="p-3.5 rounded-xl bg-luxury-gold/5 dark:bg-luxury-gold/10 border border-luxury-gold/20 text-xs">
+                <div className="flex items-center justify-between text-luxury-goldDark dark:text-luxury-gold font-bold mb-1 text-[11px]">
+                  <span className="flex items-center gap-1.5">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-luxury-gold" />
+                    <span>Response from {rev.adminReply.repliedBy || 'Shree Shyam PVC Interior'}</span>
+                  </span>
+                  <span className="text-[10px] text-stone-400 font-mono">
+                    {rev.adminReply.repliedAt ? new Date(rev.adminReply.repliedAt).toLocaleDateString() : 'Official'}
+                  </span>
+                </div>
+                <p className="text-stone-600 dark:text-stone-300 font-sans leading-relaxed">
+                  {rev.adminReply.text}
+                </p>
+              </div>
+            )}
 
             {/* Helpful Counter */}
             <div className="pt-2 border-t border-stone-100 dark:border-white/10 flex items-center justify-between text-[11px] text-stone-500 dark:text-stone-400">

@@ -1,61 +1,72 @@
-const store = require('../config/store');
+const connectDB = require('../config/db');
+const Faq = require('../models/Faq');
 
-const faqs = store.getCollection('faqs');
-
-const getActiveFaqs = (req, res) => {
-  const { category } = req.query;
-  let list = faqs.find(f => f.active !== false);
-  if (category && category.toLowerCase() !== 'all') {
-    list = list.filter(f => f.category && f.category.toLowerCase() === category.toLowerCase());
+const getAllFaqs = async (req, res) => {
+  try {
+    await connectDB();
+    const { category } = req.query;
+    const filter = {};
+    if (category && category.toLowerCase() !== 'all') {
+      filter.category = category;
+    }
+    const items = await Faq.find(filter).sort({ order: 1 });
+    res.json(items);
+  } catch (err) {
+    res.status(500).json({ message: 'Error retrieving faqs', error: err.message });
   }
-  list.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
-  res.json(list);
 };
 
-const getAllFaqsAdmin = (req, res) => {
-  const list = faqs.find();
-  list.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
-  res.json(list);
+const createFaq = async (req, res) => {
+  try {
+    await connectDB();
+    const { question, answer, category, order } = req.body;
+    if (!question || !answer) {
+      return res.status(400).json({ message: 'Question and answer are required' });
+    }
+
+    const newFaq = await Faq.create({
+      question,
+      answer,
+      category: category || 'General',
+      order: Number(order) || 0
+    });
+
+    res.status(201).json(newFaq);
+  } catch (err) {
+    res.status(500).json({ message: 'Error creating FAQ', error: err.message });
+  }
 };
 
-const createFaq = (req, res) => {
-  const { question, answer, category, active } = req.body;
-  if (!question || !answer) {
-    return res.status(400).json({ message: 'Question and answer are required' });
+const updateFaq = async (req, res) => {
+  try {
+    await connectDB();
+    const { id } = req.params;
+    const updated = await Faq.findByIdAndUpdate(id, req.body, { new: true });
+    if (!updated) {
+      return res.status(404).json({ message: 'FAQ not found' });
+    }
+    res.json(updated);
+  } catch (err) {
+    res.status(500).json({ message: 'Error updating FAQ', error: err.message });
   }
-
-  const newFaq = faqs.create({
-    question: question.trim(),
-    answer: answer.trim(),
-    category: category || 'General',
-    active: active !== undefined ? active : true,
-    sortOrder: faqs.countDocuments() + 1
-  });
-
-  res.status(201).json(newFaq);
 };
 
-const updateFaq = (req, res) => {
-  const { id } = req.params;
-  const updated = faqs.findByIdAndUpdate(id, req.body);
-  if (!updated) {
-    return res.status(404).json({ message: 'FAQ not found' });
+const deleteFaq = async (req, res) => {
+  try {
+    await connectDB();
+    const { id } = req.params;
+    const deleted = await Faq.findByIdAndDelete(id);
+    if (!deleted) {
+      return res.status(404).json({ message: 'FAQ not found' });
+    }
+    res.json({ message: 'FAQ deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ message: 'Error deleting FAQ', error: err.message });
   }
-  res.json(updated);
-};
-
-const deleteFaq = (req, res) => {
-  const { id } = req.params;
-  const deleted = faqs.findByIdAndDelete(id);
-  if (!deleted) {
-    return res.status(404).json({ message: 'FAQ not found' });
-  }
-  res.json({ message: 'FAQ deleted' });
 };
 
 module.exports = {
-  getActiveFaqs,
-  getAllFaqsAdmin,
+  getAllFaqs,
   createFaq,
   updateFaq,
   deleteFaq

@@ -27,6 +27,11 @@ import { LoginPage } from './pages/customer/LoginPage';
 import { RegisterPage } from './pages/customer/RegisterPage';
 import { MyBookingsPage } from './pages/customer/MyBookingsPage';
 
+// Admin Pages & Protection
+import { AdminLoginPage } from './pages/admin/AdminLoginPage';
+import { AdminDashboard } from './pages/admin/AdminDashboard';
+import { AdminRoute } from './components/admin/AdminRoute';
+
 export function App() {
   return (
     <ThemeProvider>
@@ -60,6 +65,17 @@ export function App() {
               {/* 404 */}
               <Route path="/404" element={<NotFoundPage />} />
             </Route>
+
+            {/* Admin Portal Routes (Self-contained layout) */}
+            <Route path="/admin/login" element={<AdminLoginPage />} />
+            <Route
+              path="/admin"
+              element={
+                <AdminRoute>
+                  <AdminDashboard />
+                </AdminRoute>
+              }
+            />
 
             {/* Catch all fallback */}
             <Route path="*" element={<Navigate to="/404" replace />} />

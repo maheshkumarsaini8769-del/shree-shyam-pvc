@@ -1,7 +1,5 @@
-const store = require('../config/store');
-
-const bookings = store.getCollection('bookings');
-const notifications = store.getCollection('notifications');
+const connectDB = require('../config/db');
+const Booking = require('../models/Booking');
 
 const generateBookingId = () => {
   const num = Math.floor(100000 + Math.random() * 900000);
@@ -10,6 +8,7 @@ const generateBookingId = () => {
 
 const createBooking = async (req, res) => {
   try {
+    await connectDB();
     const {
       name,
       phone,
@@ -22,8 +21,6 @@ const createBooking = async (req, res) => {
       address,
       landmark,
       pincode,
-      latitude,
-      longitude,
       message
     } = req.body;
 
@@ -31,7 +28,6 @@ const createBooking = async (req, res) => {
       return res.status(400).json({ message: 'Name, mobile phone, service, date, and time slot are required' });
     }
 
-    // Phone validation (accepts 10 digits or with +91)
     const phoneDigits = phone.replace(/[^0-9]/g, '');
     if (phoneDigits.length < 10) {
       return res.status(400).json({ message: 'Please enter a valid 10-digit mobile number' });
@@ -40,7 +36,7 @@ const createBooking = async (req, res) => {
     const bookingId = generateBookingId();
     const customerId = req.user ? req.user.id : null;
 
-    const newBooking = bookings.create({
+    const newBooking = await Booking.create({
       bookingId,
       customerId,
       name: name.trim(),
@@ -54,27 +50,16 @@ const createBooking = async (req, res) => {
       address: address ? address.trim() : '',
       landmark: landmark ? landmark.trim() : '',
       pincode: pincode ? pincode.trim() : '382418',
-      latitude: latitude || null,
-      longitude: longitude || null,
       message: message ? message.trim() : '',
       status: 'Pending',
       adminNotes: '',
       statusHistory: [
         {
           status: 'Pending',
-          timestamp: new Date().toISOString(),
+          timestamp: new Date(),
           note: 'Booking request received online'
         }
       ]
-    });
-
-    // Notify Admin
-    notifications.create({
-      type: 'booking',
-      title: 'New Site Visit Request',
-      message: `${name} requested a visit for ${serviceName} on ${preferredDate}`,
-      referenceId: bookingId,
-      read: false
     });
 
     res.status(201).json({
@@ -89,14 +74,16 @@ const createBooking = async (req, res) => {
 
 const getBookingById = async (req, res) => {
   try {
+    await connectDB();
     const { id } = req.params;
     const cleanId = id.trim().toUpperCase();
 
-    const booking = bookings.findOne(b => 
-      b.bookingId === cleanId || 
-      b.id === id || 
-      b._id === id
-    );
+    const booking = await Booking.findOne({
+      $or: [
+        { bookingId: cleanId },
+        { _id: id.match(/^[0-9a-fA-F]{24}$/) ? id : null }
+      ].filter(Boolean)
+    });
 
     if (!booking) {
       return res.status(404).json({ message: `No booking found for reference ID ${id}` });
@@ -110,18 +97,20 @@ const getBookingById = async (req, res) => {
 
 const getMyBookings = async (req, res) => {
   try {
+    await connectDB();
     const phone = req.query.phone;
     const userId = req.user ? req.user.id : null;
 
-    let userBookings = [];
+    let filter = {};
     if (userId) {
-      userBookings = bookings.find(b => b.customerId === userId);
+      filter.customerId = userId;
     } else if (phone) {
       const cleanPhone = phone.replace(/[^0-9]/g, '');
-      userBookings = bookings.find(b => b.phone.replace(/[^0-9]/g, '').includes(cleanPhone));
+      filter.phone = new RegExp(cleanPhone, 'i');
     }
 
-    res.json(userBookings.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
+    const userBookings = await Booking.find(filter).sort({ createdAt: -1 });
+    res.json(userBookings);
   } catch (err) {
     res.status(500).json({ message: 'Error retrieving bookings', error: err.message });
   }
@@ -130,32 +119,33 @@ const getMyBookings = async (req, res) => {
 // Admin Endpoints
 const getAllBookings = async (req, res) => {
   try {
+    await connectDB();
     const { status, service, date, search } = req.query;
-    let list = bookings.find();
+    const filter = {};
 
     if (status && status !== 'all') {
-      list = list.filter(b => b.status.toLowerCase() === status.toLowerCase());
+      filter.status = status;
     }
 
     if (service && service !== 'all') {
-      list = list.filter(b => b.serviceName.toLowerCase().includes(service.toLowerCase()));
+      filter.serviceName = new RegExp(service, 'i');
     }
 
     if (date) {
-      list = list.filter(b => b.preferredDate === date);
+      filter.preferredDate = date;
     }
 
     if (search) {
-      const q = search.toLowerCase();
-      list = list.filter(b => 
-        b.bookingId.toLowerCase().includes(q) ||
-        b.name.toLowerCase().includes(q) ||
-        b.phone.toLowerCase().includes(q) ||
-        (b.area && b.area.toLowerCase().includes(q))
-      );
+      const q = new RegExp(search.trim(), 'i');
+      filter.$or = [
+        { bookingId: q },
+        { name: q },
+        { phone: q },
+        { area: q }
+      ];
     }
 
-    list.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    const list = await Booking.find(filter).sort({ createdAt: -1 });
     res.json(list);
   } catch (err) {
     res.status(500).json({ message: 'Error fetching bookings', error: err.message });
@@ -164,37 +154,59 @@ const getAllBookings = async (req, res) => {
 
 const updateBookingStatus = async (req, res) => {
   try {
+    await connectDB();
     const { id } = req.params;
-    const { status, adminNotes, scheduledDate, scheduledTime } = req.body;
+    const { status, adminNotes } = req.body;
 
-    const booking = bookings.findById(id) || bookings.findOne(b => b.bookingId === id);
+    const booking = await Booking.findOne({
+      $or: [
+        { bookingId: id },
+        { _id: id.match(/^[0-9a-fA-F]{24}$/) ? id : null }
+      ].filter(Boolean)
+    });
+
     if (!booking) {
       return res.status(404).json({ message: 'Booking not found' });
     }
 
-    const updates = {};
     if (status) {
-      updates.status = status;
-      const history = booking.statusHistory || [];
-      history.push({
+      booking.status = status;
+      booking.statusHistory.push({
         status,
-        timestamp: new Date().toISOString(),
+        timestamp: new Date(),
         note: adminNotes || `Status updated to ${status}`
       });
-      updates.statusHistory = history;
     }
 
     if (adminNotes !== undefined) {
-      updates.adminNotes = adminNotes;
+      booking.adminNotes = adminNotes;
     }
 
-    if (scheduledDate) updates.scheduledDate = scheduledDate;
-    if (scheduledTime) updates.scheduledTime = scheduledTime;
-
-    const updated = bookings.findByIdAndUpdate(booking.id, updates);
-    res.json(updated);
+    await booking.save();
+    res.json(booking);
   } catch (err) {
     res.status(500).json({ message: 'Error updating booking', error: err.message });
+  }
+};
+
+const deleteBooking = async (req, res) => {
+  try {
+    await connectDB();
+    const { id } = req.params;
+    const deleted = await Booking.findOneAndDelete({
+      $or: [
+        { bookingId: id },
+        { _id: id.match(/^[0-9a-fA-F]{24}$/) ? id : null }
+      ].filter(Boolean)
+    });
+
+    if (!deleted) {
+      return res.status(404).json({ message: 'Booking not found' });
+    }
+
+    res.json({ success: true, message: 'Booking deleted permanently' });
+  } catch (err) {
+    res.status(500).json({ message: 'Error deleting booking', error: err.message });
   }
 };
 
@@ -203,5 +215,6 @@ module.exports = {
   getBookingById,
   getMyBookings,
   getAllBookings,
-  updateBookingStatus
+  updateBookingStatus,
+  deleteBooking
 };
