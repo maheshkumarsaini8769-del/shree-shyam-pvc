@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="100%" height="100%">
+  <defs>
+    <linearGradient id="kitWall" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#F5F2EB"/>
+      <stop offset="100%" stop-color="#EBE3D7"/>
+    </linearGradient>
+    <linearGradient id="backsplash" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="50%" stop-color="#F0ECE4"/>
+      <stop offset="100%" stop-color="#FAF8F5"/>
+    </linearGradient>
+    <linearGradient id="countertop" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#2D2B2A"/>
+      <stop offset="100%" stop-color="#1A1817"/>
+    </linearGradient>
+    <linearGradient id="pvcShine" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#6E473B"/>
+      <stop offset="100%" stop-color="#55362C"/>
+    </linearGradient>
+    <linearGradient id="glossCream" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFDF9"/>
+      <stop offset="100%" stop-color="#EFE9DE"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Wall & Floor -->
+  <rect width="800" height="420" fill="url(#kitWall)"/>
+  <polygon points="0,420 800,420 800,600 0,600" fill="#B3A18F"/>
+  <line x1="250" y1="420" x2="180" y2="600" stroke="#9A8877" stroke-width="1.5"/>
+  <line x1="550" y1="420" x2="520" y2="600" stroke="#9A8877" stroke-width="1.5"/>
+
+  <!-- Backsplash tiles -->
+  <rect x="60" y="190" width="680" height="150" fill="url(#backsplash)" stroke="#D8CEBF" stroke-width="1"/>
+  <!-- Subtle subway tile pattern -->
+  <g stroke="#E5DEC4" stroke-width="1" opacity="0.6">
+    <line x1="60" y1="220" x2="740" y2="220"/>
+    <line x1="60" y1="250" x2="740" y2="250"/>
+    <line x1="60" y1="280" x2="740" y2="280"/>
+    <line x1="60" y1="310" x2="740" y2="310"/>
+  </g>
+
+  <!-- Upper Cabinets (Glossy Cream PVC) -->
+  <g>
+    <!-- Upper cabinet body -->
+    <rect x="60" y="40" width="680" height="150" fill="url(#glossCream)" stroke="#D8CDBE" stroke-width="2" rx="3"/>
+    <!-- Cabinet doors separation -->
+    <line x1="230" y1="40" x2="230" y2="190" stroke="#D8CDBE" stroke-width="2"/>
+    <line x1="400" y1="40" x2="400" y2="190" stroke="#D8CDBE" stroke-width="2"/>
+    <line x1="570" y1="40" x2="570" y2="190" stroke="#D8CDBE" stroke-width="2"/>
+    
+    <!-- Concealed G-Profile Handles -->
+    <rect x="75" y="175" width="140" height="6" fill="#6E473B" rx="2"/>
+    <rect x="245" y="175" width="140" height="6" fill="#6E473B" rx="2"/>
+    <rect x="415" y="175" width="140" height="6" fill="#6E473B" rx="2"/>
+    <rect x="585" y="175" width="140" height="6" fill="#6E473B" rx="2"/>
+    
+    <!-- Under-cabinet warm LED light glow -->
+    <rect x="60" y="188" width="680" height="10" fill="#FFEAA7" opacity="0.75" filter="blur(4px)"/>
+  </g>
+
+  <!-- Modern Stainless Steel Chimney Hood -->
+  <g transform="translate(340, 70)">
+    <polygon points="30,0 90,0 110,80 10,80" fill="#4B4B4B"/>
+    <rect x="10" y="80" width="100" height="12" rx="2" fill="#2E2E2A"/>
+    <rect x="45" y="0" width="30" height="40" fill="#66615B"/>
+  </g>
+
+  <!-- Quartz / Granite Black Countertop -->
+  <rect x="50" y="335" width="700" height="25" rx="3" fill="url(#countertop)"/>
+  <rect x="50" y="335" width="700" height="5" fill="#444240"/>
+
+  <!-- Base Cabinets (Deep Rich Warm Brown PVC) -->
+  <g>
+    <rect x="60" y="360" width="680" height="180" fill="url(#pvcShine)" stroke="#452A21" stroke-width="2" rx="3"/>
+    <!-- Base Drawer and Shutter lines -->
+    <line x1="230" y1="360" x2="230" y2="540" stroke="#452A21" stroke-width="2"/>
+    <line x1="400" y1="360" x2="400" y2="540" stroke="#452A21" stroke-width="2"/>
+    <line x1="570" y1="360" x2="570" y2="540" stroke="#452A21" stroke-width="2"/>
+
+    <!-- Drawer horizontal divisions on middle sections -->
+    <line x1="230" y1="420" x2="400" y2="420" stroke="#452A21" stroke-width="2"/>
+    <line x1="230" y1="480" x2="400" y2="480" stroke="#452A21" stroke-width="2"/>
+
+    <!-- Premium Edge Pull Handles -->
+    <rect x="80" y="375" width="125" height="5" fill="#D4AF37" rx="1"/>
+    <rect x="250" y="375" width="130" height="5" fill="#D4AF37" rx="1"/>
+    <rect x="250" y="435" width="130" height="5" fill="#D4AF37" rx="1"/>
+    <rect x="250" y="495" width="130" height="5" fill="#D4AF37" rx="1"/>
+    <rect x="420" y="375" width="130" height="5" fill="#D4AF37" rx="1"/>
+    <rect x="590" y="375" width="130" height="5" fill="#D4AF37" rx="1"/>
+
+    <!-- Stainless steel skirt plinth at bottom -->
+    <rect x="60" y="540" width="680" height="20" fill="#3A3835"/>
+  </g>
+
+  <!-- Gas Cooktop on counter -->
+  <g transform="translate(350, 320)">
+    <rect x="0" y="0" width="100" height="15" rx="3" fill="#151515"/>
+    <circle cx="28" cy="7" r="7" fill="#3D3C3A"/>
+    <circle cx="72" cy="7" r="7" fill="#3D3C3A"/>
+    <circle cx="28" cy="7" r="4" fill="#C62828"/>
+    <circle cx="72" cy="7" r="4" fill="#C62828"/>
+  </g>
+
+  <!-- Badge Tag -->
+  <g transform="translate(560, 60)">
+    <rect width="160" height="30" rx="15" fill="#C62828" opacity="0.95"/>
+    <text x="80" y="20" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" font-size="11" fill="#FFFFFF" text-anchor="middle">100% WATERPROOF PVC</text>
+  </g>
+</svg>

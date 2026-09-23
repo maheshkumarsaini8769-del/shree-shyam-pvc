@@ -1,0 +1,433 @@
+{
+  "users": [
+    {
+      "id": "admin_1",
+      "name": "Shree Shyam Admin",
+      "email": "admin@shreeshyam.com",
+      "phone": "+91 8209836370",
+      "password": "$2a$10$IG4fBrX8R9uUfirvdhoEG.8viWqpaSVCFTuXzhYA1bNcTy10M4t0O",
+      "role": "admin",
+      "_id": "admin_1",
+      "createdAt": "2026-09-23T03:45:56.196Z",
+      "updatedAt": "2026-09-23T03:45:56.197Z"
+    }
+  ],
+  "services": [
+    {
+      "id": "pvc-modular-kitchen",
+      "slug": "pvc-modular-kitchen",
+      "title": "PVC Modular Kitchen",
+      "category": "Kitchen",
+      "shortDescription": "Modern, termite-proof, and 100% water-resistant modular kitchens tailored to your cooking space.",
+      "fullDescription": "Upgrade your culinary space with our custom-crafted PVC modular kitchens. Built using premium KAKA PVC profiles, our kitchens resist water splashing, humidity, turmeric stains, and pests, ensuring lasting hygiene and elegance.",
+      "imageKey": "kitchen",
+      "features": [
+        "100% Waterproof and moisture resistant",
+        "Termite and borer proof construction",
+        "High load-bearing capacity cabinets",
+        "Soft-close hinges and hydraulic fittings",
+        "Available in glossy, matte, and wood grain finishes"
+      ],
+      "availableDesigns": [
+        "L-Shaped Kitchen",
+        "U-Shaped Kitchen",
+        "Straight Kitchen",
+        "Parallel Kitchen",
+        "Island Kitchen"
+      ],
+      "active": true,
+      "sortOrder": 1,
+      "_id": "pvc-modular-kitchen",
+      "createdAt": "2026-09-23T03:45:56.202Z",
+      "updatedAt": "2026-09-23T03:45:56.202Z"
+    },
+    {
+      "id": "pvc-wardrobe",
+      "slug": "pvc-wardrobe",
+      "title": "PVC Wardrobe",
+      "category": "Wardrobe",
+      "shortDescription": "Spacious, elegant wardrobes that protect your clothing and valuables from dampness and termites.",
+      "fullDescription": "Our customized PVC wardrobes combine generous storage with contemporary aesthetic charm. Perfectly structured with sliding or hinged doors, internal drawers, and organizers to suit your bedroom.",
+      "imageKey": "wardrobe",
+      "features": [
+        "Zero risk of fungal growth or damp odors",
+        "Smooth sliding track systems & quiet doors",
+        "Custom internal shelving, lockers, and hanging rods",
+        "Scratch-resistant textured panel surfaces",
+        "Available in 2-door, 3-door, 4-door, and floor-to-ceiling configurations"
+      ],
+      "availableDesigns": [
+        "Sliding Door Wardrobe",
+        "Hinged Door Wardrobe",
+        "Walk-in Wardrobe",
+        "Loft Integrated Wardrobe"
+      ],
+      "active": true,
+      "sortOrder": 2,
+      "_id": "pvc-wardrobe",
+      "createdAt": "2026-09-23T03:45:56.203Z",
+      "updatedAt": "2026-09-23T03:45:56.203Z"
+    },
+    {
+      "id": "pvc-doors",
+      "slug": "pvc-doors",
+      "title": "PVC Doors & Frames",
+      "category": "Doors",
+      "shortDescription": "Heavy-duty, weather-resistant PVC doors ideal for bathrooms, balconies, bedrooms, and offices.",
+      "fullDescription": "Engineered for tough moisture-prone environments, our PVC doors withstand daily water exposure without warping, swelling, or rotting. Fitted with durable locksets and matching PVC frames.",
+      "imageKey": "doors",
+      "features": [
+        "No warping, expansion, or shrinkage during monsoon",
+        "Ideal for bathroom, toilet, and utility areas",
+        "Lightweight yet strong multi-chamber design",
+        "Zero painting or polishing required over time",
+        "Available in printed decorative and plain solid textures"
+      ],
+      "availableDesigns": [
+        "Flush PVC Doors",
+        "Designer Embossed Doors",
+        "Panel Doors",
+        "Glazed Combination Doors"
+      ],
+      "active": true,
+      "sortOrder": 3,
+      "_id": "pvc-doors",
+      "createdAt": "2026-09-23T03:45:56.203Z",
+      "updatedAt": "2026-09-23T03:45:56.203Z"
+    },
+    {
+      "id": "pvc-wall-panels",
+      "slug": "pvc-wall-panels",
+      "title": "PVC Wall Panels & Ceilings",
+      "category": "Wall Panels",
+      "shortDescription": "Seamless wall and false ceiling cladding that conceals dampness and enhances room aesthetics.",
+      "fullDescription": "Transform plain or damp walls into stunning accent spaces. PVC wall paneling and false ceilings insulate against heat, cover surface imperfections, and are easily wiped clean with a damp cloth.",
+      "imageKey": "wallPanels",
+      "features": [
+        "Instant remedy for damp walls and paint peeling",
+        "Thermal insulation and acoustic dampening",
+        "Interlocking tongue-and-groove joint system",
+        "Fire retardant grade profile material",
+        "Marble finish, wooden slat, and 3D textured choices"
+      ],
+      "availableDesigns": [
+        "Fluted Louver Panels",
+        "Marble Finish Sheets",
+        "Wooden Grain Ceiling",
+        "Geometric Feature Wall"
+      ],
+      "active": true,
+      "sortOrder": 4,
+      "_id": "pvc-wall-panels",
+      "createdAt": "2026-09-23T03:45:56.204Z",
+      "updatedAt": "2026-09-23T03:45:56.204Z"
+    },
+    {
+      "id": "tv-unit-panels",
+      "slug": "tv-unit-panels",
+      "title": "TV Unit & Entertainment Panels",
+      "category": "TV Unit",
+      "shortDescription": "Sleek entertainment consoles and accent backdrops with integrated wire concealment.",
+      "fullDescription": "Make your living room the centerpiece of your home. Our custom PVC TV units combine wall-mounted back panels, LED cove lighting channels, floating shelves, and media consoles without bulky wood weight.",
+      "imageKey": "tvUnit",
+      "features": [
+        "Hidden cable routing channels for neat visual appeal",
+        "Floating console storage for set-top boxes and gaming units",
+        "Backlit LED profile illumination options",
+        "Zero termite decay around electronics",
+        "Customizable for any TV screen size (32\" to 85\"+)"
+      ],
+      "availableDesigns": [
+        "Minimalist Floating Unit",
+        "Full Wall Slat Panel Unit",
+        "Marble & Wood Combo Backdrop",
+        "Compact Corner Unit"
+      ],
+      "active": true,
+      "sortOrder": 5,
+      "_id": "tv-unit-panels",
+      "createdAt": "2026-09-23T03:45:56.204Z",
+      "updatedAt": "2026-09-23T03:45:56.204Z"
+    },
+    {
+      "id": "office-interior",
+      "slug": "office-interior",
+      "title": "Office & Commercial Interior",
+      "category": "Office",
+      "shortDescription": "Professional, low-maintenance workstations, partitions, and conference interiors.",
+      "fullDescription": "Equip your commercial or office environment with clean, cost-effective, and long-lasting PVC modular partitions, reception backdrops, and workstations. Designed for quick installation with minimal business downtime.",
+      "imageKey": "office",
+      "features": [
+        "Modular partitions for efficient space division",
+        "Durable executive desks and cubicle separators",
+        "Acoustic PVC ceiling panels for reduced office echo",
+        "Rapid assembly and dust-free installation",
+        "Professional corporate colors and clean lines"
+      ],
+      "availableDesigns": [
+        "Workstation Cubicles",
+        "Executive Cabin Interior",
+        "Conference Room Cladding",
+        "Reception Desk & Backdrop"
+      ],
+      "active": true,
+      "sortOrder": 6,
+      "_id": "office-interior",
+      "createdAt": "2026-09-23T03:45:56.205Z",
+      "updatedAt": "2026-09-23T03:45:56.205Z"
+    }
+  ],
+  "bookings": [
+    {
+      "id": "bk_sample_1",
+      "bookingId": "SSPI-104928",
+      "name": "Ramesh Patel",
+      "phone": "+91 9825012345",
+      "serviceId": "pvc-modular-kitchen",
+      "serviceName": "PVC Modular Kitchen",
+      "preferredDate": "2026-09-25",
+      "preferredTime": "11:00 AM - 01:00 PM",
+      "city": "Ahmedabad",
+      "area": "Vastral",
+      "address": "B-204, Shivalik Residency, Near Ratanpura Road",
+      "landmark": "Opposite Vastral Metro Station",
+      "pincode": "382418",
+      "message": "Looking for an L-shaped modular kitchen for our new 3BHK flat.",
+      "status": "Confirmed",
+      "adminNotes": "Spoke with customer. Confirmed visit for 11:30 AM.",
+      "statusHistory": [
+        {
+          "status": "Pending",
+          "timestamp": "2026-09-22T03:45:56.213Z",
+          "note": "Booking submitted online"
+        },
+        {
+          "status": "Confirmed",
+          "timestamp": "2026-09-22T15:45:56.213Z",
+          "note": "Confirmed with customer by phone"
+        }
+      ],
+      "_id": "bk_sample_1",
+      "createdAt": "2026-09-23T03:45:56.213Z",
+      "updatedAt": "2026-09-23T03:45:56.213Z"
+    },
+    {
+      "bookingId": "SSPI-776819",
+      "customerId": null,
+      "name": "Harshil Dave",
+      "phone": "9825987654",
+      "serviceId": "pvc-modular-kitchen",
+      "serviceName": "PVC Modular Kitchen",
+      "preferredDate": "2026-09-28",
+      "preferredTime": "10:00 AM - 01:00 PM",
+      "city": "Ahmedabad",
+      "area": "Vastral",
+      "address": "402, Suryam Elegance, Near Canal Road",
+      "landmark": "Opp. Ashutosh Tenament",
+      "pincode": "382418",
+      "latitude": null,
+      "longitude": null,
+      "message": "Need L-shaped waterproof PVC kitchen",
+      "status": "Site Visit Scheduled",
+      "adminNotes": "Technician Amit assigned with KAKA profile shade card",
+      "statusHistory": [
+        {
+          "status": "Pending",
+          "timestamp": "2026-09-23T04:00:12.377Z",
+          "note": "Booking request received online"
+        },
+        {
+          "status": "Site Visit Scheduled",
+          "timestamp": "2026-09-23T04:00:12.623Z",
+          "note": "Technician Amit assigned with KAKA profile shade card"
+        }
+      ],
+      "id": "id_1790136012377_nq8vo",
+      "_id": "id_1790136012377_nq8vo",
+      "createdAt": "2026-09-23T04:00:12.378Z",
+      "updatedAt": "2026-09-23T04:00:12.623Z",
+      "scheduledDate": "2026-09-28",
+      "scheduledTime": "11:00 AM"
+    }
+  ],
+  "enquiries": [],
+  "gallery": [
+    {
+      "title": "Modern L-Shaped Modular Kitchen",
+      "category": "Kitchen",
+      "serviceId": "pvc-modular-kitchen",
+      "imageKey": "kitchen",
+      "altText": "Glossy White & Charcoal PVC Modular Kitchen Setup",
+      "featured": true,
+      "sortOrder": 1,
+      "id": "id_1790135156205_7qdkv",
+      "_id": "id_1790135156205_7qdkv",
+      "createdAt": "2026-09-23T03:45:56.205Z",
+      "updatedAt": "2026-09-23T03:45:56.205Z"
+    },
+    {
+      "title": "3-Door Sliding Bedroom Wardrobe",
+      "category": "Wardrobe",
+      "serviceId": "pvc-wardrobe",
+      "imageKey": "wardrobe",
+      "altText": "Textured Wood Finish PVC Wardrobe with Mirror Panel",
+      "featured": true,
+      "sortOrder": 2,
+      "id": "id_1790135156206_n7drf",
+      "_id": "id_1790135156206_n7drf",
+      "createdAt": "2026-09-23T03:45:56.206Z",
+      "updatedAt": "2026-09-23T03:45:56.206Z"
+    },
+    {
+      "title": "Waterproof Bathroom PVC Door",
+      "category": "Doors",
+      "serviceId": "pvc-doors",
+      "imageKey": "doors",
+      "altText": "Durable Solid PVC Door with Modern Handle Fitting",
+      "featured": true,
+      "sortOrder": 3,
+      "id": "id_1790135156207_nrs2k",
+      "_id": "id_1790135156207_nrs2k",
+      "createdAt": "2026-09-23T03:45:56.207Z",
+      "updatedAt": "2026-09-23T03:45:56.207Z"
+    },
+    {
+      "title": "Fluted Wooden Accent Wall Paneling",
+      "category": "Wall Panels",
+      "serviceId": "pvc-wall-panels",
+      "imageKey": "wallPanels",
+      "altText": "Interior Accent Wall using PVC Fluted Louver Panels",
+      "featured": true,
+      "sortOrder": 4,
+      "id": "id_1790135156207_m8f4w",
+      "_id": "id_1790135156207_m8f4w",
+      "createdAt": "2026-09-23T03:45:56.207Z",
+      "updatedAt": "2026-09-23T03:45:56.207Z"
+    },
+    {
+      "title": "Living Room TV Entertainment Unit",
+      "category": "TV Unit",
+      "serviceId": "tv-unit-panels",
+      "imageKey": "tvUnit",
+      "altText": "Contemporary TV Wall Unit with Floating Console",
+      "featured": true,
+      "sortOrder": 5,
+      "id": "id_1790135156208_ho0ab",
+      "_id": "id_1790135156208_ho0ab",
+      "createdAt": "2026-09-23T03:45:56.208Z",
+      "updatedAt": "2026-09-23T03:45:56.208Z"
+    },
+    {
+      "title": "Corporate Office Modular Partitioning",
+      "category": "Office",
+      "serviceId": "office-interior",
+      "imageKey": "office",
+      "altText": "PVC Office Workstations and Partition System",
+      "featured": true,
+      "sortOrder": 6,
+      "id": "id_1790135156208_raruz",
+      "_id": "id_1790135156208_raruz",
+      "createdAt": "2026-09-23T03:45:56.208Z",
+      "updatedAt": "2026-09-23T03:45:56.208Z"
+    }
+  ],
+  "reviews": [],
+  "faqs": [
+    {
+      "question": "Why choose PVC interior over conventional wood or plywood?",
+      "answer": "PVC interior materials (such as KAKA PVC profiles) are 100% waterproof and 100% termite proof. Unlike plywood, PVC does not rot, swell, peel, or harbor pests in damp climates or wet areas like kitchens and bathrooms. It also requires zero polishing and is easy to clean with a damp cloth.",
+      "category": "PVC Interior",
+      "active": true,
+      "sortOrder": 1,
+      "id": "id_1790135156209_t5cbx",
+      "_id": "id_1790135156209_t5cbx",
+      "createdAt": "2026-09-23T03:45:56.209Z",
+      "updatedAt": "2026-09-23T03:45:56.209Z"
+    },
+    {
+      "question": "Is the site visit and consultation really free?",
+      "answer": "Yes! We provide a free, no-obligation site visit across Vastral and nearby areas in Ahmedabad. Our specialist visits your location, takes exact site measurements, shows profile swatches and catalog designs, and discusses your requirements.",
+      "category": "Site Visit",
+      "active": true,
+      "sortOrder": 2,
+      "id": "id_1790135156210_h2v0u",
+      "_id": "id_1790135156210_h2v0u",
+      "createdAt": "2026-09-23T03:45:56.210Z",
+      "updatedAt": "2026-09-23T03:45:56.210Z"
+    },
+    {
+      "question": "How do I book a site visit?",
+      "answer": "Simply tap the \"Book Free Visit\" button on our website. Choose the service you need (Kitchen, Wardrobe, Doors, etc.), enter your contact details and preferred date/time slot, and provide your address or share your location. You will receive an instant booking confirmation number to track your request.",
+      "category": "Booking",
+      "active": true,
+      "sortOrder": 3,
+      "id": "id_1790135156210_7p7hi",
+      "_id": "id_1790135156210_7p7hi",
+      "createdAt": "2026-09-23T03:45:56.210Z",
+      "updatedAt": "2026-09-23T03:45:56.210Z"
+    },
+    {
+      "question": "Are PVC cabinets strong enough for heavy kitchen utensils?",
+      "answer": "Yes. We utilize high-density multi-chamber KAKA PVC profiles engineered with internal ribs and structural reinforcement. Heavy kitchen pots, mixers, and stone countertops are safely supported when installed by our experienced fabricators.",
+      "category": "Services",
+      "active": true,
+      "sortOrder": 4,
+      "id": "id_1790135156211_u9jox",
+      "_id": "id_1790135156211_u9jox",
+      "createdAt": "2026-09-23T03:45:56.211Z",
+      "updatedAt": "2026-09-23T03:45:56.211Z"
+    },
+    {
+      "question": "How long does a PVC interior project take to complete?",
+      "answer": "Because PVC profiles are pre-finished and prefabricated with precision, on-site installation is much faster and cleaner than traditional woodwork. A standard kitchen or wardrobe is typically completed within 3 to 7 working days once designs and measurements are finalized.",
+      "category": "Work Process",
+      "active": true,
+      "sortOrder": 5,
+      "id": "id_1790135156212_krbd2",
+      "_id": "id_1790135156212_krbd2",
+      "createdAt": "2026-09-23T03:45:56.212Z",
+      "updatedAt": "2026-09-23T03:45:56.212Z"
+    },
+    {
+      "question": "Can I choose different colors and wooden textures?",
+      "answer": "Yes, we offer an extensive palette of surface finishes including natural teak, walnut, oak wooden textures, modern solid pastels, high-gloss whites, and matte textures.",
+      "category": "Services",
+      "active": true,
+      "sortOrder": 6,
+      "id": "id_1790135156212_pk0xm",
+      "_id": "id_1790135156212_pk0xm",
+      "createdAt": "2026-09-23T03:45:56.212Z",
+      "updatedAt": "2026-09-23T03:45:56.212Z"
+    }
+  ],
+  "settings": {
+    "businessName": "Shree Shyam PVC Interior",
+    "profileBrand": "KAKA PVC PROFILE",
+    "address": "Yogeshwar Residency, Opp. Ashutosh Tenament, Moti Canal Road, Vastral, Ahmedabad.",
+    "primaryPhone": "+91 8209836370",
+    "secondaryPhone": "+91 9828448936",
+    "whatsappNumber": "+918209836370",
+    "heroHeadline": "Elegant Spaces For A Better Tomorrow",
+    "heroSubheadline": "Premium PVC Interior Solutions For Home & Office",
+    "city": "Ahmedabad",
+    "state": "Gujarat",
+    "pincode": "382418",
+    "mapEmbedUrl": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14690.697415494639!2d72.6456381!3d23.0000452!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x395e87a26f634351%3A0x2a3e5c9472e39951!2sVastral%2C%20Ahmedabad%2C%20Gujarat!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin",
+    "workingHours": "Monday - Saturday: 9:00 AM - 8:30 PM",
+    "footerAbout": "Shree Shyam PVC Interior specializes in premium, durable, termite-proof, and water-resistant interior solutions for residential and commercial spaces in Vastral, Ahmedabad.",
+    "updatedAt": "2026-09-23T03:45:56.200Z"
+  },
+  "notifications": [
+    {
+      "type": "booking",
+      "title": "New Site Visit Request",
+      "message": "Harshil Dave requested a visit for PVC Modular Kitchen on 2026-09-28",
+      "referenceId": "SSPI-776819",
+      "read": false,
+      "id": "id_1790136012380_8u6oy",
+      "_id": "id_1790136012380_8u6oy",
+      "createdAt": "2026-09-23T04:00:12.380Z",
+      "updatedAt": "2026-09-23T04:00:12.380Z"
+    }
+  ]
+}

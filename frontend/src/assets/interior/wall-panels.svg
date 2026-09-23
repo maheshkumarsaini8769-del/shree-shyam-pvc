@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="100%" height="100%">
+  <defs>
+    <linearGradient id="marbleSlab" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FCFAF7"/>
+      <stop offset="50%" stop-color="#F2EDE4"/>
+      <stop offset="100%" stop-color="#E8E0D2"/>
+    </linearGradient>
+    <linearGradient id="slatWood" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#704739"/>
+      <stop offset="100%" stop-color="#583528"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="800" height="480" fill="#E8E2D6"/>
+  <polygon points="0,480 800,480 800,600 0,600" fill="#A89785"/>
+
+  <!-- Left Fluted Louver PVC Wall (16 Slats) -->
+  <rect x="50" y="30" width="300" height="450" fill="#583528" rx="3"/>
+  <g fill="#7A4F40">
+    <rect x="62" y="30" width="12" height="450"/>
+    <rect x="80" y="30" width="12" height="450"/>
+    <rect x="98" y="30" width="12" height="450"/>
+    <rect x="116" y="30" width="12" height="450"/>
+    <rect x="134" y="30" width="12" height="450"/>
+    <rect x="152" y="30" width="12" height="450"/>
+    <rect x="170" y="30" width="12" height="450"/>
+    <rect x="188" y="30" width="12" height="450"/>
+    <rect x="206" y="30" width="12" height="450"/>
+    <rect x="224" y="30" width="12" height="450"/>
+    <rect x="242" y="30" width="12" height="450"/>
+    <rect x="260" y="30" width="12" height="450"/>
+    <rect x="278" y="30" width="12" height="450"/>
+    <rect x="296" y="30" width="12" height="450"/>
+    <rect x="314" y="30" width="12" height="450"/>
+    <rect x="332" y="30" width="12" height="450"/>
+  </g>
+  <!-- Warm strip glow -->
+  <rect x="345" y="30" width="10" height="450" fill="#FFE59E" opacity="0.7" filter="blur(6px)"/>
+
+  <!-- Right PVC Marble Feature Sheet with Gold Inlay Profile -->
+  <rect x="360" y="30" width="390" height="450" fill="url(#marbleSlab)" stroke="#D4C9B8" stroke-width="2" rx="3"/>
+  <!-- Marble Veins -->
+  <path d="M380,80 Q450,160 520,200 T680,260" stroke="#C4B7A4" stroke-width="2.5" fill="none" opacity="0.6"/>
+  <path d="M480,50 Q560,180 640,320 T740,400" stroke="#CCBEAC" stroke-width="2" fill="none" opacity="0.5"/>
+  <path d="M370,300 Q430,350 500,380 T600,430" stroke="#D1C4B3" stroke-width="1.8" fill="none" opacity="0.5"/>
+
+  <!-- Metallic T-Profile Brass Inlays -->
+  <line x1="490" y1="30" x2="490" y2="480" stroke="#D4AF37" stroke-width="3"/>
+  <line x1="620" y1="30" x2="620" y2="480" stroke="#D4AF37" stroke-width="3"/>
+  <line x1="360" y1="240" x2="750" y2="240" stroke="#D4AF37" stroke-width="2"/>
+
+  <!-- Decorative Minimalist Wall Sconce Light -->
+  <g transform="translate(555, 140)">
+    <circle cx="0" cy="0" r="28" fill="#FFEAA7" opacity="0.85" filter="blur(5px)"/>
+    <circle cx="0" cy="0" r="16" fill="#FFFFFF"/>
+    <line x1="0" y1="-30" x2="0" y2="30" stroke="#1D1D1B" stroke-width="4"/>
+  </g>
+
+  <!-- Tag -->
+  <g transform="translate(480, 520)">
+    <rect width="240" height="32" rx="16" fill="#C62828"/>
+    <text x="120" y="21" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" font-size="12" fill="#FFFFFF" text-anchor="middle">ANTI-DAMP WALL CLADDING</text>
+  </g>
+</svg>

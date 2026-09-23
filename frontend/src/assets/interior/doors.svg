@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="100%" height="100%">
+  <defs>
+    <linearGradient id="doorWall" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#EFEBE4"/>
+      <stop offset="100%" stop-color="#E2DBD0"/>
+    </linearGradient>
+    <linearGradient id="doorWood" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#734B3D"/>
+      <stop offset="30%" stop-color="#5E3B2F"/>
+      <stop offset="70%" stop-color="#6A4436"/>
+      <stop offset="100%" stop-color="#513227"/>
+    </linearGradient>
+    <linearGradient id="chromeHandle" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="50%" stop-color="#DCDCDC"/>
+      <stop offset="100%" stop-color="#9E9E9E"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="800" height="520" fill="url(#doorWall)"/>
+  <polygon points="0,520 800,520 800,600 0,600" fill="#9F8E7C"/>
+
+  <!-- Door Frame (Heavy duty PVC Choukhat) -->
+  <rect x="250" y="50" width="300" height="470" fill="#3D261E" stroke="#251610" stroke-width="2"/>
+  <rect x="264" y="64" width="272" height="456" fill="#1C110C"/>
+
+  <!-- Solid PVC Shutter Panel -->
+  <rect x="270" y="68" width="260" height="452" fill="url(#doorWood)" rx="2"/>
+
+  <!-- Embossed Modern CNC Grooves / Geometric Accents -->
+  <rect x="290" y="90" width="220" height="170" fill="#523226" stroke="#41271D" stroke-width="2" rx="2"/>
+  <rect x="300" y="100" width="200" height="150" fill="url(#doorWood)" stroke="#684235" stroke-width="1.5"/>
+
+  <rect x="290" y="290" width="220" height="200" fill="#523226" stroke="#41271D" stroke-width="2" rx="2"/>
+  <rect x="300" y="300" width="200" height="180" fill="url(#doorWood)" stroke="#684235" stroke-width="1.5"/>
+
+  <!-- Three Modern Frosted Glass / Textured Accent Inserts -->
+  <g fill="#E6EEF2" opacity="0.85">
+    <rect x="320" y="140" width="50" height="12" rx="2"/>
+    <rect x="320" y="170" width="50" height="12" rx="2"/>
+    <rect x="320" y="200" width="50" height="12" rx="2"/>
+  </g>
+
+  <!-- Heavy Duty Stainless Steel Lever Handle & Mortise Lock -->
+  <g transform="translate(485, 290)">
+    <rect x="0" y="0" width="16" height="70" rx="3" fill="url(#chromeHandle)" stroke="#888" stroke-width="1"/>
+    <!-- Lever Handle -->
+    <rect x="-35" y="15" width="45" height="12" rx="3" fill="url(#chromeHandle)" stroke="#777" stroke-width="1"/>
+    <!-- Key hole -->
+    <circle cx="8" cy="50" r="3" fill="#333"/>
+    <polygon points="6,50 10,50 9,58 7,58" fill="#333"/>
+  </g>
+
+  <!-- Badges -->
+  <g transform="translate(290, 540)">
+    <rect width="220" height="30" rx="15" fill="#1D1D1B" opacity="0.9"/>
+    <text x="110" y="20" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" font-size="11" fill="#FFFFFF" text-anchor="middle">WATERPROOF & ZERO ROT</text>
+  </g>
+</svg>

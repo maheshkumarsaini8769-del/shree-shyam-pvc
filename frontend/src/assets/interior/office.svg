@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="100%" height="100%">
+  <defs>
+    <linearGradient id="officeWall" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#F2EFE9"/>
+      <stop offset="100%" stop-color="#E2DDD5"/>
+    </linearGradient>
+    <linearGradient id="officeDesk" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#6F483C"/>
+      <stop offset="50%" stop-color="#5C3B30"/>
+      <stop offset="100%" stop-color="#4B2F26"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="800" height="420" fill="url(#officeWall)"/>
+  <polygon points="0,420 800,420 800,600 0,600" fill="#998B7C"/>
+
+  <!-- Back Wall PVC Acoustic Slat Paneling -->
+  <rect x="80" y="30" width="640" height="260" fill="#E8E2D6" rx="4"/>
+  <g fill="#5F3C31">
+    <rect x="100" y="30" width="8" height="260"/>
+    <rect x="130" y="30" width="8" height="260"/>
+    <rect x="160" y="30" width="8" height="260"/>
+    <rect x="190" y="30" width="8" height="260"/>
+    <rect x="220" y="30" width="8" height="260"/>
+    <rect x="250" y="30" width="8" height="260"/>
+    <rect x="280" y="30" width="8" height="260"/>
+    <rect x="310" y="30" width="8" height="260"/>
+    <rect x="340" y="30" width="8" height="260"/>
+    <rect x="370" y="30" width="8" height="260"/>
+    <rect x="400" y="30" width="8" height="260"/>
+    <rect x="430" y="30" width="8" height="260"/>
+    <rect x="460" y="30" width="8" height="260"/>
+    <rect x="490" y="30" width="8" height="260"/>
+    <rect x="520" y="30" width="8" height="260"/>
+    <rect x="550" y="30" width="8" height="260"/>
+    <rect x="580" y="30" width="8" height="260"/>
+    <rect x="610" y="30" width="8" height="260"/>
+    <rect x="640" y="30" width="8" height="260"/>
+    <rect x="670" y="30" width="8" height="260"/>
+    <rect x="700" y="30" width="8" height="260"/>
+  </g>
+
+  <!-- Office Signage / Logo backer plate -->
+  <rect x="280" y="70" width="240" height="70" rx="4" fill="#1D1D1B" opacity="0.95"/>
+  <text x="400" y="102" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" font-size="14" fill="#FFFFFF" text-anchor="middle">EXECUTIVE SUITE</text>
+  <text x="400" y="122" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="11" fill="#D4AF37" text-anchor="middle">KAKA PVC PROFILE SYSTEM</text>
+
+  <!-- PVC Modular Workstation Desk -->
+  <g transform="translate(180, 310)">
+    <!-- Desktop Surface -->
+    <rect x="0" y="0" width="440" height="24" rx="3" fill="url(#officeDesk)"/>
+    <!-- PVC Modesty & Partition Panel -->
+    <rect x="20" y="24" width="400" height="150" fill="#2E2C2A"/>
+    <!-- Metal legs / Frame -->
+    <rect x="10" y="24" width="16" height="200" fill="#151515"/>
+    <rect x="414" y="24" width="16" height="200" fill="#151515"/>
+    <rect x="200" y="24" width="120" height="180" fill="#4B2F25"/>
+    <!-- Drawers on side -->
+    <line x1="200" y1="80" x2="320" y2="80" stroke="#331E17" stroke-width="2"/>
+    <line x1="200" y1="140" x2="320" y2="140" stroke="#331E17" stroke-width="2"/>
+    <rect x="240" y="45" width="40" height="4" fill="#D4AF37"/>
+    <rect x="240" y="105" width="40" height="4" fill="#D4AF37"/>
+    <rect x="240" y="165" width="40" height="4" fill="#D4AF37"/>
+
+    <!-- Laptop on desk -->
+    <polygon points="120, -5 180, -5 190, -45 130, -45" fill="#3A3837"/>
+    <rect x="110" y="-5" width="80" height="4" fill="#B0BEC5"/>
+  </g>
+
+  <!-- Tag -->
+  <g transform="translate(260, 540)">
+    <rect width="280" height="32" rx="16" fill="#1D1D1B" opacity="0.9"/>
+    <text x="140" y="21" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" font-size="11" fill="#FFFFFF" text-anchor="middle">MODULAR COMMERCIAL PARTITIONS</text>
+  </g>
+</svg>

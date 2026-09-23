@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="100%" height="100%">
+  <defs>
+    <linearGradient id="wallGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#EFE8DE"/>
+      <stop offset="100%" stop-color="#E2D8C9"/>
+    </linearGradient>
+    <linearGradient id="floorGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#C2B29F"/>
+      <stop offset="100%" stop-color="#9C8875"/>
+    </linearGradient>
+    <linearGradient id="woodGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#8D5B4C"/>
+      <stop offset="50%" stop-color="#6E473B"/>
+      <stop offset="100%" stop-color="#55362C"/>
+    </linearGradient>
+    <linearGradient id="warmLight" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFF3DF" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#FFE0B2" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="cabinetGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#F2EDE4"/>
+    </linearGradient>
+    <linearGradient id="accentRed" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#D32F2F"/>
+      <stop offset="100%" stop-color="#9A0007"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background Wall -->
+  <rect width="1200" height="540" fill="url(#wallGrad)"/>
+
+  <!-- Floor with subtle perspective joints -->
+  <polygon points="0,540 1200,540 1200,800 0,800" fill="url(#floorGrad)"/>
+  <line x1="200" y1="540" x2="100" y2="800" stroke="#877564" stroke-width="1.5" stroke-opacity="0.4"/>
+  <line x1="450" y1="540" x2="380" y2="800" stroke="#877564" stroke-width="1.5" stroke-opacity="0.4"/>
+  <line x1="750" y1="540" x2="720" y2="800" stroke="#877564" stroke-width="1.5" stroke-opacity="0.4"/>
+  <line x1="1000" y1="540" x2="1060" y2="800" stroke="#877564" stroke-width="1.5" stroke-opacity="0.4"/>
+
+  <!-- Left Feature Wall (Fluted Louver PVC Slat Panel) -->
+  <rect x="60" y="40" width="280" height="500" fill="#643F33" rx="4"/>
+  <!-- Repeated Flutes -->
+  <g fill="#7A4F41">
+    <rect x="75" y="40" width="12" height="500"/>
+    <rect x="100" y="40" width="12" height="500"/>
+    <rect x="125" y="40" width="12" height="500"/>
+    <rect x="150" y="40" width="12" height="500"/>
+    <rect x="175" y="40" width="12" height="500"/>
+    <rect x="200" y="40" width="12" height="500"/>
+    <rect x="225" y="40" width="12" height="500"/>
+    <rect x="250" y="40" width="12" height="500"/>
+    <rect x="275" y="40" width="12" height="500"/>
+    <rect x="300" y="40" width="12" height="500"/>
+    <rect x="325" y="40" width="12" height="500"/>
+  </g>
+  <!-- Warm LED strip glow behind panel -->
+  <rect x="55" y="40" width="10" height="500" fill="#FFE5A3" opacity="0.6" filter="blur(6px)"/>
+  <rect x="338" y="40" width="10" height="500" fill="#FFE5A3" opacity="0.6" filter="blur(6px)"/>
+
+  <!-- Center Floating PVC TV Unit Panel & Console -->
+  <rect x="380" y="70" width="560" height="340" fill="#FAF7F2" stroke="#E2D8C9" stroke-width="2" rx="6"/>
+  <!-- Marble vein details -->
+  <path d="M420,90 Q480,180 540,240 T700,320" stroke="#DDD4C5" stroke-width="2" fill="none" opacity="0.6"/>
+  <path d="M600,80 Q660,140 780,210 T890,260" stroke="#E0D6C8" stroke-width="1.5" fill="none" opacity="0.5"/>
+
+  <!-- Sleek OLED TV Mockup -->
+  <rect x="440" y="110" width="440" height="240" rx="4" fill="#151515"/>
+  <rect x="446" y="116" width="428" height="228" rx="2" fill="#242424"/>
+  <!-- Ambient TV Art Display -->
+  <polygon points="446,260 560,180 660,250 780,150 874,230 874,344 446,344" fill="#3A3835"/>
+  <circle cx="530" cy="160" r="24" fill="#D4AF37" opacity="0.8"/>
+
+  <!-- Floating PVC Under-TV Media Console -->
+  <rect x="380" y="440" width="560" height="70" fill="url(#woodGrad)" rx="4"/>
+  <line x1="566" y1="440" x2="566" y2="510" stroke="#482D24" stroke-width="2"/>
+  <line x1="753" y1="440" x2="753" y2="510" stroke="#482D24" stroke-width="2"/>
+  <!-- Warm glow under console -->
+  <rect x="400" y="508" width="520" height="15" fill="#FFE082" opacity="0.45" filter="blur(8px)"/>
+
+  <!-- Right Side: PVC Modular Cabinet & Tall Storage Unit -->
+  <rect x="980" y="40" width="180" height="500" fill="url(#cabinetGrad)" stroke="#DFD5C5" stroke-width="1.5" rx="3"/>
+  <line x1="980" y1="180" x2="1160" y2="180" stroke="#D3C7B5" stroke-width="1.5"/>
+  <line x1="980" y1="360" x2="1160" y2="360" stroke="#D3C7B5" stroke-width="1.5"/>
+  <!-- Minimalist vertical handles -->
+  <rect x="995" y="90" width="4" height="40" fill="#6E473B" rx="1"/>
+  <rect x="995" y="240" width="4" height="40" fill="#6E473B" rx="1"/>
+  <rect x="995" y="420" width="4" height="40" fill="#6E473B" rx="1"/>
+
+  <!-- Ceiling Recessed Lighting & Track Spots -->
+  <ellipse cx="200" cy="30" rx="30" ry="6" fill="#FFFFFF"/>
+  <ellipse cx="660" cy="30" rx="40" ry="6" fill="#FFFFFF"/>
+  <ellipse cx="1060" cy="30" rx="30" ry="6" fill="#FFFFFF"/>
+  <polygon points="620,30 500,400 820,400 700,30" fill="url(#warmLight)"/>
+
+  <!-- Designer Planter Accent -->
+  <polygon points="320,520 345,520 340,640 325,640" fill="#2E2E2A"/>
+  <ellipse cx="332" cy="510" rx="28" ry="18" fill="#4B6043"/>
+  <ellipse cx="320" cy="485" rx="20" ry="24" fill="#3D5036"/>
+  <ellipse cx="345" cy="490" rx="18" ry="20" fill="#586E50"/>
+
+  <!-- Brand Card Subtle Badge Overlay in Corner -->
+  <g transform="translate(60, 680)">
+    <rect width="320" height="60" rx="30" fill="#1D1D1B" opacity="0.88"/>
+    <circle cx="30" cy="30" r="14" fill="#C62828"/>
+    <text x="30" y="35" font-family="'Plus Jakarta Sans', sans-serif" font-weight="bold" font-size="12" fill="#FFFFFF" text-anchor="middle">SS</text>
+    <text x="56" y="27" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" font-size="14" fill="#FFFFFF">Shree Shyam PVC Interior</text>
+    <text x="56" y="44" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="11" fill="#D3C7B5">KAKA PVC PROFILE • Vastral, Ahmedabad</text>
+  </g>
+</svg>

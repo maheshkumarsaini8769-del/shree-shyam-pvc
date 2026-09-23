@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="100%" height="100%">
+  <defs>
+    <linearGradient id="wardWall" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#F7F4EE"/>
+      <stop offset="100%" stop-color="#ECE5D9"/>
+    </linearGradient>
+    <linearGradient id="teakGrain" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#6F483C"/>
+      <stop offset="50%" stop-color="#5B382E"/>
+      <stop offset="100%" stop-color="#4C2E25"/>
+    </linearGradient>
+    <linearGradient id="mirrorGlass" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#E8EFF5"/>
+      <stop offset="50%" stop-color="#D4E3ED"/>
+      <stop offset="100%" stop-color="#BED1DE"/>
+    </linearGradient>
+    <linearGradient id="loftWhite" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FAF8F5"/>
+      <stop offset="100%" stop-color="#EFE8DD"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="800" height="480" fill="url(#wardWall)"/>
+  <polygon points="0,480 800,480 800,600 0,600" fill="#B3A290"/>
+
+  <!-- Main Wardrobe Frame -->
+  <rect x="100" y="40" width="600" height="470" rx="4" fill="#3D251D" stroke="#2B1A14" stroke-width="3"/>
+
+  <!-- Top Loft Cabinets (Off-white PVC) -->
+  <g>
+    <rect x="106" y="46" width="588" height="90" fill="url(#loftWhite)"/>
+    <line x1="302" y1="46" x2="302" y2="136" stroke="#D3C7B5" stroke-width="2"/>
+    <line x1="498" y1="46" x2="498" y2="136" stroke="#D3C7B5" stroke-width="2"/>
+    <!-- Minimal Push catches / small knobs -->
+    <circle cx="204" cy="115" r="4" fill="#6E473B"/>
+    <circle cx="400" cy="115" r="4" fill="#6E473B"/>
+    <circle cx="596" cy="115" r="4" fill="#6E473B"/>
+  </g>
+
+  <!-- Horizontal divider between Loft and Main Doors -->
+  <rect x="100" y="136" width="600" height="8" fill="#2E1B15"/>
+
+  <!-- 3 Sliding Doors -->
+  <!-- Left Door (Rich Textured PVC Wood Grain) -->
+  <g transform="translate(106, 144)">
+    <rect width="194" height="358" fill="url(#teakGrain)"/>
+    <!-- Horizontal inlay brass strip -->
+    <rect x="10" y="160" width="174" height="4" fill="#D4AF37"/>
+    <!-- Recessed full-height handle bar -->
+    <rect x="180" y="80" width="6" height="200" rx="3" fill="#D4AF37"/>
+  </g>
+
+  <!-- Center Door (Full Length Tinted Mirror with PVC Frame) -->
+  <g transform="translate(303, 144)">
+    <rect width="194" height="358" fill="url(#mirrorGlass)"/>
+    <!-- Reflection diagonal shine -->
+    <polygon points="20,0 60,0 0,60 0,20" fill="#FFFFFF" opacity="0.4"/>
+    <polygon points="80,0 140,0 0,140 0,80" fill="#FFFFFF" opacity="0.3"/>
+    <!-- Inlay brass strip matching -->
+    <rect x="10" y="160" width="174" height="4" fill="#D4AF37" opacity="0.8"/>
+  </g>
+
+  <!-- Right Door (Rich Textured PVC Wood Grain) -->
+  <g transform="translate(500, 144)">
+    <rect width="194" height="358" fill="url(#teakGrain)"/>
+    <!-- Horizontal inlay brass strip -->
+    <rect x="10" y="160" width="174" height="4" fill="#D4AF37"/>
+    <!-- Recessed handle bar -->
+    <rect x="8" y="80" width="6" height="200" rx="3" fill="#D4AF37"/>
+  </g>
+
+  <!-- Bottom Sliding Track & Skirting -->
+  <rect x="100" y="504" width="600" height="12" fill="#241611"/>
+  <rect x="106" y="506" width="588" height="4" fill="#A89A88"/>
+
+  <!-- Badge Tag -->
+  <g transform="translate(120, 60)">
+    <rect width="160" height="28" rx="14" fill="#1D1D1B" opacity="0.9"/>
+    <text x="80" y="19" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" font-size="11" fill="#FFFFFF" text-anchor="middle">100% TERMITE PROOF</text>
+  </g>
+</svg>
