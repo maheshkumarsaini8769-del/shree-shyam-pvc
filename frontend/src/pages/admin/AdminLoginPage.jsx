@@ -42,7 +42,7 @@ export const AdminLoginPage = () => {
         localStorage.removeItem('sspi_token');
         localStorage.removeItem('sspi_user');
         if (logout) logout();
-        setError('Yeh account admin panel ke liye authorized nahi hai. Kripya authorized admin email use karein.');
+        setError('This account is not authorized to access the admin panel. Please use an authorized admin email.');
         setLoading(false);
         return;
       }
@@ -60,7 +60,7 @@ export const AdminLoginPage = () => {
       localStorage.removeItem('sspi_token');
       localStorage.removeItem('sspi_user');
       if (logout) logout();
-      setError(err.message || 'Login failed. Kripya apna authorized email aur password check karein.');
+      setError(err.message || 'Login failed. Please verify your authorized email and password.');
     } finally {
       setLoading(false);
     }
@@ -107,7 +107,7 @@ export const AdminLoginPage = () => {
             <div className="mb-5 p-3.5 rounded-xl bg-amber-500/10 border border-luxury-gold/40 text-stone-200 text-xs space-y-2">
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span>Pehle se logged in hain: <strong className="text-luxury-gold">{user.email}</strong></span>
+                <span>Currently logged in as: <strong className="text-luxury-gold">{user.email}</strong></span>
               </div>
               <div className="flex items-center gap-2 pt-1">
                 <button
@@ -115,14 +115,14 @@ export const AdminLoginPage = () => {
                   onClick={() => navigate('/admin')}
                   className="px-3 py-1.5 rounded-lg bg-luxury-gold hover:bg-luxury-goldDark text-obsidian font-bold text-xs shadow-sm transition-all"
                 >
-                  Dashboard Kholein →
+                  Open Dashboard →
                 </button>
                 <button
                   type="button"
                   onClick={handleSwitchAccount}
                   className="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/15 text-stone-300 font-semibold text-xs transition-all"
                 >
-                  Logout / Doosra Account Check Karein
+                  Sign Out / Switch Account
                 </button>
               </div>
             </div>

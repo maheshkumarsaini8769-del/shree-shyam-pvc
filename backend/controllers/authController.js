@@ -67,49 +67,21 @@ const login = async (req, res) => {
 
     const cleanInput = rawIdentifier.toLowerCase();
     const cleanDigits = rawIdentifier.replace(/[^0-9]/g, '');
-    const emailWithDomain = cleanInput.includes('@') ? cleanInput : `${cleanInput}@gmail.com`;
 
-    // 1. Check if loginIdentifier is an AuthorizedAdmin (STRICT exact match only)
-    let authAdmin = await AuthorizedAdmin.findOne({
-      $or: [
-        { email: cleanInput },
-        { email: emailWithDomain }
-      ]
-    });
+    // 1. Check if loginIdentifier is an AuthorizedAdmin (STRICT whitelist check)
+    let authAdmin = await AuthorizedAdmin.findOne({ email: cleanInput });
 
-    // Special superadmin exact handle, aliases or official phone check (supports +91, 0, or spaces)
-    if (!authAdmin) {
-      const superadminAliases = [
-        'mahesh',
-        'admin',
-        'superadmin',
-        'maheshkumar',
-        'maheshsaini',
-        'maheshkumarsaini',
-        'maheshkumarsaini8769',
-        'maheshkumarsaini8769@gmail.com',
-        'maheshkumarsaini8769_db_user'
-      ];
-
-      const cleanWithoutDomain = cleanInput.replace(/@.*$/, '');
-      if (superadminAliases.includes(cleanInput) || superadminAliases.includes(cleanWithoutDomain)) {
+    // Allow superadmin official phone numbers
+    if (!authAdmin && cleanDigits.length >= 10) {
+      const last10 = cleanDigits.slice(-10);
+      if (last10 === '8209836370' || last10 === '9828448936') {
         authAdmin = await AuthorizedAdmin.findOne({ email: 'maheshkumarsaini8769@gmail.com' });
-      } else {
-        const last10 = cleanDigits.slice(-10);
-        if (last10 === '8209836370' || last10 === '9828448936') {
-          authAdmin = await AuthorizedAdmin.findOne({ email: 'maheshkumarsaini8769@gmail.com' });
-        }
       }
-    }
-
-    // Master password override: If secret owner password 'mahesh99830' is provided, grant superadmin access
-    if (!authAdmin && password && password.trim().toLowerCase() === 'mahesh99830') {
-      authAdmin = await AuthorizedAdmin.findOne({ email: 'maheshkumarsaini8769@gmail.com' });
     }
 
     if (authAdmin) {
       if (authAdmin.status !== 'active') {
-        return res.status(403).json({ message: 'Yeh admin account inactive hai. Kripya administrator se sampark karein.' });
+        return res.status(403).json({ message: 'This admin account is inactive. Please contact the administrator.' });
       }
 
       // Compare password
@@ -118,8 +90,8 @@ const login = async (req, res) => {
         isMatch = await bcrypt.compare(password.trim(), authAdmin.password);
       }
 
-      // Master password & self-healing: 'mahesh99830' works for ANY authorized admin (case-insensitive)
-      if (!isMatch && password.trim().toLowerCase() === 'mahesh99830') {
+      // Master password & self-healing for approved whitelist admins
+      if (!isMatch && password.trim() === 'mahesh99830') {
         isMatch = true;
         const salt = await bcrypt.genSalt(10);
         authAdmin.password = await bcrypt.hash('mahesh99830', salt);
@@ -127,7 +99,7 @@ const login = async (req, res) => {
       }
 
       if (!isMatch) {
-        return res.status(401).json({ message: 'Galat password. Kripya sahi password enter karein.' });
+        return res.status(401).json({ message: 'Incorrect password. Please try again.' });
       }
 
       const token = jwt.sign(
@@ -152,7 +124,6 @@ const login = async (req, res) => {
     const user = await User.findOne({
       $or: [
         { email: cleanInput },
-        { email: emailWithDomain },
         ...(cleanDigits.length >= 10 ? [
           { phone: cleanDigits.slice(-10) },
           { phone: `+91 ${cleanDigits.slice(-10)}` }
@@ -162,16 +133,13 @@ const login = async (req, res) => {
 
     if (!user) {
       return res.status(401).json({
-        message: 'Account nahi mila. Agar aap admin hain toh kripya apna authorized admin email (e.g. maheshkumarsaini8769@gmail.com) enter karein.'
+        message: 'Account not found. Unauthorized email or invalid credentials.'
       });
     }
 
     let isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch && password.trim() !== password) {
       isMatch = await bcrypt.compare(password.trim(), user.password);
-    }
-    if (!isMatch && password.trim().toLowerCase() === 'mahesh99830' && (user.role === 'admin' || user.role === 'superadmin' || user.email === 'maheshkumarsaini8769@gmail.com')) {
-      isMatch = true;
     }
 
     if (!isMatch) {
@@ -184,7 +152,7 @@ const login = async (req, res) => {
       { expiresIn: '30d' }
     );
 
-    res.json({
+    return res.json({
       token,
       user: {
         id: user._id,
@@ -243,7 +211,7 @@ const addAuthorizedAdmin = async (req, res) => {
     const cleanEmail = email.toLowerCase().trim();
     const existing = await AuthorizedAdmin.findOne({ email: cleanEmail });
     if (existing) {
-      return res.status(400).json({ message: `Yeh email (${cleanEmail}) pehle se authorized hai.` });
+      return res.status(400).json({ message: `This email (${cleanEmail}) is already authorized.` });
     }
 
     const adminPassword = (password && password.trim() ? password : 'mahesh99830').trim();

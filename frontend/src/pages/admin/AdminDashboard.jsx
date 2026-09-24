@@ -762,27 +762,27 @@ ${quotationData.advancePaid > 0 ? `💳 *Advance Received:* ₹${Number(quotatio
   });
 
   const navItems = [
-    { id: 'overview', label: '📊 Dashboard Overview (होम)', icon: LayoutDashboard },
+    { id: 'overview', label: '📊 Dashboard Overview', icon: LayoutDashboard },
     { id: 'bookings', label: `📅 Orders & Bookings (${bookings.length})`, icon: CalendarCheck },
-    { id: 'quotations', label: '🧾 Quotation & Bill (पक्का बिल)', icon: Receipt },
+    { id: 'quotations', label: '🧾 Quotation & Bill Maker', icon: Receipt },
     { id: 'enquiries', label: `📥 Customer Leads (${enquiries.length})`, icon: Inbox },
     { id: 'gallery', label: `📸 Photo Gallery (${gallery.length})`, icon: Camera },
     { id: 'services', label: `🛠️ Services & Rates (${services.length})`, icon: Wrench },
-    { id: 'calculator', label: '🧮 Rate Calculator (प्रति Sq.Ft)', icon: Calculator },
+    { id: 'calculator', label: '🧮 Pricing Calculator', icon: Calculator },
     { id: 'reviews', label: `⭐ Customer Reviews (${reviews.length})`, icon: Star },
-    { id: 'header', label: '📢 Notice & Top Bar (ऑफर/नोटिस)', icon: Megaphone },
+    { id: 'header', label: '📢 Notice & Top Bar', icon: Megaphone },
     { id: 'hero', label: '✨ Home Banner & Tagline', icon: Sparkles },
-    { id: 'contact', label: '📞 Phone & WhatsApp (संपर्क)', icon: PhoneCall },
-    { id: 'about', label: 'ℹ️ About Shop (दुकान जानकारी)', icon: Info },
+    { id: 'contact', label: '📞 Phone & WhatsApp', icon: PhoneCall },
+    { id: 'about', label: 'ℹ️ About Us & Workshop', icon: Info },
     { id: 'locations', label: `📍 Service Areas (${(settingsData.serviceLocations || []).length})`, icon: MapPin },
     { id: 'brands', label: '🏢 Material Brands (KAKA, TAASA)', icon: Layers },
     { id: 'faqs', label: `❓ FAQ Questions (${faqs.length})`, icon: HelpCircle },
-    { id: 'legal', label: '📜 Address & GST (दुकान पता)', icon: Building },
-    { id: 'authority', label: `🔑 Admin Login Access (${authorities.length})`, icon: KeyRound }
+    { id: 'legal', label: '📜 Business Address & GST', icon: Building },
+    { id: 'authority', label: `🔑 Email Authority (${authorities.length})`, icon: KeyRound }
   ];
 
   return (
-    <div className="min-h-screen bg-[#0F141E] text-stone-200 flex flex-col md:flex-row">
+    <div className="h-screen w-screen bg-[#0F141E] text-stone-200 flex flex-col md:flex-row overflow-hidden">
       {/* Toast Alerts */}
       {saveSuccess && (
         <div className="fixed top-5 right-5 z-50 px-4 py-3 rounded-xl bg-emerald-900/90 border border-emerald-500 text-emerald-200 text-xs sm:text-sm font-semibold shadow-2xl flex items-center gap-2 backdrop-blur-md animate-fade-in">
@@ -838,10 +838,10 @@ ${quotationData.advancePaid > 0 ? `💳 *Advance Received:* ₹${Number(quotatio
       </div>
 
       {/* Sidebar Navigation (Desktop) */}
-      <aside className={`w-full md:w-72 bg-[#141B28] border-r border-white/5 flex flex-col shrink-0 ${
+      <aside className={`w-full md:w-72 md:h-screen bg-[#141B28] border-r border-white/5 flex flex-col shrink-0 overflow-hidden ${
         mobileMenuOpen ? 'block' : 'hidden md:flex'
       }`}>
-        <div className="p-4 border-b border-white/5 hidden md:flex items-center justify-between">
+        <div className="p-4 border-b border-white/5 hidden md:flex items-center justify-between shrink-0">
           <div className="flex items-center gap-3">
             <div className="w-11 h-11 rounded-full overflow-hidden shrink-0 ring-2 ring-luxury-gold/70 shadow-lg shadow-luxury-gold/15">
               <img src={logoImg} alt="Shree Shyam PVC Logo" className="w-full h-full object-cover" />
@@ -854,7 +854,7 @@ ${quotationData.advancePaid > 0 ? `💳 *Advance Received:* ₹${Number(quotatio
         </div>
 
         {/* User identification */}
-        <div className="px-5 py-3.5 bg-black/20 border-b border-white/5 flex items-center justify-between text-xs">
+        <div className="px-5 py-3.5 bg-black/20 border-b border-white/5 flex items-center justify-between text-xs shrink-0">
           <div className="truncate mr-2">
             <p className="text-stone-300 font-bold truncate">{user?.name || 'Mahesh Kumar Saini'}</p>
             <p className="text-[11px] text-luxury-gold truncate font-mono">{user?.email || 'maheshkumarsaini8769@gmail.com'}</p>
@@ -864,7 +864,7 @@ ${quotationData.advancePaid > 0 ? `💳 *Advance Received:* ₹${Number(quotatio
           </span>
         </div>
 
-        {/* Navigation list */}
+        {/* Navigation list (Independent Scroll) */}
         <nav className="p-3 space-y-1 flex-1 overflow-y-auto">
           {navItems.map(item => {
             const Icon = item.icon;
@@ -890,7 +890,7 @@ ${quotationData.advancePaid > 0 ? `💳 *Advance Received:* ₹${Number(quotatio
         </nav>
 
         {/* Footer shortcuts */}
-        <div className="p-4 border-t border-white/5 space-y-2">
+        <div className="p-4 border-t border-white/5 space-y-2 shrink-0">
           <a
             href="/"
             target="_blank"
@@ -898,22 +898,22 @@ ${quotationData.advancePaid > 0 ? `💳 *Advance Received:* ₹${Number(quotatio
             className="w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-bold text-stone-200 hover:text-white bg-white/5 hover:bg-white/10 transition-colors"
           >
             <ExternalLink className="w-3.5 h-3.5 text-luxury-gold" />
-            <span>Open Website (वेबसाइट देखें)</span>
+            <span>Open Live Website</span>
           </a>
           <button
             onClick={handleLogout}
             className="w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-bold text-red-400 hover:text-red-300 bg-red-950/20 hover:bg-red-950/40 transition-colors"
           >
             <LogOut className="w-3.5 h-3.5" />
-            <span>Logout (लॉगआउट)</span>
+            <span>Sign Out</span>
           </button>
         </div>
       </aside>
 
-      {/* Main Content Area */}
-      <main className="flex-1 flex flex-col min-w-0 bg-[#0B0F17]">
+      {/* Main Content Area (Independent Scroll) */}
+      <main className="flex-1 h-screen flex flex-col min-w-0 bg-[#0B0F17] overflow-hidden">
         {/* Top Header */}
-        <header className="px-6 py-4 bg-[#141B28]/60 backdrop-blur-md border-b border-white/5 flex items-center justify-between sticky top-0 z-20">
+        <header className="px-6 py-4 bg-[#141B28]/60 backdrop-blur-md border-b border-white/5 flex items-center justify-between sticky top-0 z-20 shrink-0">
           <div>
             <h1 className="text-base sm:text-lg font-bold text-white capitalize font-serif">
               {navItems.find(n => n.id === activeTab)?.label || 'Admin Panel'}
@@ -926,7 +926,7 @@ ${quotationData.advancePaid > 0 ? `💳 *Advance Received:* ₹${Number(quotatio
               onClick={loadData}
               disabled={loading}
               className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-stone-300 hover:text-white transition-colors"
-              title="Refresh / रीफ्रेश करें"
+              title="Refresh Data"
             >
               <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
             </button>
@@ -937,7 +937,7 @@ ${quotationData.advancePaid > 0 ? `💳 *Advance Received:* ₹${Number(quotatio
                 className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-luxury-gold hover:bg-luxury-goldDark text-obsidian text-xs font-black transition-all shadow-md active:scale-95"
               >
                 <Save className="w-3.5 h-3.5" />
-                <span>Save Changes (सेव करें)</span>
+                <span>Save Changes</span>
               </button>
             )}
           </div>
@@ -3112,7 +3112,7 @@ ${quotationData.advancePaid > 0 ? `💳 *Advance Received:* ₹${Number(quotatio
                     <h3 className="font-serif font-bold text-base text-white">Add New Authorized Admin Email & Password</h3>
                   </div>
                   <p className="text-xs text-stone-400">
-                    Aap jis email aur password ko yahan add karenge, sirf wahi person admin panel login kar sakega.
+                    Only emails and credentials registered here are granted access to the admin control panel.
                   </p>
                 </div>
 
