@@ -819,7 +819,7 @@ ${quotationData.advancePaid > 0 ? `💳 *Advance Received:* ₹${Number(quotatio
       </div>
 
       {/* Mobile Horizontal Quick Navigation */}
-      <div className="md:hidden bg-[#111722] border-b border-white/5 px-3 py-2 flex gap-1.5 overflow-x-auto scrollbar-none sticky top-[65px] z-30">
+      <div className="md:hidden bg-[#111722] border-b border-white/5 px-3 py-2 flex gap-1.5 overflow-x-auto no-scrollbar sticky top-[65px] z-30">
         {navItems.map(item => (
           <button
             key={item.id}
@@ -865,8 +865,8 @@ ${quotationData.advancePaid > 0 ? `💳 *Advance Received:* ₹${Number(quotatio
           </span>
         </div>
 
-        {/* Navigation list (Independent Scroll) */}
-        <nav className="p-3 space-y-1 flex-1 overflow-y-auto">
+        {/* Navigation list (Independent Scroll - Hidden scrollbar, fully scrollable) */}
+        <nav className="p-3 space-y-1 flex-1 overflow-y-auto no-scrollbar">
           {navItems.map(item => {
             const Icon = item.icon;
             const isActive = activeTab === item.id;
