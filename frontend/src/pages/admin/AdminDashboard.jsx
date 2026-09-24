@@ -1515,6 +1515,35 @@ ${quotationData.advancePaid > 0 ? `💳 *Advance Received:* ₹${Number(quotatio
                     </div>
                   </div>
 
+                  {/* POPUP & BADGE TOGGLES */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                    <div className="flex items-center gap-3 p-3 rounded-xl bg-black/20 border border-white/5">
+                      <input
+                        type="checkbox"
+                        id="festShowPopup"
+                        checked={settingsData.festivalMode?.showPopup !== false}
+                        onChange={(e) => handleUpdateFestivalField('showPopup', e.target.checked)}
+                        className="w-4 h-4 accent-luxury-gold rounded cursor-pointer shrink-0"
+                      />
+                      <label htmlFor="festShowPopup" className="text-xs font-bold text-white cursor-pointer">
+                        Show Festive Popup Modal to Visitors (with mobile close button)
+                      </label>
+                    </div>
+
+                    <div className="flex items-center gap-3 p-3 rounded-xl bg-black/20 border border-white/5">
+                      <input
+                        type="checkbox"
+                        id="festShowBadge"
+                        checked={settingsData.festivalMode?.showFestiveBadge !== false}
+                        onChange={(e) => handleUpdateFestivalField('showFestiveBadge', e.target.checked)}
+                        className="w-4 h-4 accent-luxury-gold rounded cursor-pointer shrink-0"
+                      />
+                      <label htmlFor="festShowBadge" className="text-xs font-bold text-white cursor-pointer">
+                        Show Festive Discount Ribbons & Badges on Homepage
+                      </label>
+                    </div>
+                  </div>
+
                   {/* AUTO-SCHEDULE DATE RANGE (OPTIONAL) */}
                   <div className="p-4 rounded-xl bg-black/20 border border-white/5 space-y-3">
                     <div className="flex items-center gap-3">

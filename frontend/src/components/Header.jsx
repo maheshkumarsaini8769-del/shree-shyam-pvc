@@ -112,17 +112,19 @@ export const Header = () => {
           const isFestiveActive = fest.id && fest.id !== 'normal';
 
           return (
-            <div className={`hidden md:block text-stone-200 text-[10.5px] font-medium py-1 px-4 transition-all duration-300 border-b ${
+            <div className={`hidden md:block text-[10.5px] font-medium py-1 px-4 transition-all duration-300 border-b ${
               isFestiveActive
-                ? 'bg-gradient-to-r from-[#1f160b] via-[#2e1d09] to-[#1f160b] border-amber-500/30'
-                : 'bg-[#161514] border-white/5'
+                ? (fest.themeClasses?.barBg || 'bg-gradient-to-r from-[#1c0f02] via-[#381e05] to-[#190901] border-amber-500/50 text-amber-200')
+                : 'bg-[#161514] border-white/5 text-stone-200'
             } ${
               isScrolled ? 'h-0 py-0 opacity-0 overflow-hidden border-none' : 'opacity-100'
             }`}>
               <div className="max-w-7xl mx-auto flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   {isFestiveActive ? (
-                    <span className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-bold border border-amber-500/40 text-[10.5px]">
+                    <span className={`flex items-center gap-1.5 px-2.5 py-0.5 rounded-full font-bold text-[10.5px] shadow-sm ${
+                      fest.themeClasses?.badgeBg || 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
+                    }`}>
                       <span>{fest.icon || '🪔'}</span>
                       <span>{fest.greeting || fest.name}</span>
                     </span>
@@ -133,7 +135,7 @@ export const Header = () => {
                     </span>
                   )}
                   <span className="text-white/20">•</span>
-                  <span className={isFestiveActive ? 'text-amber-200 font-semibold' : 'text-stone-300'}>
+                  <span className={isFestiveActive ? 'text-amber-100 dark:text-amber-200 font-semibold' : 'text-stone-300'}>
                     {isFestiveActive ? fest.announcement : (settings.announcementText || 'All Company PVC Material Work Available • KAKA, TAASA & All Major Brands')}
                   </span>
                 </div>
@@ -161,13 +163,17 @@ export const Header = () => {
           const fest = settings.effectiveFestival || {};
           if (!fest.id || fest.id === 'normal') return null;
           return (
-            <div className="md:hidden bg-gradient-to-r from-amber-950 via-amber-900 to-amber-950 text-amber-200 text-[10px] font-bold py-1 px-3 flex items-center justify-between border-b border-amber-500/30">
-              <span className="flex items-center gap-1 truncate">
-                <span>{fest.icon || '🪔'}</span>
+            <div className={`md:hidden text-[10.5px] font-bold py-1.5 px-3 flex items-center justify-between border-b shadow-sm ${
+              fest.themeClasses?.barBg || 'bg-gradient-to-r from-amber-950 via-amber-900 to-amber-950 text-amber-200 border-amber-500/30'
+            }`}>
+              <span className="flex items-center gap-1.5 truncate">
+                <span className="text-xs">{fest.icon || '🪔'}</span>
                 <span className="truncate">{fest.greeting || fest.announcement}</span>
               </span>
               {fest.discountPercent > 0 && (
-                <span className="px-1.5 py-0.5 rounded bg-amber-500 text-obsidian font-black text-[9px] shrink-0 ml-1">
+                <span className={`px-1.5 py-0.5 rounded font-black text-[9px] shrink-0 ml-1.5 ${
+                  fest.themeClasses?.badgeBg || 'bg-amber-500 text-obsidian'
+                }`}>
                   {fest.discountPercent}% OFF
                 </span>
               )}

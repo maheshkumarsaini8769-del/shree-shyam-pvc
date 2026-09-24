@@ -250,6 +250,10 @@ const SettingsSchema = new mongoose.Schema({
     showFestiveBadge: {
       type: Boolean,
       default: true
+    },
+    showPopup: {
+      type: Boolean,
+      default: true
     }
   }
 }, { timestamps: true });

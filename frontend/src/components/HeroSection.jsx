@@ -240,7 +240,7 @@ export const HeroSection = ({ onOpenShowreel }) => {
                 <span>{current.category}</span>
               </div>
               {fest?.isFestive && (
-                <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full ${fest.badgeBg} text-[10px] sm:text-xs font-bold tracking-wide shadow-sm`}>
+                <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] sm:text-xs font-bold tracking-wide shadow-sm ${fest.themeClasses?.badgeBg || 'bg-amber-500 text-stone-950'}`}>
                   <span>{fest.icon}</span>
                   <span>{fest.badgeText}</span>
                   {fest.discountPercent > 0 && <span>• {fest.discountPercent}% OFF</span>}
@@ -268,21 +268,21 @@ export const HeroSection = ({ onOpenShowreel }) => {
 
             {/* Festive Offer Banner */}
             {fest?.isFestive && (
-              <div className={`p-3 sm:p-3.5 rounded-xl border ${fest.accentBorder} bg-gradient-to-r ${fest.bgGradient} backdrop-blur-md flex items-center justify-between gap-3 shadow-md`}>
+              <div className={`p-3 sm:p-3.5 rounded-2xl backdrop-blur-md flex items-center justify-between gap-3 shadow-md ${fest.themeClasses?.ribbonBg || 'bg-gradient-to-r from-amber-950/80 via-amber-900/40 to-red-950/70 border border-amber-500/50'}`}>
                 <div className="flex items-center gap-2.5 min-w-0">
                   <span className="text-2xl sm:text-3xl shrink-0 drop-shadow-sm">{fest.icon}</span>
                   <div className="truncate">
-                    <div className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-amber-700 dark:text-amber-400">
+                    <div className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-amber-300">
                       {fest.name} Offer
                     </div>
-                    <p className="text-xs sm:text-sm font-semibold text-stone-900 dark:text-white truncate">
+                    <p className="text-xs sm:text-sm font-semibold text-white truncate">
                       {fest.offerTagline}
                     </p>
                   </div>
                 </div>
                 <Link
                   to="/cost-calculator"
-                  className="shrink-0 px-3 py-1.5 rounded-lg text-xs font-bold text-white bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 shadow-sm flex items-center gap-1 transition-all"
+                  className={`shrink-0 px-3.5 py-1.5 rounded-xl text-xs font-black shadow-md flex items-center gap-1 transition-all active:scale-95 ${fest.themeClasses?.buttonBg || 'bg-gradient-to-r from-amber-500 to-orange-500 text-stone-950'}`}
                 >
                   Claim Offer
                   <ArrowRight className="w-3.5 h-3.5" />
