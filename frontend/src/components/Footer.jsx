@@ -48,7 +48,7 @@ export const Footer = () => {
               </div>
               <div className="flex items-center gap-2 text-xs text-slate-400">
                 <Clock className="w-3.5 h-3.5 text-luxury-gold" />
-                <span>Mon - Sat: 9:00 AM - 8:30 PM</span>
+                <span>{settings.workingHours || 'Mon - Sun: 9:00 AM - 9:00 PM'}</span>
               </div>
             </div>
           </div>
@@ -121,7 +121,7 @@ export const Footer = () => {
 
               <div className="pt-2 space-y-2">
                 <a
-                  href={`https://wa.me/918209836370?text=Hello%20Shree%20Shyam%20PVC,%20I%20am%20looking%20for%20an%20interior%20quote`}
+                  href={`https://wa.me/${(settings.whatsappNumber || settings.phone1 || '918209836370').replace(/[^0-9]/g, '')}?text=Hello%20Shree%20Shyam%20PVC,%20I%20am%20looking%20for%20an%20interior%20quote`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold transition-all shadow-sm"
@@ -145,7 +145,7 @@ export const Footer = () => {
 
         {/* Bottom Bar */}
         <div className="pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-slate-500">
-          <p>© {new Date().getFullYear()} Shree Shyam PVC Interior. All rights reserved.</p>
+          <p>{settings.footerCopyright || `© ${new Date().getFullYear()} Shree Shyam PVC Interior. All rights reserved.`}</p>
           <div className="flex items-center gap-4">
             <Link to="/faq" className="hover:text-slate-400 transition-colors">
               FAQ

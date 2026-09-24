@@ -55,7 +55,11 @@ export const LocationPage = () => {
                 {settings.address}
               </address>
               <p className="text-[11px] text-slate-400 mt-1">
-                Landmark: Near Ashutosh Tenament & Moti Canal Road
+                Landmark: Near Ashutosh Tenament &amp; Moti Canal Road
+              </p>
+              <p className="text-[11px] text-stone-500 dark:text-slate-400 mt-1 flex items-center gap-1.5 font-medium">
+                <Clock className="w-3.5 h-3.5 text-luxury-gold shrink-0" />
+                <span>{settings.workingHours || 'Mon - Sun: 9:00 AM - 9:00 PM'}</span>
               </p>
             </div>
           </div>
@@ -72,7 +76,7 @@ export const LocationPage = () => {
         {/* Buttons */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <a
-            href={settings.googleMapsDirectionsUrl}
+            href={settings.googleMapsDirectionsUrl || settings.googleMapsUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="py-3 px-4 rounded-xl bg-obsidian hover:bg-charcoal dark:bg-luxury-gold dark:hover:bg-luxury-goldDark text-white dark:text-obsidian text-xs font-bold flex items-center justify-center gap-2 shadow-md transition-all group"
@@ -90,7 +94,7 @@ export const LocationPage = () => {
           </a>
 
           <a
-            href={`https://wa.me/${settings.whatsappNumber}?text=${encodeURIComponent(settings.defaultWhatsAppMessage())}`}
+            href={`https://wa.me/${(settings.whatsappNumber || settings.phone1 || '918209836370').replace(/[^0-9]/g, '')}?text=${encodeURIComponent(settings.defaultWhatsAppMessage ? settings.defaultWhatsAppMessage() : 'Hello Shree Shyam PVC Interior, I want to visit your workshop')}`}
             target="_blank"
             rel="noopener noreferrer"
             className="py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center justify-center gap-2 shadow-sm transition-all"
@@ -112,6 +116,30 @@ export const LocationPage = () => {
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"
           />
+        </div>
+      </div>
+
+      {/* Service Coverage Areas (Driven dynamically from Admin settings) */}
+      <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-white/10 shadow-elevated space-y-4">
+        <div className="flex items-center gap-2 text-luxury-gold">
+          <MapPin className="w-5 h-5" />
+          <h3 className="font-serif font-bold text-base sm:text-lg text-obsidian dark:text-white">
+            Areas We Serve Across Ahmedabad &amp; Gujarat
+          </h3>
+        </div>
+        <p className="text-xs text-charcoal-muted dark:text-slate-400">
+          We provide complimentary on-site laser measurements, free material estimates, and doorstep fabrication across the following locations:
+        </p>
+        <div className="flex flex-wrap gap-2 pt-2">
+          {(settings.serviceLocations || ['Vastral', 'Maninagar', 'Nikol', 'Naroda', 'Bopal', 'SG Highway', 'Satellite', 'Chandkheda', 'Gota', 'Odhav']).map((loc, idx) => (
+            <span
+              key={idx}
+              className="px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-xs font-semibold text-obsidian dark:text-stone-200 flex items-center gap-1.5 shadow-sm"
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+              <span>{loc}</span>
+            </span>
+          ))}
         </div>
       </div>
     </div>

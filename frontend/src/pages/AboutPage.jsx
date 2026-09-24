@@ -28,10 +28,10 @@ export const AboutPage = () => {
           <span>OUR HERITAGE & CRAFTSMANSHIP</span>
         </div>
         <h1 className="text-3xl sm:text-4xl font-serif font-bold text-obsidian dark:text-white">
-          About Shree Shyam PVC Interior
+          {settings.aboutHeading || 'About Shree Shyam PVC Interior'}
         </h1>
         <p className="text-xs sm:text-sm text-charcoal-muted dark:text-slate-400 mt-1.5">
-          Pioneering waterproof & termite-resistant architectural interiors in Vastral, Ahmedabad.
+          {settings.aboutSubheading || 'Pioneering waterproof & termite-resistant architectural interiors in Vastral, Ahmedabad.'}
         </p>
       </div>
 
@@ -61,11 +61,11 @@ export const AboutPage = () => {
           </span>
           <span className="flex items-center gap-1.5 text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-3 py-1 rounded-full border border-emerald-200 dark:border-emerald-800">
             <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-            Termite & Pest Proof
+            Termite &amp; Pest Proof
           </span>
           <span className="flex items-center gap-1.5 text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-3 py-1 rounded-full border border-emerald-200 dark:border-emerald-800">
             <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-            10-Year Warranty
+            {settings.warrantyYears || 10}-Year Warranty
           </span>
         </div>
       </div>
@@ -77,10 +77,10 @@ export const AboutPage = () => {
             Why We Specialize in PVC
           </h3>
           <p>
-            Shree Shyam PVC Interior is Ahmedabad's premier interior fabrication studio dedicated to eliminating the headaches of traditional wooden carpentry—such as moisture seepage, termite infestations, swollen door frames, and expensive maintenance.
+            {settings.aboutStory || "Shree Shyam PVC Interior is Ahmedabad's premier interior fabrication studio dedicated to eliminating the headaches of traditional wooden carpentry—such as moisture seepage, termite infestations, swollen door frames, and expensive maintenance."}
           </p>
           <p>
-            Using 100% virgin KAKA PVC profile extrusions, our modular installations are designed to withstand humid Ahmedabad kitchens and bathrooms while delivering modern luxury aesthetic finishes like Italian Marble, Teak Woodgrain, and Fluted Louver paneling.
+            {settings.materialsDescription || "Using 100% virgin KAKA PVC profile extrusions, our modular installations are designed to withstand humid Ahmedabad kitchens and bathrooms while delivering modern luxury aesthetic finishes like Italian Marble, Teak Woodgrain, and Fluted Louver paneling."}
           </p>
         </div>
 
@@ -101,18 +101,46 @@ export const AboutPage = () => {
       {/* Stats Grid */}
       <div className="grid grid-cols-3 gap-3 sm:gap-6 text-center">
         <div className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 shadow-soft space-y-1">
-          <span className="text-2xl sm:text-4xl font-serif font-black text-obsidian dark:text-white block">5+</span>
+          <span className="text-2xl sm:text-4xl font-serif font-black text-obsidian dark:text-white block">
+            {settings.yearsExperience || 5}+
+          </span>
           <span className="text-xs text-charcoal-muted dark:text-slate-400 font-bold block">Years Experience</span>
         </div>
         <div className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 shadow-soft space-y-1">
-          <span className="text-2xl sm:text-4xl font-serif font-black text-luxury-goldDark dark:text-luxury-gold block">500+</span>
+          <span className="text-2xl sm:text-4xl font-serif font-black text-luxury-goldDark dark:text-luxury-gold block">
+            {settings.happyClients || 500}+
+          </span>
           <span className="text-xs text-charcoal-muted dark:text-slate-400 font-bold block">Happy Families</span>
         </div>
         <div className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 shadow-soft space-y-1">
-          <span className="text-2xl sm:text-4xl font-serif font-black text-obsidian dark:text-white block">1000+</span>
+          <span className="text-2xl sm:text-4xl font-serif font-black text-obsidian dark:text-white block">
+            {settings.completedProjects || 1000}+
+          </span>
           <span className="text-xs text-charcoal-muted dark:text-slate-400 font-bold block">Projects Completed</span>
         </div>
       </div>
+
+      {/* Mission & Vision (If provided in Admin) */}
+      {(settings.missionStatement || settings.visionStatement) && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {settings.missionStatement && (
+            <div className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 shadow-soft space-y-2">
+              <span className="text-xs font-bold text-luxury-gold uppercase tracking-wider block">🎯 Our Mission</span>
+              <p className="text-xs sm:text-sm text-stone-600 dark:text-stone-300 leading-relaxed">
+                {settings.missionStatement}
+              </p>
+            </div>
+          )}
+          {settings.visionStatement && (
+            <div className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 shadow-soft space-y-2">
+              <span className="text-xs font-bold text-luxury-gold uppercase tracking-wider block">🔭 Our Vision</span>
+              <p className="text-xs sm:text-sm text-stone-600 dark:text-stone-300 leading-relaxed">
+                {settings.visionStatement}
+              </p>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Feature Pillars */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">

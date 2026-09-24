@@ -98,41 +98,47 @@ export const Header = () => {
   return (
     <>
       <header className="sticky top-0 z-40 w-full transition-all duration-300">
-        {/* TOP ANNOUNCEMENT BAR — Desktop only */}
-        <div className={`hidden md:block bg-[#161514] text-stone-300 text-[10.5px] font-medium py-1 px-4 transition-all duration-300 border-b border-white/5 ${
-          isScrolled ? 'h-0 py-0 opacity-0 overflow-hidden border-none' : 'opacity-100'
-        }`}>
-          <div className="max-w-7xl mx-auto flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-luxury-gold/15 text-luxury-gold font-bold border border-luxury-gold/30">
-                <Sparkles className="w-3 h-3 text-luxury-gold" />
-                <span>All Company PVC Material Work Available</span>
-              </span>
-              <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 font-bold border border-emerald-500/30 text-[10px]">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                KAKA, TAASA &amp; All Major Brands
-              </span>
-              <span className="text-white/20">•</span>
-              <span className="text-stone-300">
-                Vastral Workshop &amp; Free Laser Measurement
-              </span>
-            </div>
-            <div className="flex items-center gap-4 text-stone-300">
-              <div className="flex items-center gap-1.5">
-                <Clock className="w-3 h-3 text-luxury-gold" />
-                <span>Mon - Sat: 9:00 AM - 8:30 PM</span>
+        {/* EMERGENCY TOP NOTICE (Controlled via Admin) */}
+        {settings.emergencyNotice && (
+          <div className="bg-amber-600 text-white text-xs font-bold py-1 px-4 text-center tracking-wide flex items-center justify-center gap-2 shadow-sm">
+            <span>📢</span>
+            <span>{settings.emergencyNotice}</span>
+          </div>
+        )}
+
+        {/* TOP ANNOUNCEMENT BAR — Desktop only (Controlled via Admin) */}
+        {settings.announcementActive !== false && (
+          <div className={`hidden md:block bg-[#161514] text-stone-300 text-[10.5px] font-medium py-1 px-4 transition-all duration-300 border-b border-white/5 ${
+            isScrolled ? 'h-0 py-0 opacity-0 overflow-hidden border-none' : 'opacity-100'
+          }`}>
+            <div className="max-w-7xl mx-auto flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-luxury-gold/15 text-luxury-gold font-bold border border-luxury-gold/30">
+                  <Sparkles className="w-3 h-3 text-luxury-gold" />
+                  <span>{settings.announcementText || 'All Company PVC Material Work Available • KAKA, TAASA & All Major Brands'}</span>
+                </span>
+                <span className="text-white/20">•</span>
+                <span className="text-stone-300">
+                  Vastral Workshop &amp; Free Laser Measurement
+                </span>
               </div>
-              <span className="text-white/20">|</span>
-              <a
-                href={`tel:${settings.phone1}`}
-                className="hover:text-luxury-gold font-bold flex items-center gap-1 transition-colors text-white"
-              >
-                <Phone className="w-3 h-3 text-luxury-gold" />
-                <span>{settings.phone1}</span>
-              </a>
+              <div className="flex items-center gap-4 text-stone-300">
+                <div className="flex items-center gap-1.5">
+                  <Clock className="w-3 h-3 text-luxury-gold" />
+                  <span>{settings.workingHours || 'Mon - Sat: 9:00 AM - 8:30 PM'}</span>
+                </div>
+                <span className="text-white/20">|</span>
+                <a
+                  href={`tel:${settings.phone1}`}
+                  className="hover:text-luxury-gold font-bold flex items-center gap-1 transition-colors text-white"
+                >
+                  <Phone className="w-3 h-3 text-luxury-gold" />
+                  <span>{settings.phone1}</span>
+                </a>
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
         {/* MAIN HEADER BAR */}
         <div className={`w-full transition-all duration-300 ${

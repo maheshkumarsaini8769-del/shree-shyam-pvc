@@ -230,7 +230,7 @@ export const HeroSection = ({ onOpenShowreel }) => {
 
             {/* Headline */}
             <h1 className="text-2xl sm:text-4xl lg:text-5xl font-serif font-bold text-obsidian dark:text-white tracking-tight leading-[1.2] sm:leading-[1.14]">
-              {current.title.split('&').map((part, i) => (
+              {((activeSlide === 0 && settings?.heroHeading) ? settings.heroHeading : current.title).split('&').map((part, i) => (
                 <React.Fragment key={i}>
                   {i === 0 ? (
                     part
@@ -248,7 +248,7 @@ export const HeroSection = ({ onOpenShowreel }) => {
 
             {/* Subtitle */}
             <p className="text-xs sm:text-base text-stone-600 dark:text-stone-300 font-normal leading-relaxed max-w-xl">
-              {current.subtitle}
+              {(activeSlide === 0 && settings?.heroSubheading) ? settings.heroSubheading : current.subtitle}
             </p>
 
             {/* Feature Checklist (Desktop only) */}
@@ -370,7 +370,7 @@ export const HeroSection = ({ onOpenShowreel }) => {
               </Link>
 
               <a
-                href={`https://wa.me/${settings?.whatsappNumber || '918209836370'}?text=Hello%20Shree%20Shyam%20PVC,%20I%20am%20interested%20in%20PVC%20interior%20solutions`}
+                href={`https://wa.me/${(settings?.whatsappNumber || settings?.phone1 || '918209836370').replace(/[^0-9]/g, '')}?text=Hello%20Shree%20Shyam%20PVC,%20I%20am%20interested%20in%20PVC%20interior%20solutions`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-1.5 px-4 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-xs sm:text-sm font-bold shadow-sm transition-all active:scale-95"
@@ -383,8 +383,12 @@ export const HeroSection = ({ onOpenShowreel }) => {
             {/* Trust Mini-Bar (Clean single line on mobile) */}
             <div className="pt-2 flex items-center gap-4 sm:gap-6 border-t border-stone-200/80 dark:border-white/10">
               <div>
-                <p className="text-base sm:text-2xl font-serif font-black text-obsidian dark:text-white">{current.statNumber}</p>
-                <p className="text-[10px] sm:text-[11px] text-stone-500 dark:text-stone-400 font-medium">{current.statLabel}</p>
+                <p className="text-base sm:text-2xl font-serif font-black text-obsidian dark:text-white">
+                  {settings?.happyClients ? `${settings.happyClients}+` : current.statNumber}
+                </p>
+                <p className="text-[10px] sm:text-[11px] text-stone-500 dark:text-stone-400 font-medium">
+                  {settings?.happyClients ? 'Happy Families' : current.statLabel}
+                </p>
               </div>
               <div className="h-6 w-px bg-stone-200 dark:bg-white/10" />
               <div>

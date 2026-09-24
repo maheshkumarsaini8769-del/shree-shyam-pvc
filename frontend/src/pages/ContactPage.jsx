@@ -41,7 +41,8 @@ export const ContactPage = () => {
 ${formData.message ? `💬 *Requirement:* ${formData.message}\n` : ''}━━━━━━━━━━━━━━━━━━━━━━━━━━
 _Sent via Shree Shyam PVC Website_`;
 
-    const waUrl = `https://wa.me/918209836370?text=${encodeURIComponent(waMsg)}`;
+    const cleanWaNumber = (settings.whatsappNumber || settings.phone1 || '918209836370').replace(/[^0-9]/g, '');
+    const waUrl = `https://wa.me/${cleanWaNumber}?text=${encodeURIComponent(waMsg)}`;
     setSubmittedWaUrl(waUrl);
 
     try {
@@ -62,6 +63,8 @@ _Sent via Shree Shyam PVC Website_`;
       setSubmitting(false);
     }
   };
+
+  const cleanWaNumber = (settings.whatsappNumber || settings.phone1 || '918209836370').replace(/[^0-9]/g, '');
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-12 space-y-8 pb-24">
@@ -97,7 +100,7 @@ _Sent via Shree Shyam PVC Website_`;
                   {settings.phone2}
                 </a>
               </div>
-              <p className="text-[10px] text-slate-400">Available 9:00 AM - 8:30 PM (Mon - Sat)</p>
+              <p className="text-[10px] text-slate-400">{settings.workingHours || 'Available 9:00 AM - 9:00 PM (Monday - Sunday)'}</p>
             </div>
           </div>
 
@@ -112,12 +115,12 @@ _Sent via Shree Shyam PVC Website_`;
                 Send your room dimensions or photos for an instant estimate.
               </p>
               <a
-                href="https://wa.me/918209836370?text=Hello%20Shree%20Shyam%20PVC,%20I%20want%20to%20inquire%20about%20interior%20services"
+                href={`https://wa.me/${cleanWaNumber}?text=Hello%20Shree%20Shyam%20PVC,%20I%20want%20to%20inquire%20about%20interior%20services`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-block mt-1 font-bold text-emerald-600 dark:text-emerald-400 hover:text-emerald-700"
               >
-                Chat on WhatsApp (+91 8209836370) →
+                Chat on WhatsApp ({settings.phone1 || '+91 8209836370'}) →
               </a>
             </div>
           </div>
@@ -128,7 +131,7 @@ _Sent via Shree Shyam PVC Website_`;
               <MapPin className="w-5 h-5" />
             </div>
             <div className="text-xs space-y-1">
-              <h3 className="font-serif font-bold text-sm text-obsidian dark:text-white">Workshop & Showroom</h3>
+              <h3 className="font-serif font-bold text-sm text-obsidian dark:text-white">Workshop &amp; Showroom</h3>
               <p className="text-charcoal dark:text-slate-300 leading-relaxed">
                 {settings.address || 'Yogeshwar Residency, Opp. Ashutosh Tenament, Moti Canal Road, Vastral, Ahmedabad'}
               </p>
@@ -142,8 +145,8 @@ _Sent via Shree Shyam PVC Website_`;
             </div>
             <div className="text-xs space-y-1">
               <h3 className="font-serif font-bold text-sm text-obsidian dark:text-white">Working Hours</h3>
-              <p className="text-charcoal dark:text-slate-300 font-medium">Monday - Saturday: 9:00 AM - 8:30 PM</p>
-              <p className="text-slate-400">Sunday: Closed for factory maintenance</p>
+              <p className="text-charcoal dark:text-slate-300 font-medium">{settings.workingHours || 'Monday - Sunday: 9:00 AM - 9:00 PM'}</p>
+              <p className="text-slate-400">Open 7 Days for Design Consultations &amp; Site Visits</p>
             </div>
           </div>
         </div>

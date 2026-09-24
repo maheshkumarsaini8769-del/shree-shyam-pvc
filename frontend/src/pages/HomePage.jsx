@@ -337,8 +337,20 @@ export const HomePage = () => {
                 All Companies PVC Material Work Available
               </h3>
               <p className="text-xs sm:text-sm text-stone-300 mt-1 max-w-2xl leading-relaxed">
-                Hum <strong>KAKA PVC PROFILE</strong>, <strong>TAASA</strong>, aur sabhi leading certified brands ke PVC profiles aur high-gloss sheets me custom fabrication aur fitting karte hain. Customer apni pasand aur budget ke according koi bhi company material choose kar sakte hain.
+                {settings.materialsDescription || 'We fabricate and install with all top certified PVC profile brands across Ahmedabad according to your design and budget requirements:'}
               </p>
+              {/* Dynamic Brands Badges (Managed via Admin) */}
+              <div className="flex flex-wrap gap-1.5 pt-2">
+                {(settings.availableBrands || ['KAKA PVC PROFILE', 'TAASA', 'Greenply PVC', 'Alstone', 'Century PVC']).map((brand, bIdx) => (
+                  <span
+                    key={bIdx}
+                    className="px-2.5 py-1 rounded-lg bg-white/10 border border-white/15 text-[11px] font-bold text-luxury-gold flex items-center gap-1"
+                  >
+                    <span>✓</span>
+                    <span>{brand}</span>
+                  </span>
+                ))}
+              </div>
             </div>
           </div>
 
@@ -350,7 +362,7 @@ export const HomePage = () => {
               Explore Services
             </Link>
             <a
-              href="https://wa.me/918209836370?text=Hello%20Shree%20Shyam%20PVC,%20I%20want%20to%20inquire%20about%20All%20Company%20PVC%20Material%20options%20and%20rates"
+              href={`https://wa.me/${(settings.whatsappNumber || settings.phone1 || '918209836370').replace(/[^0-9]/g, '')}?text=Hello%20Shree%20Shyam%20PVC,%20I%20want%20to%20inquire%20about%20All%20Company%20PVC%20Material%20options%20and%20rates`}
               target="_blank"
               rel="noopener noreferrer"
               className="flex-1 sm:flex-none text-center px-5 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold border border-white/20 transition-all active:scale-95"
@@ -856,7 +868,7 @@ export const HomePage = () => {
                 {settings.address || 'Yogeshwar Residency, Opp. Ashutosh Tenament, Moti Canal Road, Vastral, Ahmedabad'}
               </p>
               <p className="text-[11px] text-charcoal-light dark:text-slate-300 font-semibold mt-1">
-                Mon - Sat: 9:00 AM - 8:30 PM | Direct Hotline: {settings.phone1} / {settings.phone2}
+                {settings.workingHours || 'Mon - Sun: 9:00 AM - 9:00 PM'} | Direct Hotline: {settings.phone1} / {settings.phone2}
               </p>
             </div>
           </div>
@@ -869,7 +881,7 @@ export const HomePage = () => {
               Get Directions
             </Link>
             <a
-              href={`https://wa.me/918209836370?text=Hello%20Shree%20Shyam%20PVC,%20I%20want%20to%20visit%20your%20Vastral%20workshop`}
+              href={`https://wa.me/${(settings.whatsappNumber || settings.phone1 || '918209836370').replace(/[^0-9]/g, '')}?text=Hello%20Shree%20Shyam%20PVC,%20I%20want%20to%20visit%20your%20Vastral%20workshop`}
               target="_blank"
               rel="noopener noreferrer"
               className="flex-1 md:flex-none text-center px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-colors"
