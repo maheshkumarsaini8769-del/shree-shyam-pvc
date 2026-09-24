@@ -18,6 +18,7 @@ export const AdminLoginPage = () => {
 
   const handleSwitchAccount = () => {
     localStorage.removeItem('sspi_token');
+    localStorage.removeItem('sspi_user');
     if (logout) logout();
     setEmail('');
     setPassword('');
@@ -32,13 +33,14 @@ export const AdminLoginPage = () => {
     try {
       // 1. Clear any old session before authenticating
       localStorage.removeItem('sspi_token');
-      if (logout) logout();
+      localStorage.removeItem('sspi_user');
 
       // 2. Authenticate credentials against backend MongoDB
       const data = await api.login({ identifier: email.trim(), password });
       
       if (!data.user || (data.user.role !== 'admin' && data.user.role !== 'superadmin')) {
         localStorage.removeItem('sspi_token');
+        localStorage.removeItem('sspi_user');
         if (logout) logout();
         setError('Yeh account admin panel ke liye authorized nahi hai. Kripya authorized admin email use karein.');
         setLoading(false);
@@ -47,15 +49,16 @@ export const AdminLoginPage = () => {
 
       // 3. Save new valid token and user
       localStorage.setItem('sspi_token', data.token);
+      localStorage.setItem('sspi_user', JSON.stringify(data.user));
       if (login) {
         await login(data.user, data.token);
       }
       
-      const destination = location.state?.from?.pathname || '/admin';
-      navigate(destination, { replace: true });
+      navigate('/admin', { replace: true });
     } catch (err) {
       // Ensure bad login never preserves old token
       localStorage.removeItem('sspi_token');
+      localStorage.removeItem('sspi_user');
       if (logout) logout();
       setError(err.message || 'Login failed. Kripya apna authorized email aur password check karein.');
     } finally {
