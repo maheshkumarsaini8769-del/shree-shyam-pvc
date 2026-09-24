@@ -203,6 +203,54 @@ const SettingsSchema = new mongoose.Schema({
   guaranteeDetails: {
     type: String,
     default: '100% Termite Proof & 100% Waterproof with 10 Years Warranty'
+  },
+
+  // 1-Click Festival Theme & Offer Presets
+  festivalMode: {
+    activeFestival: {
+      type: String,
+      default: 'normal' // 'normal', 'diwali', 'holi', 'navratri', 'newyear', 'republic', 'custom'
+    },
+    festivalName: {
+      type: String,
+      default: ''
+    },
+    greeting: {
+      type: String,
+      default: ''
+    },
+    announcement: {
+      type: String,
+      default: ''
+    },
+    offerTagline: {
+      type: String,
+      default: ''
+    },
+    badgeText: {
+      type: String,
+      default: ''
+    },
+    discountPercent: {
+      type: Number,
+      default: 0
+    },
+    autoSchedule: {
+      type: Boolean,
+      default: false
+    },
+    startDate: {
+      type: String,
+      default: ''
+    },
+    endDate: {
+      type: String,
+      default: ''
+    },
+    showFestiveBadge: {
+      type: Boolean,
+      default: true
+    }
   }
 }, { timestamps: true });
 

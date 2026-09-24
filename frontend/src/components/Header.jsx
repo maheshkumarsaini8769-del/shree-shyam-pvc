@@ -106,39 +106,74 @@ export const Header = () => {
           </div>
         )}
 
-        {/* TOP ANNOUNCEMENT BAR — Desktop only (Controlled via Admin) */}
-        {settings.announcementActive !== false && (
-          <div className={`hidden md:block bg-[#161514] text-stone-300 text-[10.5px] font-medium py-1 px-4 transition-all duration-300 border-b border-white/5 ${
-            isScrolled ? 'h-0 py-0 opacity-0 overflow-hidden border-none' : 'opacity-100'
-          }`}>
-            <div className="max-w-7xl mx-auto flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-luxury-gold/15 text-luxury-gold font-bold border border-luxury-gold/30">
-                  <Sparkles className="w-3 h-3 text-luxury-gold" />
-                  <span>{settings.announcementText || 'All Company PVC Material Work Available • KAKA, TAASA & All Major Brands'}</span>
-                </span>
-                <span className="text-white/20">•</span>
-                <span className="text-stone-300">
-                  Vastral Workshop &amp; Free Laser Measurement
-                </span>
-              </div>
-              <div className="flex items-center gap-4 text-stone-300">
-                <div className="flex items-center gap-1.5">
-                  <Clock className="w-3 h-3 text-luxury-gold" />
-                  <span>{settings.workingHours || 'Mon - Sat: 9:00 AM - 8:30 PM'}</span>
+        {/* TOP ANNOUNCEMENT / FESTIVAL BAR — Desktop only */}
+        {settings.announcementActive !== false && (() => {
+          const fest = settings.effectiveFestival || {};
+          const isFestiveActive = fest.id && fest.id !== 'normal';
+
+          return (
+            <div className={`hidden md:block text-stone-200 text-[10.5px] font-medium py-1 px-4 transition-all duration-300 border-b ${
+              isFestiveActive
+                ? 'bg-gradient-to-r from-[#1f160b] via-[#2e1d09] to-[#1f160b] border-amber-500/30'
+                : 'bg-[#161514] border-white/5'
+            } ${
+              isScrolled ? 'h-0 py-0 opacity-0 overflow-hidden border-none' : 'opacity-100'
+            }`}>
+              <div className="max-w-7xl mx-auto flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  {isFestiveActive ? (
+                    <span className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-bold border border-amber-500/40 text-[10.5px]">
+                      <span>{fest.icon || '🪔'}</span>
+                      <span>{fest.greeting || fest.name}</span>
+                    </span>
+                  ) : (
+                    <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-luxury-gold/15 text-luxury-gold font-bold border border-luxury-gold/30">
+                      <Sparkles className="w-3 h-3 text-luxury-gold" />
+                      <span>All Company PVC Material Work Available</span>
+                    </span>
+                  )}
+                  <span className="text-white/20">•</span>
+                  <span className={isFestiveActive ? 'text-amber-200 font-semibold' : 'text-stone-300'}>
+                    {isFestiveActive ? fest.announcement : (settings.announcementText || 'All Company PVC Material Work Available • KAKA, TAASA & All Major Brands')}
+                  </span>
                 </div>
-                <span className="text-white/20">|</span>
-                <a
-                  href={`tel:${settings.phone1}`}
-                  className="hover:text-luxury-gold font-bold flex items-center gap-1 transition-colors text-white"
-                >
-                  <Phone className="w-3 h-3 text-luxury-gold" />
-                  <span>{settings.phone1}</span>
-                </a>
+                <div className="flex items-center gap-4 text-stone-300">
+                  <div className="flex items-center gap-1.5">
+                    <Clock className="w-3 h-3 text-luxury-gold" />
+                    <span>{settings.workingHours || 'Mon - Sat: 9:00 AM - 8:30 PM'}</span>
+                  </div>
+                  <span className="text-white/20">|</span>
+                  <a
+                    href={`tel:${settings.phone1}`}
+                    className="hover:text-luxury-gold font-bold flex items-center gap-1 transition-colors text-white"
+                  >
+                    <Phone className="w-3 h-3 text-luxury-gold" />
+                    <span>{settings.phone1}</span>
+                  </a>
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          );
+        })()}
+
+        {/* Mobile Festive Announcement Strip */}
+        {(() => {
+          const fest = settings.effectiveFestival || {};
+          if (!fest.id || fest.id === 'normal') return null;
+          return (
+            <div className="md:hidden bg-gradient-to-r from-amber-950 via-amber-900 to-amber-950 text-amber-200 text-[10px] font-bold py-1 px-3 flex items-center justify-between border-b border-amber-500/30">
+              <span className="flex items-center gap-1 truncate">
+                <span>{fest.icon || '🪔'}</span>
+                <span className="truncate">{fest.greeting || fest.announcement}</span>
+              </span>
+              {fest.discountPercent > 0 && (
+                <span className="px-1.5 py-0.5 rounded bg-amber-500 text-obsidian font-black text-[9px] shrink-0 ml-1">
+                  {fest.discountPercent}% OFF
+                </span>
+              )}
+            </div>
+          );
+        })()}
 
         {/* MAIN HEADER BAR */}
         <div className={`w-full transition-all duration-300 ${

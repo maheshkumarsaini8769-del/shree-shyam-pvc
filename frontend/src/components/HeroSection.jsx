@@ -136,6 +136,7 @@ export const HeroSection = ({ onOpenShowreel }) => {
   ];
 
   const current = slides[activeSlide];
+  const fest = settings?.effectiveFestival;
 
   // Auto-play timer
   useEffect(() => {
@@ -198,10 +199,20 @@ export const HeroSection = ({ onOpenShowreel }) => {
         {/* TOP NOTICE: Clean & compact */}
         <div className="flex items-center justify-between gap-2 mb-3 sm:mb-6">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-stone-100/90 dark:bg-white/5 border border-stone-200 dark:border-white/10 text-[11px] sm:text-xs font-semibold text-stone-700 dark:text-stone-300 shadow-sm">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
-            <span>
-              <strong className="text-obsidian dark:text-white">Ahmedabad Direct:</strong> {settings?.heroBadgeText || 'All Companies PVC Material Work Available (KAKA, TAASA & Major Brands)'}
-            </span>
+            {fest?.isFestive ? (
+              <>
+                <span className="text-sm shrink-0 animate-bounce">{fest.icon}</span>
+                <span className="font-bold text-amber-700 dark:text-amber-400">{fest.name}:</span>
+                <span className="text-stone-800 dark:text-stone-200">{fest.greeting}</span>
+              </>
+            ) : (
+              <>
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+                <span>
+                  <strong className="text-obsidian dark:text-white">Ahmedabad Direct:</strong> {settings?.heroBadgeText || 'All Companies PVC Material Work Available (KAKA, TAASA & Major Brands)'}
+                </span>
+              </>
+            )}
           </div>
 
           <div className="hidden md:flex items-center gap-4 text-xs font-semibold text-stone-600 dark:text-stone-400">
@@ -222,10 +233,19 @@ export const HeroSection = ({ onOpenShowreel }) => {
           
           {/* LEFT COLUMN: Headings, Subtitle, CTAs, Trust */}
           <div className="lg:col-span-6 space-y-3 sm:space-y-5">
-            {/* Category Pill */}
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-luxury-gold/15 text-luxury-goldDark dark:text-luxury-gold text-[10px] sm:text-xs font-bold tracking-widest uppercase border border-luxury-gold/30">
-              <Sparkles className="w-3 h-3 text-luxury-gold shrink-0" />
-              <span>{current.category}</span>
+            {/* Category Pill + Festive Badge */}
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-luxury-gold/15 text-luxury-goldDark dark:text-luxury-gold text-[10px] sm:text-xs font-bold tracking-widest uppercase border border-luxury-gold/30">
+                <Sparkles className="w-3 h-3 text-luxury-gold shrink-0" />
+                <span>{current.category}</span>
+              </div>
+              {fest?.isFestive && (
+                <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full ${fest.badgeBg} text-[10px] sm:text-xs font-bold tracking-wide shadow-sm`}>
+                  <span>{fest.icon}</span>
+                  <span>{fest.badgeText}</span>
+                  {fest.discountPercent > 0 && <span>• {fest.discountPercent}% OFF</span>}
+                </div>
+              )}
             </div>
 
             {/* Headline */}
@@ -245,6 +265,30 @@ export const HeroSection = ({ onOpenShowreel }) => {
                 </React.Fragment>
               ))}
             </h1>
+
+            {/* Festive Offer Banner */}
+            {fest?.isFestive && (
+              <div className={`p-3 sm:p-3.5 rounded-xl border ${fest.accentBorder} bg-gradient-to-r ${fest.bgGradient} backdrop-blur-md flex items-center justify-between gap-3 shadow-md`}>
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <span className="text-2xl sm:text-3xl shrink-0 drop-shadow-sm">{fest.icon}</span>
+                  <div className="truncate">
+                    <div className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-amber-700 dark:text-amber-400">
+                      {fest.name} Offer
+                    </div>
+                    <p className="text-xs sm:text-sm font-semibold text-stone-900 dark:text-white truncate">
+                      {fest.offerTagline}
+                    </p>
+                  </div>
+                </div>
+                <Link
+                  to="/cost-calculator"
+                  className="shrink-0 px-3 py-1.5 rounded-lg text-xs font-bold text-white bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 shadow-sm flex items-center gap-1 transition-all"
+                >
+                  Claim Offer
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              </div>
+            )}
 
             {/* Subtitle */}
             <p className="text-xs sm:text-base text-stone-600 dark:text-stone-300 font-normal leading-relaxed max-w-xl">

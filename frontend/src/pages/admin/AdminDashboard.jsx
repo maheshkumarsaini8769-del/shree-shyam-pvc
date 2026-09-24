@@ -55,6 +55,7 @@ import { useSettings } from '../../context/SettingsContext';
 import { useTheme } from '../../context/ThemeContext';
 import { exportToCSV, compressImageFile } from '../../utils/exportHelpers';
 import { realWorkImages } from '../../data/realWorkImages';
+import { FESTIVAL_PRESETS } from '../../data/festivalPresets';
 import logoImg from '../../assets/logo.jpg';
 
 export const AdminDashboard = () => {
@@ -124,7 +125,20 @@ export const AdminDashboard = () => {
       twitter: ''
     },
     availableBrands: [],
-    guaranteeDetails: ''
+    guaranteeDetails: '',
+    festivalMode: {
+      activeFestival: 'normal',
+      festivalName: '',
+      greeting: '',
+      announcement: '',
+      offerTagline: '',
+      badgeText: '',
+      discountPercent: 0,
+      autoSchedule: false,
+      startDate: '',
+      endDate: '',
+      showFestiveBadge: true
+    }
   });
 
   // 3. Bookings
@@ -235,7 +249,11 @@ export const AdminDashboard = () => {
             ...prev.socialChannels,
             ...(settingsRes.socialChannels || {})
           },
-          availableBrands: settingsRes.availableBrands || prev.availableBrands
+          availableBrands: settingsRes.availableBrands || prev.availableBrands,
+          festivalMode: {
+            ...prev.festivalMode,
+            ...(settingsRes.festivalMode || {})
+          }
         }));
       }
       if (Array.isArray(bookingsRes)) setBookings(bookingsRes);
@@ -276,6 +294,38 @@ export const AdminDashboard = () => {
     } catch (err) {
       showNotification(err.message || 'Error updating settings', true);
     }
+  };
+
+  // Festival Mode Preset Handler
+  const handleSelectFestivalPreset = (presetKey) => {
+    const preset = FESTIVAL_PRESETS[presetKey];
+    if (!preset) return;
+
+    setSettingsData(prev => ({
+      ...prev,
+      festivalMode: {
+        ...(prev.festivalMode || {}),
+        activeFestival: presetKey,
+        festivalName: preset.name || '',
+        greeting: preset.greeting || '',
+        announcement: preset.announcement || '',
+        offerTagline: preset.offerTagline || '',
+        badgeText: preset.badgeText || '',
+        discountPercent: preset.discountPercent || 0,
+        showFestiveBadge: presetKey !== 'normal'
+      }
+    }));
+    showNotification(`Festival preset chosen: ${preset.name || 'Normal'}. Click Save to apply live!`);
+  };
+
+  const handleUpdateFestivalField = (field, value) => {
+    setSettingsData(prev => ({
+      ...prev,
+      festivalMode: {
+        ...(prev.festivalMode || {}),
+        [field]: value
+      }
+    }));
   };
 
   // Booking status update
@@ -768,6 +818,7 @@ ${quotationData.advancePaid > 0 ? `💳 *Advance Received:* ₹${Number(quotatio
 
   const navItems = [
     { id: 'overview', label: '📊 Dashboard Overview', icon: LayoutDashboard },
+    { id: 'festival', label: `🎉 Festival & Offers (${settingsData.festivalMode?.activeFestival && settingsData.festivalMode?.activeFestival !== 'normal' ? 'Active' : 'Normal'})`, icon: Sparkles },
     { id: 'bookings', label: `📅 Orders & Bookings (${bookings.length})`, icon: CalendarCheck },
     { id: 'quotations', label: '🧾 Quotation & Bill Maker', icon: Receipt },
     { id: 'enquiries', label: `📥 Customer Leads (${enquiries.length})`, icon: Inbox },
@@ -978,7 +1029,7 @@ ${quotationData.advancePaid > 0 ? `💳 *Advance Received:* ₹${Number(quotatio
               <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
             </button>
 
-            {['header', 'hero', 'calculator', 'contact', 'about', 'brands', 'locations', 'legal'].includes(activeTab) && (
+            {['header', 'hero', 'calculator', 'contact', 'about', 'brands', 'locations', 'legal', 'festival'].includes(activeTab) && (
               <button
                 onClick={handleSaveSettings}
                 className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-luxury-gold hover:bg-luxury-goldDark text-obsidian text-xs font-black transition-all shadow-md active:scale-95"
@@ -1058,10 +1109,17 @@ ${quotationData.advancePaid > 0 ? `💳 *Advance Received:* ₹${Number(quotatio
                   <div>
                     <h3 className="font-serif font-bold text-base text-white">100% Comprehensive Website Controls</h3>
                     <p className="text-xs text-stone-300 mt-0.5">
-                      Header announcement, Hero banners, Calculator rates, Gallery photos, Bookings, Reviews, Areas & Email authority.
+                      Festival themes, Header notice, Hero banners, Calculator rates, Gallery photos, Bookings, Reviews, Areas & Email authority.
                     </p>
                   </div>
                   <div className="flex flex-wrap gap-2">
+                    <button
+                      onClick={() => setActiveTab('festival')}
+                      className="px-2.5 py-1 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-bold hover:bg-amber-500/30 flex items-center gap-1"
+                    >
+                      <span>🎉</span>
+                      <span>Festival Mode</span>
+                    </button>
                     <button
                       onClick={() => setActiveTab('header')}
                       className="px-2.5 py-1 rounded-lg bg-luxury-gold text-obsidian text-xs font-bold hover:bg-luxury-goldDark"
@@ -1177,6 +1235,345 @@ ${quotationData.advancePaid > 0 ? `💳 *Advance Received:* ₹${Number(quotatio
                         )}
                       </div>
                     ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* TAB: FESTIVAL & SEASONAL OFFERS CMS */}
+          {activeTab === 'festival' && (
+            <div className="max-w-4xl space-y-6">
+              {/* Header Card */}
+              <div className="bg-[#141B28] border border-white/5 rounded-2xl p-6 space-y-5">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/5 pb-4">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xl">🎉</span>
+                      <h3 className="font-serif font-bold text-base text-white">One-Click Festival Theme & Festive Offers CMS</h3>
+                    </div>
+                    <p className="text-xs text-stone-400 mt-1">
+                      Instantly activate festive banners, greetings, and promotional discounts across the website in 1 click. Select "Normal Mode" anytime to return to standard clean luxury styling.
+                    </p>
+                  </div>
+                  
+                  {/* Current Status Pill */}
+                  <div className="shrink-0 flex items-center gap-2">
+                    <span className="text-xs text-stone-400">Current Mode:</span>
+                    <span className={`px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1.5 ${
+                      settingsData.festivalMode?.activeFestival && settingsData.festivalMode?.activeFestival !== 'normal'
+                        ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40 shadow-sm'
+                        : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
+                    }`}>
+                      <span className="w-2 h-2 rounded-full animate-pulse bg-current" />
+                      <span>
+                        {settingsData.festivalMode?.activeFestival === 'normal' || !settingsData.festivalMode?.activeFestival
+                          ? 'Normal Luxury Theme'
+                          : `${settingsData.festivalMode?.festivalName || 'Festive Active'}`}
+                      </span>
+                    </span>
+                  </div>
+                </div>
+
+                {/* 1-CLICK PRESET PICKER BUTTONS */}
+                <div>
+                  <label className="text-xs font-bold text-luxury-gold uppercase tracking-wider block mb-3">
+                    ⚡ 1-Click Festival Selection (Auto-Fills All Banners & Discounts)
+                  </label>
+                  
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5">
+                    {/* Normal Mode Button */}
+                    <button
+                      type="button"
+                      onClick={() => handleSelectFestivalPreset('normal')}
+                      className={`p-3 rounded-xl border text-left transition-all ${
+                        settingsData.festivalMode?.activeFestival === 'normal' || !settingsData.festivalMode?.activeFestival
+                          ? 'bg-white/10 border-luxury-gold ring-1 ring-luxury-gold shadow-md'
+                          : 'bg-[#0B0F17] border-white/10 hover:border-white/20'
+                      }`}
+                    >
+                      <div className="text-base mb-1">⚪</div>
+                      <div className="text-xs font-bold text-white">Normal Mode</div>
+                      <div className="text-[10px] text-stone-400">Standard clean luxury look (No festival)</div>
+                    </button>
+
+                    {/* Diwali */}
+                    <button
+                      type="button"
+                      onClick={() => handleSelectFestivalPreset('diwali')}
+                      className={`p-3 rounded-xl border text-left transition-all ${
+                        settingsData.festivalMode?.activeFestival === 'diwali'
+                          ? 'bg-amber-950/40 border-amber-500 ring-1 ring-amber-500 shadow-md'
+                          : 'bg-[#0B0F17] border-white/10 hover:border-amber-500/40'
+                      }`}
+                    >
+                      <div className="text-base mb-1">🪔</div>
+                      <div className="text-xs font-bold text-amber-300">Diwali Dhamaka</div>
+                      <div className="text-[10px] text-stone-400">15% OFF + Free Hardware Upgrade</div>
+                    </button>
+
+                    {/* Holi */}
+                    <button
+                      type="button"
+                      onClick={() => handleSelectFestivalPreset('holi')}
+                      className={`p-3 rounded-xl border text-left transition-all ${
+                        settingsData.festivalMode?.activeFestival === 'holi'
+                          ? 'bg-pink-950/40 border-pink-500 ring-1 ring-pink-500 shadow-md'
+                          : 'bg-[#0B0F17] border-white/10 hover:border-pink-500/40'
+                      }`}
+                    >
+                      <div className="text-base mb-1">🎨</div>
+                      <div className="text-xs font-bold text-pink-300">Holi Rangotsav</div>
+                      <div className="text-[10px] text-stone-400">12% OFF on all Waterproof PVC</div>
+                    </button>
+
+                    {/* Navratri */}
+                    <button
+                      type="button"
+                      onClick={() => handleSelectFestivalPreset('navratri')}
+                      className={`p-3 rounded-xl border text-left transition-all ${
+                        settingsData.festivalMode?.activeFestival === 'navratri'
+                          ? 'bg-rose-950/40 border-rose-500 ring-1 ring-rose-500 shadow-md'
+                          : 'bg-[#0B0F17] border-white/10 hover:border-rose-500/40'
+                      }`}
+                    >
+                      <div className="text-base mb-1">🌸</div>
+                      <div className="text-xs font-bold text-rose-300">Navratri Mahotsav</div>
+                      <div className="text-[10px] text-stone-400">10% Festive Savings + Free 3D Design</div>
+                    </button>
+
+                    {/* New Year */}
+                    <button
+                      type="button"
+                      onClick={() => handleSelectFestivalPreset('newyear')}
+                      className={`p-3 rounded-xl border text-left transition-all ${
+                        settingsData.festivalMode?.activeFestival === 'newyear'
+                          ? 'bg-blue-950/40 border-blue-500 ring-1 ring-blue-500 shadow-md'
+                          : 'bg-[#0B0F17] border-white/10 hover:border-blue-500/40'
+                      }`}
+                    >
+                      <div className="text-base mb-1">🎆</div>
+                      <div className="text-xs font-bold text-blue-300">New Year 2026</div>
+                      <div className="text-[10px] text-stone-400">12% New Year Fresh Home Offer</div>
+                    </button>
+
+                    {/* Republic / Independence */}
+                    <button
+                      type="button"
+                      onClick={() => handleSelectFestivalPreset('republic')}
+                      className={`p-3 rounded-xl border text-left transition-all ${
+                        settingsData.festivalMode?.activeFestival === 'republic'
+                          ? 'bg-orange-950/40 border-orange-500 ring-1 ring-orange-500 shadow-md'
+                          : 'bg-[#0B0F17] border-white/10 hover:border-orange-500/40'
+                      }`}
+                    >
+                      <div className="text-base mb-1">🇮🇳</div>
+                      <div className="text-xs font-bold text-orange-300">Republic & Independence</div>
+                      <div className="text-[10px] text-stone-400">10% Desh Ka Bharosa Discount</div>
+                    </button>
+
+                    {/* Custom Festival */}
+                    <button
+                      type="button"
+                      onClick={() => handleSelectFestivalPreset('custom')}
+                      className={`p-3 rounded-xl border text-left transition-all ${
+                        settingsData.festivalMode?.activeFestival === 'custom'
+                          ? 'bg-purple-950/40 border-purple-500 ring-1 ring-purple-500 shadow-md'
+                          : 'bg-[#0B0F17] border-white/10 hover:border-purple-500/40'
+                      }`}
+                    >
+                      <div className="text-base mb-1">✨</div>
+                      <div className="text-xs font-bold text-purple-300">Custom Event / Offer</div>
+                      <div className="text-[10px] text-stone-400">Write your own custom festival name & offer</div>
+                    </button>
+                  </div>
+                </div>
+
+                {/* LIVE PREVIEW OF FESTIVE BANNER & OFFERS */}
+                <div>
+                  <label className="text-xs font-bold text-stone-300 block mb-2">Live Website Preview</label>
+                  
+                  {settingsData.festivalMode?.activeFestival === 'normal' || !settingsData.festivalMode?.activeFestival ? (
+                    <div className="p-4 rounded-xl bg-black/30 border border-white/10 text-xs text-stone-400 flex items-center gap-3">
+                      <span className="text-xl">🏛️</span>
+                      <div>
+                        <strong className="text-stone-200 block">Normal Mode Active</strong>
+                        <span>Website is currently displaying standard luxury branding without any festival banners or badges.</span>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="space-y-2.5">
+                      {/* Top Bar Preview */}
+                      <div className="p-2.5 rounded-xl bg-gradient-to-r from-[#121212] via-[#2A2318] to-[#121212] border border-amber-500/40 text-xs flex items-center justify-between gap-2 shadow-inner">
+                        <div className="flex items-center gap-2 truncate">
+                          <span className="text-base">{FESTIVAL_PRESETS[settingsData.festivalMode?.activeFestival]?.icon || '🎉'}</span>
+                          <span className="text-amber-400 font-bold truncate">
+                            {settingsData.festivalMode?.greeting || 'Festival Greetings'}
+                          </span>
+                          <span className="text-stone-300 hidden sm:inline truncate">
+                            — {settingsData.festivalMode?.announcement}
+                          </span>
+                        </div>
+                        {Number(settingsData.festivalMode?.discountPercent) > 0 && (
+                          <span className="shrink-0 px-2 py-0.5 rounded-full text-[10px] font-black bg-amber-500 text-stone-900 shadow">
+                            {settingsData.festivalMode?.discountPercent}% OFF
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Hero Ribbon Preview */}
+                      <div className="p-3 rounded-xl border border-amber-500/40 bg-gradient-to-r from-amber-500/10 via-orange-500/5 to-transparent flex items-center justify-between gap-3 shadow">
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <span className="text-2xl shrink-0">{FESTIVAL_PRESETS[settingsData.festivalMode?.activeFestival]?.icon || '🎉'}</span>
+                          <div className="truncate">
+                            <div className="text-[11px] font-bold uppercase tracking-wider text-amber-400">
+                              {settingsData.festivalMode?.festivalName || 'Special Offer'}
+                            </div>
+                            <p className="text-xs font-semibold text-white truncate">
+                              {settingsData.festivalMode?.offerTagline || 'Exclusive festive discount on modular kitchens'}
+                            </p>
+                          </div>
+                        </div>
+                        <span className="shrink-0 px-3 py-1.5 rounded-lg text-xs font-bold text-white bg-gradient-to-r from-amber-600 to-orange-600 shadow">
+                          Claim Offer →
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* EDITABLE FIELDS */}
+                <div className="border-t border-white/5 pt-4 space-y-4">
+                  <h4 className="text-xs font-bold text-stone-300 uppercase tracking-wider">Customize Text & Offer Values</h4>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-xs font-bold text-stone-300 block mb-1">Festival / Occasion Name</label>
+                      <input
+                        type="text"
+                        value={settingsData.festivalMode?.festivalName || ''}
+                        onChange={(e) => handleUpdateFestivalField('festivalName', e.target.value)}
+                        placeholder="e.g. Diwali Dhamaka, Holi Rangotsav"
+                        className="w-full p-2.5 rounded-xl bg-[#0B0F17] border border-white/10 text-white text-xs focus:ring-2 focus:ring-luxury-gold/50 focus:outline-none"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="text-xs font-bold text-stone-300 block mb-1">Festive Discount % (0 if none)</label>
+                      <input
+                        type="number"
+                        min="0"
+                        max="100"
+                        value={settingsData.festivalMode?.discountPercent || 0}
+                        onChange={(e) => handleUpdateFestivalField('discountPercent', Number(e.target.value))}
+                        className="w-full p-2.5 rounded-xl bg-[#0B0F17] border border-white/10 text-white text-xs focus:ring-2 focus:ring-luxury-gold/50 focus:outline-none font-mono"
+                      />
+                    </div>
+
+                    <div className="sm:col-span-2">
+                      <label className="text-xs font-bold text-stone-300 block mb-1">Greeting Message (Shown in Header Bar)</label>
+                      <input
+                        type="text"
+                        value={settingsData.festivalMode?.greeting || ''}
+                        onChange={(e) => handleUpdateFestivalField('greeting', e.target.value)}
+                        placeholder="e.g. Happy Diwali & Prosperous New Year!"
+                        className="w-full p-2.5 rounded-xl bg-[#0B0F17] border border-white/10 text-white text-xs focus:ring-2 focus:ring-luxury-gold/50 focus:outline-none"
+                      />
+                    </div>
+
+                    <div className="sm:col-span-2">
+                      <label className="text-xs font-bold text-stone-300 block mb-1">Full Announcement Bar Text</label>
+                      <textarea
+                        rows="2"
+                        value={settingsData.festivalMode?.announcement || ''}
+                        onChange={(e) => handleUpdateFestivalField('announcement', e.target.value)}
+                        placeholder="e.g. Diwali Special: Book PVC Modular Kitchen & Get Free Soft-Close Hafele Hinges Upgrade"
+                        className="w-full p-2.5 rounded-xl bg-[#0B0F17] border border-white/10 text-white text-xs focus:ring-2 focus:ring-luxury-gold/50 focus:outline-none"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="text-xs font-bold text-stone-300 block mb-1">Hero Offer Ribbon Headline</label>
+                      <input
+                        type="text"
+                        value={settingsData.festivalMode?.offerTagline || ''}
+                        onChange={(e) => handleUpdateFestivalField('offerTagline', e.target.value)}
+                        placeholder="e.g. Free Modular Kitchen Hardware Upgrade on orders above ₹45,000"
+                        className="w-full p-2.5 rounded-xl bg-[#0B0F17] border border-white/10 text-white text-xs focus:ring-2 focus:ring-luxury-gold/50 focus:outline-none"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="text-xs font-bold text-stone-300 block mb-1">Hero Pill Badge Text</label>
+                      <input
+                        type="text"
+                        value={settingsData.festivalMode?.badgeText || ''}
+                        onChange={(e) => handleUpdateFestivalField('badgeText', e.target.value)}
+                        placeholder="e.g. Diwali Dhamaka Special"
+                        className="w-full p-2.5 rounded-xl bg-[#0B0F17] border border-white/10 text-white text-xs focus:ring-2 focus:ring-luxury-gold/50 focus:outline-none"
+                      />
+                    </div>
+                  </div>
+
+                  {/* AUTO-SCHEDULE DATE RANGE (OPTIONAL) */}
+                  <div className="p-4 rounded-xl bg-black/20 border border-white/5 space-y-3">
+                    <div className="flex items-center gap-3">
+                      <input
+                        type="checkbox"
+                        id="festAutoSchedule"
+                        checked={settingsData.festivalMode?.autoSchedule || false}
+                        onChange={(e) => handleUpdateFestivalField('autoSchedule', e.target.checked)}
+                        className="w-4 h-4 accent-luxury-gold rounded cursor-pointer"
+                      />
+                      <label htmlFor="festAutoSchedule" className="text-xs font-bold text-white cursor-pointer">
+                        Auto-Schedule Date Range (Optional — Automatically turns off after end date)
+                      </label>
+                    </div>
+
+                    {settingsData.festivalMode?.autoSchedule && (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                        <div>
+                          <label className="text-[11px] font-bold text-stone-400 block mb-1">Start Date</label>
+                          <input
+                            type="date"
+                            value={settingsData.festivalMode?.startDate || ''}
+                            onChange={(e) => handleUpdateFestivalField('startDate', e.target.value)}
+                            className="w-full p-2 rounded-lg bg-[#0B0F17] border border-white/10 text-white text-xs font-mono"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-[11px] font-bold text-stone-400 block mb-1">End Date</label>
+                          <input
+                            type="date"
+                            value={settingsData.festivalMode?.endDate || ''}
+                            onChange={(e) => handleUpdateFestivalField('endDate', e.target.value)}
+                            className="w-full p-2 rounded-lg bg-[#0B0F17] border border-white/10 text-white text-xs font-mono"
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex flex-wrap items-center gap-3 pt-3">
+                    <button
+                      type="button"
+                      onClick={handleSaveSettings}
+                      className="px-6 py-2.5 rounded-xl bg-luxury-gold hover:bg-luxury-goldDark text-obsidian text-xs font-black shadow-md flex items-center gap-2 active:scale-95 transition-all"
+                    >
+                      <Save className="w-4 h-4" />
+                      <span>Save & Apply Festival Settings Live</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        handleSelectFestivalPreset('normal');
+                      }}
+                      className="px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-stone-300 text-xs font-bold transition-colors"
+                    >
+                      Revert to Normal Mode
+                    </button>
                   </div>
                 </div>
               </div>
