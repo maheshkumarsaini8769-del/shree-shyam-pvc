@@ -7,7 +7,10 @@ const {
   getAuthorizedAdmins,
   addAuthorizedAdmin,
   updateAuthorizedAdmin,
-  deleteAuthorizedAdmin
+  deleteAuthorizedAdmin,
+  getAdminSessions,
+  revokeAdminSession,
+  revokeAllOtherSessions
 } = require('../controllers/authController');
 const { requireAuth, requireAdmin } = require('../middleware/auth');
 
@@ -20,5 +23,10 @@ router.get('/admin/authorities', requireAdmin, getAuthorizedAdmins);
 router.post('/admin/authorities', requireAdmin, addAuthorizedAdmin);
 router.patch('/admin/authorities/:id', requireAdmin, updateAuthorizedAdmin);
 router.delete('/admin/authorities/:id', requireAdmin, deleteAuthorizedAdmin);
+
+// Admin Active Device Sessions & Remote Logout
+router.get('/admin/sessions', requireAdmin, getAdminSessions);
+router.delete('/admin/sessions/:sessionId', requireAdmin, revokeAdminSession);
+router.post('/admin/sessions/revoke-others', requireAdmin, revokeAllOtherSessions);
 
 module.exports = router;

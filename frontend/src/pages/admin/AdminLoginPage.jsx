@@ -15,6 +15,19 @@ export const AdminLoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [revokedNotice, setRevokedNotice] = useState(false);
+
+  useEffect(() => {
+    // Explicitly reset fields on mount to prevent browser cache fill
+    setEmail('');
+    setPassword('');
+
+    // Check if redirected here because session was revoked on another device
+    const params = new URLSearchParams(location.search);
+    if (params.get('revoked') === 'true') {
+      setRevokedNotice(true);
+    }
+  }, [location.search]);
 
   const handleSwitchAccount = () => {
     localStorage.removeItem('sspi_token');
@@ -23,6 +36,7 @@ export const AdminLoginPage = () => {
     setEmail('');
     setPassword('');
     setError('');
+    setRevokedNotice(false);
   };
 
   const handleSubmit = async (e) => {
@@ -128,6 +142,13 @@ export const AdminLoginPage = () => {
             </div>
           )}
 
+          {revokedNotice && (
+            <div className="mb-5 p-3.5 rounded-xl bg-amber-950/60 border border-amber-500/60 text-amber-200 text-xs font-medium flex items-start gap-2.5 animate-pulse">
+              <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-amber-400" />
+              <span>Your session was logged out or revoked remotely. Please enter your email and password to log in again.</span>
+            </div>
+          )}
+
           {error && (
             <div className="mb-5 p-3.5 rounded-xl bg-red-950/50 border border-red-800/60 text-red-300 text-xs font-medium flex items-start gap-2.5 animate-shake">
               <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-red-400" />
@@ -135,32 +156,28 @@ export const AdminLoginPage = () => {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4" autoComplete="off">
+            {/* Hidden dummy fields to prevent browser password manager auto-populating fields */}
+            <input type="text" name="sspi_prevent_browser_autofill_u" style={{ display: 'none' }} tabIndex={-1} autoComplete="off" />
+            <input type="password" name="sspi_prevent_browser_autofill_p" style={{ display: 'none' }} tabIndex={-1} autoComplete="off" />
+
             <div>
               <div className="flex items-center justify-between mb-1.5">
                 <label className="text-xs font-bold text-stone-300">
                   Authorized Admin Email or Phone
                 </label>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setEmail('maheshkumarsaini8769@gmail.com');
-                    setPassword('mahesh99830');
-                  }}
-                  className="text-[10px] text-luxury-gold hover:underline font-mono"
-                >
-                  ⚡ Autofill Superadmin
-                </button>
               </div>
               <div className="relative">
                 <Mail className="w-4 h-4 text-stone-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
+                  name="sspi_admin_email_id"
                   required
+                  autoComplete="off"
                   autoCapitalize="none"
                   autoCorrect="off"
                   spellCheck="false"
-                  placeholder="maheshkumarsaini8769@gmail.com or 8209836370"
+                  placeholder="Enter authorized email or registered phone"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#1A2232] border border-white/10 text-white placeholder-stone-500 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-luxury-gold/50 focus:border-luxury-gold/60 transition-all font-sans"
@@ -176,7 +193,9 @@ export const AdminLoginPage = () => {
                 <Lock className="w-4 h-4 text-stone-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
                   type={showPassword ? 'text' : 'password'}
+                  name="sspi_admin_secret_pass"
                   required
+                  autoComplete="new-password"
                   autoCapitalize="none"
                   autoCorrect="off"
                   spellCheck="false"

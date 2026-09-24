@@ -3,6 +3,8 @@ const jwt = require('jsonwebtoken');
 const connectDB = require('../config/db');
 const User = require('../models/User');
 const AuthorizedAdmin = require('../models/AuthorizedAdmin');
+const AdminSession = require('../models/AdminSession');
+const { parseDeviceDetails } = require('../utils/deviceParser');
 const { JWT_SECRET } = require('../middleware/auth');
 
 // Customer registration
@@ -102,8 +104,30 @@ const login = async (req, res) => {
         return res.status(401).json({ message: 'Incorrect password. Please try again.' });
       }
 
+      // Record active admin session with device details
+      let sessionId;
+      try {
+        const deviceDetails = parseDeviceDetails(req);
+        const session = await AdminSession.create({
+          userId: authAdmin._id,
+          email: authAdmin.email,
+          role: authAdmin.role || 'admin',
+          device: deviceDetails.device,
+          browser: deviceDetails.browser,
+          os: deviceDetails.os,
+          ip: deviceDetails.ip,
+          location: deviceDetails.location,
+          userAgent: deviceDetails.userAgent,
+          isValid: true,
+          lastActive: new Date()
+        });
+        sessionId = session._id;
+      } catch (sessionErr) {
+        console.error('Failed to create AdminSession:', sessionErr.message);
+      }
+
       const token = jwt.sign(
-        { id: authAdmin._id, role: authAdmin.role, email: authAdmin.email },
+        { id: authAdmin._id, role: authAdmin.role, email: authAdmin.email, ...(sessionId ? { sessionId } : {}) },
         JWT_SECRET,
         { expiresIn: '30d' }
       );
@@ -146,8 +170,32 @@ const login = async (req, res) => {
       return res.status(401).json({ message: 'Invalid credentials. Please check your password.' });
     }
 
+    // If logging in as an admin or superadmin from User model, track session
+    let userSessionId;
+    if (user.role === 'admin' || user.role === 'superadmin') {
+      try {
+        const deviceDetails = parseDeviceDetails(req);
+        const session = await AdminSession.create({
+          userId: user._id,
+          email: user.email,
+          role: user.role,
+          device: deviceDetails.device,
+          browser: deviceDetails.browser,
+          os: deviceDetails.os,
+          ip: deviceDetails.ip,
+          location: deviceDetails.location,
+          userAgent: deviceDetails.userAgent,
+          isValid: true,
+          lastActive: new Date()
+        });
+        userSessionId = session._id;
+      } catch (sessionErr) {
+        console.error('Failed to create AdminSession for user:', sessionErr.message);
+      }
+    }
+
     const token = jwt.sign(
-      { id: user._id, role: user.role, email: user.email },
+      { id: user._id, role: user.role, email: user.email, ...(userSessionId ? { sessionId: userSessionId } : {}) },
       JWT_SECRET,
       { expiresIn: '30d' }
     );
@@ -336,6 +384,84 @@ const deleteAuthorizedAdmin = async (req, res) => {
   }
 };
 
+// ==========================================
+// ACTIVE ADMIN SESSIONS & DEVICE MANAGEMENT
+// ==========================================
+
+// Get all active admin login sessions
+const getAdminSessions = async (req, res) => {
+  try {
+    await connectDB();
+    const sessions = await AdminSession.find({ isValid: true })
+      .sort({ lastActive: -1 })
+      .limit(50);
+
+    const currentSessionId = req.sessionId ? req.sessionId.toString() : '';
+
+    const formattedSessions = sessions.map(s => ({
+      id: s._id,
+      _id: s._id,
+      email: s.email,
+      role: s.role,
+      device: s.device,
+      browser: s.browser,
+      os: s.os,
+      ip: s.ip,
+      location: s.location,
+      lastActive: s.lastActive,
+      createdAt: s.createdAt,
+      isCurrent: Boolean(currentSessionId && currentSessionId === s._id.toString())
+    }));
+
+    res.json(formattedSessions);
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching active sessions', error: err.message });
+  }
+};
+
+// Revoke a specific admin device session
+const revokeAdminSession = async (req, res) => {
+  try {
+    await connectDB();
+    const { sessionId } = req.params;
+    const session = await AdminSession.findById(sessionId);
+    if (!session) {
+      return res.status(404).json({ message: 'Session not found' });
+    }
+
+    session.isValid = false;
+    await session.save();
+
+    res.json({
+      success: true,
+      message: `Session on ${session.device} (${session.ip}) has been revoked. That device must log in again with email and password.`
+    });
+  } catch (err) {
+    res.status(500).json({ message: 'Error revoking session', error: err.message });
+  }
+};
+
+// Revoke all other admin sessions except current
+const revokeAllOtherSessions = async (req, res) => {
+  try {
+    await connectDB();
+    const currentSessionId = req.sessionId;
+    const filter = { isValid: true };
+    if (currentSessionId) {
+      filter._id = { $ne: currentSessionId };
+    }
+
+    const result = await AdminSession.updateMany(filter, { isValid: false });
+
+    res.json({
+      success: true,
+      message: `All other logged-in devices (${result.modifiedCount}) have been logged out. They must log in again with email and password.`
+    });
+  } catch (err) {
+    res.status(500).json({ message: 'Error revoking other sessions', error: err.message });
+  }
+};
+
 module.exports = {
   register,
   login,
@@ -343,5 +469,8 @@ module.exports = {
   getAuthorizedAdmins,
   addAuthorizedAdmin,
   updateAuthorizedAdmin,
-  deleteAuthorizedAdmin
+  deleteAuthorizedAdmin,
+  getAdminSessions,
+  revokeAdminSession,
+  revokeAllOtherSessions
 };

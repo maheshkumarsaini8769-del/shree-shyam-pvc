@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const connectDB = require('../config/db');
 const User = require('../models/User');
 const AuthorizedAdmin = require('../models/AuthorizedAdmin');
+const AdminSession = require('../models/AdminSession');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'sspi_secret_key_vastral_ahmedabad_2026';
 
@@ -15,6 +16,17 @@ const requireAuth = async (req, res, next) => {
   try {
     await connectDB();
     const decoded = jwt.verify(token, JWT_SECRET);
+
+    // If token has a registered session, verify it has not been revoked
+    if (decoded.sessionId) {
+      const session = await AdminSession.findById(decoded.sessionId);
+      if (!session || !session.isValid) {
+        return res.status(401).json({ message: 'Session has been revoked or logged out from this device. Please log in again.' });
+      }
+      req.sessionId = decoded.sessionId;
+      // Asynchronously bump lastActive without blocking response
+      AdminSession.findByIdAndUpdate(decoded.sessionId, { lastActive: new Date() }).exec();
+    }
     
     // Check if user exists in User or AuthorizedAdmin
     let user = await User.findById(decoded.id);

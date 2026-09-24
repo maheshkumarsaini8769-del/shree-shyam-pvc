@@ -47,7 +47,12 @@ import {
   FileText,
   Image as ImageIcon,
   Sun,
-  Moon
+  Moon,
+  Laptop,
+  Smartphone,
+  Globe,
+  Power,
+  ShieldAlert
 } from 'lucide-react';
 import { api } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
@@ -159,7 +164,7 @@ export const AdminDashboard = () => {
   const [activeReviewForReply, setActiveReviewForReply] = useState(null);
   const [replyText, setReplyText] = useState('');
 
-  // 5. Email Authority Whitelist
+  // 5. Email Authority Whitelist & Active Sessions
   const [authorities, setAuthorities] = useState([]);
   const [newAdminEmail, setNewAdminEmail] = useState('');
   const [newAdminName, setNewAdminName] = useState('');
@@ -167,6 +172,9 @@ export const AdminDashboard = () => {
   const [newAdminRole, setNewAdminRole] = useState('admin');
   const [passwordChangeId, setPasswordChangeId] = useState(null);
   const [newPasswordVal, setNewPasswordVal] = useState('');
+  const [sessions, setSessions] = useState([]);
+  const [revokingSessionId, setRevokingSessionId] = useState(null);
+  const [revokingAllOthers, setRevokingAllOthers] = useState(false);
 
   // 6. Services State
   const [services, setServices] = useState([]);
@@ -230,7 +238,7 @@ export const AdminDashboard = () => {
         }
       }
 
-      const [settingsRes, bookingsRes, reviewsRes, authRes, servicesRes, enquiriesRes, faqsRes, galleryRes] = await Promise.all([
+      const [settingsRes, bookingsRes, reviewsRes, authRes, servicesRes, enquiriesRes, faqsRes, galleryRes, sessionsRes] = await Promise.all([
         api.getSettings().catch(() => ({})),
         api.adminGetBookings().catch(() => []),
         api.adminGetReviews().catch(() => []),
@@ -238,7 +246,8 @@ export const AdminDashboard = () => {
         api.adminGetServices().catch(() => []),
         api.adminGetEnquiries().catch(() => []),
         api.adminGetFaqs().catch(() => []),
-        api.getGallery().catch(() => [])
+        api.getGallery().catch(() => []),
+        api.adminGetSessions().catch(() => [])
       ]);
 
       if (statsRes) setStats(statsRes);
@@ -269,6 +278,7 @@ export const AdminDashboard = () => {
       if (Array.isArray(enquiriesRes)) setEnquiries(enquiriesRes);
       if (Array.isArray(faqsRes)) setFaqs(faqsRes);
       if (Array.isArray(galleryRes)) setGallery(galleryRes);
+      if (Array.isArray(sessionsRes)) setSessions(sessionsRes);
     } catch (err) {
       console.error('Error loading dashboard data', err);
     } finally {
@@ -553,6 +563,45 @@ export const AdminDashboard = () => {
       showNotification(`Revoked access for ${email}`);
     } catch (err) {
       showNotification(err.message || 'Error deleting authority', true);
+    }
+  };
+
+  // Device Sessions & Remote Logout
+  const handleRevokeSession = async (sessionId, deviceName) => {
+    if (!window.confirm(`Are you sure you want to log out and revoke access for "${deviceName}"? That device will immediately be forced back to the login screen and will have to enter email & password again.`)) return;
+    setRevokingSessionId(sessionId);
+    try {
+      const res = await api.adminRevokeSession(sessionId);
+      setSessions(prev => prev.filter(s => (s.id || s._id) !== sessionId));
+      showNotification(res.message || 'Device session revoked successfully!');
+    } catch (err) {
+      showNotification(err.message || 'Error revoking device session', true);
+    } finally {
+      setRevokingSessionId(null);
+    }
+  };
+
+  const handleRevokeAllOtherSessions = async () => {
+    if (!window.confirm('Are you sure you want to log out ALL other devices? Only this current browser session will remain logged in. All other phones, tablets, and computers will be required to re-login with password.')) return;
+    setRevokingAllOthers(true);
+    try {
+      const res = await api.adminRevokeAllOtherSessions();
+      setSessions(prev => prev.filter(s => s.isCurrent));
+      showNotification(res.message || 'All other devices logged out successfully!');
+    } catch (err) {
+      showNotification(err.message || 'Error logging out other devices', true);
+    } finally {
+      setRevokingAllOthers(false);
+    }
+  };
+
+  const handleRefreshSessions = async () => {
+    try {
+      const data = await api.adminGetSessions();
+      if (Array.isArray(data)) setSessions(data);
+      showNotification('Active device list refreshed');
+    } catch (err) {
+      showNotification(err.message || 'Failed to refresh devices', true);
     }
   };
 
@@ -850,7 +899,8 @@ ${quotationData.advancePaid > 0 ? `💳 *Advance Received:* ₹${Number(quotatio
     { id: 'brands', label: '🏢 Material Brands (KAKA, TAASA)', icon: Layers },
     { id: 'faqs', label: `❓ FAQ Questions (${faqs.length})`, icon: HelpCircle },
     { id: 'legal', label: '📜 Business Address & GST', icon: Building },
-    { id: 'authority', label: `🔑 Email Authority (${authorities.length})`, icon: KeyRound }
+    { id: 'authority', label: `🔑 Email Authority (${authorities.length})`, icon: KeyRound },
+    { id: 'sessions', label: `💻 Active Devices (${sessions.length})`, icon: Laptop }
   ];
 
   return (
@@ -1117,6 +1167,19 @@ ${quotationData.advancePaid > 0 ? `💳 *Advance Received:* ₹${Number(quotatio
                   <p className="text-xl font-black text-white mt-0.5">{authorities.length}</p>
                   <p className="text-[10px] text-luxury-gold mt-1">Whitelisted</p>
                 </div>
+
+                <div
+                  onClick={() => setActiveTab('sessions')}
+                  className="bg-[#141B28] p-3.5 rounded-2xl border border-white/5 cursor-pointer hover:border-luxury-gold/50 transition-all hover:bg-white/5"
+                  title="Click to view all logged-in devices"
+                >
+                  <p className="text-[11px] text-stone-400 font-medium">Devices</p>
+                  <p className="text-xl font-black text-white mt-0.5">{sessions.length || 1}</p>
+                  <p className="text-[10px] text-emerald-400 mt-1 flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span>Logged In</span>
+                  </p>
+                </div>
               </div>
 
               {/* Quick shortcut banner */}
@@ -1183,6 +1246,13 @@ ${quotationData.advancePaid > 0 ? `💳 *Advance Received:* ₹${Number(quotatio
                       className="px-2.5 py-1 rounded-lg bg-white/10 text-white text-xs font-bold hover:bg-white/20"
                     >
                       Email Authority
+                    </button>
+                    <button
+                      onClick={() => setActiveTab('sessions')}
+                      className="px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-bold hover:bg-emerald-500/30 flex items-center gap-1"
+                    >
+                      <Laptop className="w-3.5 h-3.5" />
+                      <span>Devices ({sessions.length})</span>
                     </button>
                   </div>
                 </div>
@@ -3810,6 +3880,191 @@ ${quotationData.advancePaid > 0 ? `💳 *Advance Received:* ₹${Number(quotatio
                     </div>
                   ))}
                 </div>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 12: ACTIVE LOGGED IN SESSIONS & DEVICE MANAGEMENT */}
+          {activeTab === 'sessions' && (
+            <div className="space-y-6">
+              {/* Header card with action buttons */}
+              <div className="bg-[#141B28] border border-white/5 rounded-2xl p-6">
+                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-white/5 pb-5 mb-5">
+                  <div className="flex items-start gap-3">
+                    <div className="p-3 rounded-xl bg-luxury-gold/10 text-luxury-gold border border-luxury-gold/20 shrink-0">
+                      <Laptop className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-serif font-bold text-lg text-white">Active Login Sessions & Devices</h3>
+                        <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-luxury-gold/20 text-luxury-gold border border-luxury-gold/30">
+                          {sessions.length} {sessions.length === 1 ? 'Device' : 'Devices'}
+                        </span>
+                      </div>
+                      <p className="text-xs text-stone-400 mt-1 max-w-2xl">
+                        Monitor everywhere the admin portal is currently logged in (Mobile phones, Tablets, Laptops & PCs). If you see an unrecognized device or want to log out a remote computer, click <strong>"Log Out Device"</strong> to instantly lock it out and require email/password re-entry.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2.5 shrink-0">
+                    <button
+                      onClick={handleRefreshSessions}
+                      className="px-3.5 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-stone-300 hover:text-white text-xs font-semibold border border-white/10 transition-colors flex items-center gap-1.5"
+                    >
+                      <RefreshCw className="w-3.5 h-3.5" />
+                      <span>Refresh</span>
+                    </button>
+
+                    <button
+                      onClick={handleRevokeAllOtherSessions}
+                      disabled={revokingAllOthers || sessions.filter(s => !s.isCurrent).length === 0}
+                      className="px-4 py-2 rounded-xl bg-red-950/40 hover:bg-red-900/60 disabled:opacity-50 text-red-300 border border-red-800/60 text-xs font-bold transition-all flex items-center gap-2 shadow-sm active:scale-95"
+                    >
+                      <Power className="w-3.5 h-3.5" />
+                      <span>{revokingAllOthers ? 'Logging Out Others...' : 'Log Out All Other Devices'}</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Security highlight box */}
+                <div className="p-4 rounded-xl bg-luxury-gold/5 border border-luxury-gold/20 text-xs text-stone-300 flex items-start gap-3">
+                  <ShieldCheck className="w-5 h-5 text-luxury-gold shrink-0 mt-0.5" />
+                  <div className="space-y-1">
+                    <p className="font-bold text-white">How Remote Session Termination Works:</p>
+                    <p className="text-stone-400 leading-relaxed text-[11px]">
+                      When you revoke a session, that device's security token is immediately marked invalid in MongoDB. On that remote device's next screen tap or action, it will be automatically kicked back to the login screen and will be forced to re-enter the authorized admin email and password.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Devices Grid */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between px-1">
+                  <h4 className="text-xs font-bold text-stone-300 uppercase tracking-wider">
+                    Currently Connected Devices ({sessions.length})
+                  </h4>
+                  <span className="text-[11px] text-stone-400">
+                    Sorted by most recent activity
+                  </span>
+                </div>
+
+                {sessions.length === 0 ? (
+                  <div className="bg-[#141B28] border border-white/5 rounded-2xl p-10 text-center">
+                    <Laptop className="w-10 h-10 text-stone-500 mx-auto mb-3" />
+                    <h4 className="text-sm font-bold text-stone-300">No Remote Sessions Recorded</h4>
+                    <p className="text-xs text-stone-500 mt-1 max-w-md mx-auto">
+                      Any device that logs into the admin portal with email and password will appear here automatically with its device type, browser, IP address, and location.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {sessions.map((s) => {
+                      const isMobile = s.device?.includes('Phone') || s.device?.includes('Mobile') || s.device?.includes('Android') || s.device?.includes('iPhone');
+                      const isTablet = s.device?.includes('Tablet') || s.device?.includes('iPad');
+
+                      return (
+                        <div
+                          key={s.id || s._id}
+                          className={`p-5 rounded-2xl border transition-all ${
+                            s.isCurrent
+                              ? 'bg-gradient-to-br from-[#13221E] to-[#141B28] border-emerald-500/50 shadow-lg shadow-emerald-950/20 ring-1 ring-emerald-500/30'
+                              : 'bg-[#141B28] border-white/10 hover:border-white/20'
+                          }`}
+                        >
+                          <div className="flex items-start justify-between gap-3">
+                            <div className="flex items-start gap-3">
+                              <div className={`p-3 rounded-xl shrink-0 ${
+                                s.isCurrent
+                                  ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                                  : 'bg-white/5 text-stone-300 border border-white/10'
+                              }`}>
+                                {isMobile ? (
+                                  <Smartphone className="w-5 h-5" />
+                                ) : isTablet ? (
+                                  <Laptop className="w-5 h-5" />
+                                ) : (
+                                  <Laptop className="w-5 h-5" />
+                                )}
+                              </div>
+
+                              <div>
+                                <div className="flex items-center gap-2 flex-wrap">
+                                  <h5 className="font-serif font-bold text-sm text-white">
+                                    {s.device || 'Web Browser Device'}
+                                  </h5>
+                                  {s.isCurrent && (
+                                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 flex items-center gap-1">
+                                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                                      <span>Current Session</span>
+                                    </span>
+                                  )}
+                                </div>
+
+                                <p className="text-[11px] text-stone-400 mt-0.5 flex items-center gap-2">
+                                  <span>{s.browser}</span>
+                                  <span>•</span>
+                                  <span>{s.os}</span>
+                                </p>
+                              </div>
+                            </div>
+
+                            {/* Revoke / Logout Action */}
+                            {!s.isCurrent ? (
+                              <button
+                                onClick={() => handleRevokeSession(s.id || s._id, s.device)}
+                                disabled={revokingSessionId === (s.id || s._id)}
+                                className="px-3 py-1.5 rounded-xl bg-red-950/40 hover:bg-red-900/60 text-red-300 border border-red-800/60 text-xs font-bold transition-all flex items-center gap-1.5 shrink-0 active:scale-95 shadow-sm"
+                                title="Force remote logout"
+                              >
+                                <Power className="w-3.5 h-3.5" />
+                                <span>{revokingSessionId === (s.id || s._id) ? 'Revoking...' : 'Log Out Device'}</span>
+                              </button>
+                            ) : (
+                              <span className="text-[10px] font-mono text-emerald-400/80 bg-emerald-950/30 px-2 py-1 rounded-lg border border-emerald-900/40 shrink-0">
+                                This Browser
+                              </span>
+                            )}
+                          </div>
+
+                          {/* Device Metadata Grid */}
+                          <div className="mt-4 pt-3.5 border-t border-white/5 grid grid-cols-2 gap-3 text-xs">
+                            <div>
+                              <span className="text-[10px] text-stone-500 block uppercase font-mono">Logged In Admin</span>
+                              <span className="text-stone-300 font-medium truncate block font-mono text-[11px] mt-0.5" title={s.email}>
+                                {s.email}
+                              </span>
+                            </div>
+
+                            <div>
+                              <span className="text-[10px] text-stone-500 block uppercase font-mono">IP Address</span>
+                              <span className="text-stone-300 font-mono text-[11px] block mt-0.5">
+                                {s.ip || '127.0.0.1'}
+                              </span>
+                            </div>
+
+                            <div>
+                              <span className="text-[10px] text-stone-500 block uppercase font-mono">Estimated Location</span>
+                              <span className="text-stone-300 truncate block text-[11px] mt-0.5 flex items-center gap-1" title={s.location}>
+                                <MapPin className="w-3 h-3 text-luxury-gold shrink-0" />
+                                <span className="truncate">{s.location || 'Ahmedabad, Gujarat, India'}</span>
+                              </span>
+                            </div>
+
+                            <div>
+                              <span className="text-[10px] text-stone-500 block uppercase font-mono">Last Active</span>
+                              <span className="text-luxury-gold font-mono text-[11px] block mt-0.5 flex items-center gap-1">
+                                <Clock className="w-3 h-3 shrink-0" />
+                                <span>{s.lastActive ? new Date(s.lastActive).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Just now'}</span>
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
             </div>
           )}

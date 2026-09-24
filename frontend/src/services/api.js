@@ -15,6 +15,11 @@ const getHeaders = (isJson = true) => {
 const handleResponse = async (res) => {
   const data = await res.json().catch(() => ({}));
   if (!res.ok) {
+    if (res.status === 401 && typeof window !== 'undefined' && window.location.pathname.startsWith('/admin') && window.location.pathname !== '/admin/login') {
+      localStorage.removeItem('sspi_token');
+      localStorage.removeItem('sspi_user');
+      window.location.href = '/admin/login?revoked=true';
+    }
     const err = new Error(data.message || 'Something went wrong. Please try again.');
     err.status = res.status;
     err.data = data;
@@ -270,6 +275,22 @@ export const api = {
   adminDeleteEmailAuthority: (id) =>
     fetch(`${API_BASE}/auth/admin/authorities/${id}`, {
       method: 'DELETE',
+      headers: getHeaders()
+    }).then(handleResponse),
+
+  // Active Device Sessions & Remote Logout
+  adminGetSessions: () =>
+    fetch(`${API_BASE}/auth/admin/sessions`, { headers: getHeaders() }).then(handleResponse),
+
+  adminRevokeSession: (sessionId) =>
+    fetch(`${API_BASE}/auth/admin/sessions/${sessionId}`, {
+      method: 'DELETE',
+      headers: getHeaders()
+    }).then(handleResponse),
+
+  adminRevokeAllOtherSessions: () =>
+    fetch(`${API_BASE}/auth/admin/sessions/revoke-others`, {
+      method: 'POST',
       headers: getHeaders()
     }).then(handleResponse)
 };
