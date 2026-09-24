@@ -8,7 +8,7 @@ import logoImg from '../../assets/logo.jpg';
 export const AdminLoginPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, login } = useAuth();
+  const { user, login, logout } = useAuth();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -157,6 +157,9 @@ export const AdminLoginPage = () => {
                 <input
                   type="text"
                   required
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  spellCheck="false"
                   placeholder="maheshkumarsaini8769@gmail.com or 8209836370"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -174,6 +177,9 @@ export const AdminLoginPage = () => {
                 <input
                   type={showPassword ? 'text' : 'password'}
                   required
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  spellCheck="false"
                   placeholder="Enter your assigned password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
