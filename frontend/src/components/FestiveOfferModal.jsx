@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { X, Sparkles, Phone, MessageCircle, ArrowRight, CheckCircle2, ShieldCheck, Gift } from 'lucide-react';
+import { X, Sparkles, Phone, MessageCircle, ArrowRight, CheckCircle2, ShieldCheck, Gift, Copy, Check } from 'lucide-react';
 import { useSettings } from '../context/SettingsContext';
+import { FestiveCountdown } from './FestiveCountdown';
 
 export const FestiveOfferModal = () => {
   const { settings } = useSettings();
@@ -9,6 +10,8 @@ export const FestiveOfferModal = () => {
 
   const [isOpen, setIsOpen] = useState(false);
   const [minimized, setMinimized] = useState(false);
+  const [couponRevealed, setCouponRevealed] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   // Check if festival mode is active and not yet dismissed in current browser session
   useEffect(() => {
@@ -60,11 +63,19 @@ export const FestiveOfferModal = () => {
     return null;
   }
 
+  const generatedCoupon = fest.couponCode || `${(fest.id || 'FEST').toUpperCase()}-${fest.discountPercent || '15'}OFF`;
+
+  const handleCopyCoupon = () => {
+    navigator.clipboard.writeText(generatedCoupon);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 3000);
+  };
+
   const phone = settings?.phone1 || '+91 8209836370';
   const whatsappNum = (settings?.whatsappNumber || '918209836370').replace(/[^0-9]/g, '');
   const cleanPhone = whatsappNum.startsWith('91') ? whatsappNum : `91${whatsappNum}`;
   const whatsappMsg = encodeURIComponent(
-    `Hello Shree Shyam PVC Interior! I saw your ${fest.name} offer on your website (${fest.discountPercent > 0 ? `Flat ${fest.discountPercent}% OFF` : fest.offerTagline}). I would like to book a free on-site measurement for my home.`
+    `Hello Shree Shyam PVC Interior! I want to claim your ${fest.name} special offer on your website with Coupon Code: *${generatedCoupon}* (${fest.discountPercent > 0 ? `Flat ${fest.discountPercent}% OFF` : fest.offerTagline}). Please arrange a free laser site measurement for my home.`
   );
 
   return (
@@ -151,6 +162,50 @@ export const FestiveOfferModal = () => {
 
             {/* Scrollable Body Content */}
             <div className="p-5 sm:p-6 overflow-y-auto space-y-4 text-xs sm:text-sm flex-1">
+              {/* LIVE COUNTDOWN TIMER FOR URGENCY */}
+              {fest.showCountdown !== false && (
+                <FestiveCountdown endDate={fest.countdownEndDate} variant="card" festivalName={fest.name} />
+              )}
+
+              {/* GAMIFIED COUPON REVEAL */}
+              <div className="p-3.5 rounded-2xl bg-[#141B28] border border-amber-500/30 text-stone-200">
+                <div className="flex items-center justify-between gap-2 mb-2">
+                  <span className="flex items-center gap-1.5 text-xs font-bold text-amber-300 uppercase tracking-wider font-mono">
+                    <Gift className="w-4 h-4 text-amber-400 animate-bounce" />
+                    <span>Festive Voucher Code</span>
+                  </span>
+                  <span className="text-[10px] text-stone-400">Valid for Ahmedabad projects</span>
+                </div>
+
+                {!couponRevealed ? (
+                  <button
+                    type="button"
+                    onClick={() => setCouponRevealed(true)}
+                    className="w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-amber-500/20 via-orange-500/20 to-amber-500/20 hover:from-amber-500/30 hover:to-orange-500/30 border border-dashed border-amber-500/50 text-amber-300 text-xs font-bold transition-all flex items-center justify-center gap-2"
+                  >
+                    <Sparkles className="w-4 h-4 text-amber-400" />
+                    <span>Tap to Unlock Your Festive Bonus Code 🎁</span>
+                  </button>
+                ) : (
+                  <div className="flex items-center justify-between gap-2 p-2 rounded-xl bg-black/40 border border-amber-500/50">
+                    <div className="flex items-center gap-2 truncate">
+                      <span className="text-xs text-stone-400 font-mono">CODE:</span>
+                      <span className="font-mono font-black text-sm text-amber-300 tracking-wider truncate">
+                        {generatedCoupon}
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleCopyCoupon}
+                      className="px-3 py-1 rounded-lg bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold text-xs flex items-center gap-1 shrink-0 transition-colors"
+                    >
+                      {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+                      <span>{copied ? 'Copied!' : 'Copy'}</span>
+                    </button>
+                  </div>
+                )}
+              </div>
+
               {/* Highlight Tagline Box */}
               <div className="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-200 flex items-start gap-3">
                 <span className="text-2xl shrink-0 mt-0.5">{fest.icon || '🎁'}</span>

@@ -5,6 +5,7 @@ import { BottomNav } from '../components/BottomNav';
 import { SideDrawer } from '../components/SideDrawer';
 import { Footer } from '../components/Footer';
 import { FestiveOfferModal } from '../components/FestiveOfferModal';
+import { FestiveAtmosphere } from '../components/FestiveAtmosphere';
 import { useSettings } from '../context/SettingsContext';
 
 export const PublicLayout = () => {
@@ -23,6 +24,9 @@ export const PublicLayout = () => {
           style={{ background: fest.primaryGlow || 'rgba(245, 158, 11, 0.25)' }}
         />
       )}
+
+      {/* Floating Sparkles & Festive Particles */}
+      <FestiveAtmosphere />
 
       {/* Sticky Header */}
       <Header onOpenMenu={() => setIsDrawerOpen(true)} />

@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { images } from '../data/images';
 import { useSettings } from '../context/SettingsContext';
+import { FestiveCountdown } from './FestiveCountdown';
 
 export const HeroSection = ({ onOpenShowreel }) => {
   const { settings } = useSettings();
@@ -268,23 +269,28 @@ export const HeroSection = ({ onOpenShowreel }) => {
 
             {/* Festive Offer Banner */}
             {fest?.isFestive && (
-              <div className={`p-3 sm:p-3.5 rounded-2xl backdrop-blur-md flex items-center justify-between gap-3 shadow-md ${fest.themeClasses?.ribbonBg || 'bg-gradient-to-r from-amber-950/80 via-amber-900/40 to-red-950/70 border border-amber-500/50'}`}>
+              <div className={`p-3 sm:p-3.5 rounded-2xl backdrop-blur-md flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-md ${fest.themeClasses?.ribbonBg || 'bg-gradient-to-r from-amber-950/80 via-amber-900/40 to-red-950/70 border border-amber-500/50'}`}>
                 <div className="flex items-center gap-2.5 min-w-0">
                   <span className="text-2xl sm:text-3xl shrink-0 drop-shadow-sm">{fest.icon}</span>
                   <div className="truncate">
-                    <div className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-amber-300">
-                      {fest.name} Offer
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-amber-300">
+                        {fest.name} Offer
+                      </span>
+                      {fest.showCountdown !== false && (
+                        <FestiveCountdown endDate={fest.countdownEndDate} variant="compact" />
+                      )}
                     </div>
-                    <p className="text-xs sm:text-sm font-semibold text-white truncate">
+                    <p className="text-xs sm:text-sm font-semibold text-white truncate mt-0.5">
                       {fest.offerTagline}
                     </p>
                   </div>
                 </div>
                 <Link
                   to="/cost-calculator"
-                  className={`shrink-0 px-3.5 py-1.5 rounded-xl text-xs font-black shadow-md flex items-center gap-1 transition-all active:scale-95 ${fest.themeClasses?.buttonBg || 'bg-gradient-to-r from-amber-500 to-orange-500 text-stone-950'}`}
+                  className={`shrink-0 px-3.5 py-1.5 rounded-xl text-xs font-black shadow-md flex items-center justify-center gap-1 transition-all active:scale-95 ${fest.themeClasses?.buttonBg || 'bg-gradient-to-r from-amber-500 to-orange-500 text-stone-950'}`}
                 >
-                  Claim Offer
+                  <span>Claim Offer</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
               </div>

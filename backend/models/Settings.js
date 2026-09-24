@@ -254,6 +254,26 @@ const SettingsSchema = new mongoose.Schema({
     showPopup: {
       type: Boolean,
       default: true
+    },
+    showCountdown: {
+      type: Boolean,
+      default: true
+    },
+    countdownEndDate: {
+      type: String,
+      default: ''
+    },
+    showAtmosphere: {
+      type: Boolean,
+      default: true
+    },
+    couponCode: {
+      type: String,
+      default: ''
+    },
+    enableCouponGame: {
+      type: Boolean,
+      default: true
     }
   }
 }, { timestamps: true });

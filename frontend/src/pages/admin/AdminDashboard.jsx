@@ -137,7 +137,13 @@ export const AdminDashboard = () => {
       autoSchedule: false,
       startDate: '',
       endDate: '',
-      showFestiveBadge: true
+      showFestiveBadge: true,
+      showPopup: true,
+      showCountdown: true,
+      countdownEndDate: '',
+      showAtmosphere: true,
+      couponCode: '',
+      enableCouponGame: true
     }
   });
 
@@ -301,6 +307,10 @@ export const AdminDashboard = () => {
     const preset = FESTIVAL_PRESETS[presetKey];
     if (!preset) return;
 
+    const futureDate = new Date();
+    futureDate.setDate(futureDate.getDate() + 7);
+    const defaultCountdownStr = futureDate.toISOString().slice(0, 10);
+
     setSettingsData(prev => ({
       ...prev,
       festivalMode: {
@@ -312,7 +322,13 @@ export const AdminDashboard = () => {
         offerTagline: preset.offerTagline || '',
         badgeText: preset.badgeText || '',
         discountPercent: preset.discountPercent || 0,
-        showFestiveBadge: presetKey !== 'normal'
+        showFestiveBadge: presetKey !== 'normal',
+        showPopup: presetKey !== 'normal',
+        showCountdown: presetKey !== 'normal',
+        countdownEndDate: defaultCountdownStr,
+        showAtmosphere: presetKey !== 'normal',
+        couponCode: presetKey !== 'normal' ? `${presetKey.toUpperCase()}${preset.discountPercent || '15'}` : '',
+        enableCouponGame: true
       }
     }));
     showNotification(`Festival preset chosen: ${preset.name || 'Normal'}. Click Save to apply live!`);
@@ -1544,6 +1560,62 @@ ${quotationData.advancePaid > 0 ? `💳 *Advance Received:* ₹${Number(quotatio
                     </div>
                   </div>
 
+                  {/* COUNTDOWN & ATMOSPHERE ADVANCED CONTROLS */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                    <div className="flex items-center gap-3 p-3 rounded-xl bg-black/20 border border-white/5">
+                      <input
+                        type="checkbox"
+                        id="festShowCountdown"
+                        checked={settingsData.festivalMode?.showCountdown !== false}
+                        onChange={(e) => handleUpdateFestivalField('showCountdown', e.target.checked)}
+                        className="w-4 h-4 accent-luxury-gold rounded cursor-pointer shrink-0"
+                      />
+                      <label htmlFor="festShowCountdown" className="text-xs font-bold text-white cursor-pointer">
+                        Show Urgency Countdown Timer (In Popup & Hero Banner)
+                      </label>
+                    </div>
+
+                    <div className="flex items-center gap-3 p-3 rounded-xl bg-black/20 border border-white/5">
+                      <input
+                        type="checkbox"
+                        id="festShowAtmosphere"
+                        checked={settingsData.festivalMode?.showAtmosphere !== false}
+                        onChange={(e) => handleUpdateFestivalField('showAtmosphere', e.target.checked)}
+                        className="w-4 h-4 accent-luxury-gold rounded cursor-pointer shrink-0"
+                      />
+                      <label htmlFor="festShowAtmosphere" className="text-xs font-bold text-white cursor-pointer">
+                        Enable Floating Sparkles, Diya Embers & Color Particles
+                      </label>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-xs font-bold text-stone-300 block mb-1">
+                        Offer Countdown Expiration Date (YYYY-MM-DD)
+                      </label>
+                      <input
+                        type="date"
+                        value={settingsData.festivalMode?.countdownEndDate || ''}
+                        onChange={(e) => handleUpdateFestivalField('countdownEndDate', e.target.value)}
+                        className="w-full p-2.5 rounded-xl bg-[#0B0F17] border border-white/10 text-white text-xs font-mono focus:ring-2 focus:ring-luxury-gold/50 focus:outline-none"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="text-xs font-bold text-stone-300 block mb-1">
+                        Festive Voucher Coupon Code (For WhatsApp Leads)
+                      </label>
+                      <input
+                        type="text"
+                        value={settingsData.festivalMode?.couponCode || ''}
+                        onChange={(e) => handleUpdateFestivalField('couponCode', e.target.value.toUpperCase())}
+                        placeholder="e.g. DIWALI15, HOLI10, SSP2026"
+                        className="w-full p-2.5 rounded-xl bg-[#0B0F17] border border-white/10 text-amber-300 text-xs font-mono font-bold tracking-wider focus:ring-2 focus:ring-luxury-gold/50 focus:outline-none"
+                      />
+                    </div>
+                  </div>
+
                   {/* AUTO-SCHEDULE DATE RANGE (OPTIONAL) */}
                   <div className="p-4 rounded-xl bg-black/20 border border-white/5 space-y-3">
                     <div className="flex items-center gap-3">
@@ -1592,6 +1664,18 @@ ${quotationData.advancePaid > 0 ? `💳 *Advance Received:* ₹${Number(quotatio
                     >
                       <Save className="w-4 h-4" />
                       <span>Save & Apply Festival Settings Live</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        sessionStorage.clear();
+                        showNotification('Browser popup cache reset! Open the website to see the popup again immediately.');
+                      }}
+                      className="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold transition-colors flex items-center gap-1.5"
+                    >
+                      <RefreshCw className="w-3.5 h-3.5" />
+                      <span>Reset Browser Popup Cache</span>
                     </button>
 
                     <button

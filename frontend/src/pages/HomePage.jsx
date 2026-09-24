@@ -209,6 +209,12 @@ export const HomePage = () => {
   const baseRate = Math.round(currentRoom.rate * currentFinish.multiplier);
   const estimatedExact = sqft * baseRate;
 
+  // Festive Savings Calculation
+  const fest = settings?.effectiveFestival;
+  const hasFestiveDiscount = fest?.isFestive && Number(fest?.discountPercent) > 0;
+  const festiveSavings = hasFestiveDiscount ? Math.round((estimatedExact * fest.discountPercent) / 100) : 0;
+  const finalDiscountedPrice = estimatedExact - festiveSavings;
+
   const trustBadges = [
     {
       title: '100% Waterproof',
@@ -579,15 +585,48 @@ export const HomePage = () => {
                   <span className="text-xs font-bold text-slate-300 uppercase tracking-wider block">
                     Estimated Project Cost
                   </span>
-                  <div className="flex items-baseline gap-2 mt-1">
-                    <span className="text-3xl sm:text-4xl font-serif font-black text-luxury-goldLight">
-                      ₹{estimatedExact.toLocaleString('en-IN')}
-                    </span>
-                    <span className="text-xs text-slate-300">approx. total</span>
-                  </div>
+
+                  {hasFestiveDiscount ? (
+                    <div className="mt-1">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm sm:text-base text-slate-400 line-through font-mono">
+                          ₹{estimatedExact.toLocaleString('en-IN')}
+                        </span>
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-amber-500 text-stone-950 uppercase shadow-sm">
+                          {fest.icon} {fest.discountPercent}% FESTIVE DISCOUNT
+                        </span>
+                      </div>
+                      <div className="flex items-baseline gap-2 mt-0.5">
+                        <span className="text-3xl sm:text-4xl font-serif font-black text-amber-300">
+                          ₹{finalDiscountedPrice.toLocaleString('en-IN')}
+                        </span>
+                        <span className="text-xs text-emerald-400 font-bold">
+                          (You Save ₹{festiveSavings.toLocaleString('en-IN')}!)
+                        </span>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex items-baseline gap-2 mt-1">
+                      <span className="text-3xl sm:text-4xl font-serif font-black text-luxury-goldLight">
+                        ₹{estimatedExact.toLocaleString('en-IN')}
+                      </span>
+                      <span className="text-xs text-slate-300">approx. total</span>
+                    </div>
+                  )}
+
                   <p className="text-[11px] text-slate-300 mt-1">
                     Rate range: ₹450 to ₹800 per sq. ft. based on accessories & custom hinges.
                   </p>
+
+                  {hasFestiveDiscount && (
+                    <div className="mt-2.5 p-2 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-between text-xs text-amber-200">
+                      <span className="flex items-center gap-1 font-bold">
+                        <span>{fest.icon}</span>
+                        <span>{fest.name} Perk:</span>
+                      </span>
+                      <span className="font-semibold text-[11px] truncate max-w-[200px]">{fest.offerTagline}</span>
+                    </div>
+                  )}
                 </div>
 
                 <div className="space-y-2.5 text-xs text-slate-200 border-y border-white/15 py-4">
