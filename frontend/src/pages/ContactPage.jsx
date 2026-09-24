@@ -25,6 +25,7 @@ export const ContactPage = () => {
   });
   const [submitting, setSubmitting] = useState(false);
   const [submittedWaUrl, setSubmittedWaUrl] = useState(null);
+  const [successNotice, setSuccessNotice] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
