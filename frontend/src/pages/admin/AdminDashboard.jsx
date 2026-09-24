@@ -41,6 +41,7 @@ import {
 import { api } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import { useSettings } from '../../context/SettingsContext';
+import logoImg from '../../assets/logo.jpg';
 
 export const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -586,13 +587,13 @@ export const AdminDashboard = () => {
       )}
 
       {/* Mobile Top Header */}
-      <div className="md:hidden bg-[#141B28] border-b border-white/5 p-4 flex items-center justify-between sticky top-0 z-40">
+      <div className="md:hidden bg-[#141B28] border-b border-white/5 p-3.5 flex items-center justify-between sticky top-0 z-40">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-luxury-gold/15 border border-luxury-gold/30 flex items-center justify-center text-luxury-gold">
-            <Shield className="w-4 h-4" />
+          <div className="w-9 h-9 rounded-full overflow-hidden shrink-0 ring-1.5 ring-luxury-gold/60 shadow-md">
+            <img src={logoImg} alt="Shree Shyam PVC Logo" className="w-full h-full object-cover" />
           </div>
           <div>
-            <h2 className="font-serif font-bold text-xs text-white">SSPI Admin Panel</h2>
+            <h2 className="font-serif font-bold text-xs text-white">Shree Shyam PVC</h2>
             <p className="text-[10px] text-luxury-gold font-mono truncate max-w-[170px]">{user?.email || 'Superadmin'}</p>
           </div>
         </div>
@@ -629,14 +630,14 @@ export const AdminDashboard = () => {
       <aside className={`w-full md:w-72 bg-[#141B28] border-r border-white/5 flex flex-col shrink-0 ${
         mobileMenuOpen ? 'block' : 'hidden md:flex'
       }`}>
-        <div className="p-5 border-b border-white/5 hidden md:flex items-center justify-between">
+        <div className="p-4 border-b border-white/5 hidden md:flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-luxury-gold/15 border border-luxury-gold/30 flex items-center justify-center text-luxury-gold">
-              <Shield className="w-5 h-5" />
+            <div className="w-11 h-11 rounded-full overflow-hidden shrink-0 ring-2 ring-luxury-gold/70 shadow-lg shadow-luxury-gold/15">
+              <img src={logoImg} alt="Shree Shyam PVC Logo" className="w-full h-full object-cover" />
             </div>
             <div>
-              <h2 className="font-serif font-bold text-sm text-white tracking-wide">SSPI Control Center</h2>
-              <p className="text-[11px] text-stone-400 font-mono">MongoDB Atlas CMS</p>
+              <h2 className="font-serif font-bold text-sm text-white tracking-wide">Shree Shyam PVC</h2>
+              <p className="text-[10px] text-luxury-gold font-mono font-bold tracking-wider uppercase">Admin Control Center</p>
             </div>
           </div>
         </div>

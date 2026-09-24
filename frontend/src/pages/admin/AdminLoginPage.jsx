@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Shield, Lock, Mail, Eye, EyeOff, AlertCircle, ArrowLeft, CheckCircle2 } from 'lucide-react';
 import { api } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
+import logoImg from '../../assets/logo.jpg';
 
 export const AdminLoginPage = () => {
   const navigate = useNavigate();
@@ -77,8 +78,8 @@ export const AdminLoginPage = () => {
         <div className="bg-[#121824] border border-white/10 rounded-2xl p-7 sm:p-8 shadow-2xl backdrop-blur-sm">
           {/* Header */}
           <div className="text-center mb-7">
-            <div className="w-14 h-14 rounded-2xl bg-luxury-gold/10 border border-luxury-gold/30 flex items-center justify-center mx-auto mb-4 text-luxury-gold shadow-lg shadow-luxury-gold/5">
-              <Shield className="w-7 h-7" />
+            <div className="w-20 h-20 rounded-full overflow-hidden mx-auto mb-4 ring-2 ring-luxury-gold/70 shadow-2xl shadow-luxury-gold/20 hover:scale-105 transition-transform duration-300">
+              <img src={logoImg} alt="Shree Shyam PVC Interior Logo" className="w-full h-full object-cover" />
             </div>
             <h1 className="text-xl sm:text-2xl font-serif font-bold text-white tracking-wide">
               Shree Shyam PVC Admin
