@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Star, ArrowRight, CheckCircle2, Send, X, Sparkles, MessageCircle, MapPin, ThumbsUp, ShieldCheck, Layers } from 'lucide-react';
+import { Star, ArrowRight, CheckCircle2, Send, X, Sparkles, MessageCircle, MapPin, ThumbsUp, ShieldCheck, Layers, ExternalLink } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { images } from '../data/images';
 import { api } from '../services/api';
@@ -196,13 +196,32 @@ _Visible live on Shree Shyam PVC Website_`;
           </p>
         </div>
 
-        <button
-          onClick={() => setShowModal(true)}
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-luxury-gold hover:bg-luxury-goldDark text-[#121212] text-xs font-black shadow-sm transition-all active:scale-95 self-start sm:self-auto shrink-0"
-        >
-          <span>Write a Review</span>
-          <ArrowRight className="w-3.5 h-3.5" />
-        </button>
+        <div className="flex items-center gap-2.5 flex-wrap sm:flex-nowrap self-start sm:self-auto shrink-0">
+          <a
+            href={settings.googleReviewUrl || 'https://maps.google.com/?q=Shree+Shyam+PVC+Interior+Vastral+Ahmedabad'}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white dark:bg-[#1E2638] border border-stone-200 dark:border-white/10 hover:border-luxury-gold/70 text-obsidian dark:text-stone-100 text-xs font-bold shadow-sm transition-all hover:scale-105 active:scale-95"
+            title="Leave a 5-star review directly on Google Maps"
+          >
+            <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
+              <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.66v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.15z"/>
+              <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.24v3.15C3.26 21.36 7.33 24 12 24z"/>
+              <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.24C.45 8.15 0 9.99 0 12s.45 3.85 1.24 5.42l4.04-3.15z"/>
+              <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.24 6.58l4.04 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+            </svg>
+            <span>Review on Google</span>
+            <ExternalLink className="w-3.5 h-3.5 text-stone-400" />
+          </a>
+
+          <button
+            onClick={() => setShowModal(true)}
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-luxury-gold hover:bg-luxury-goldDark text-[#121212] text-xs font-black shadow-sm transition-all active:scale-95"
+          >
+            <span>Write a Review</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </button>
+        </div>
       </div>
 
       {/* ── ALL COMPANIES PVC MATERIAL WORK AVAILABLE NOTICE BANNER ── */}

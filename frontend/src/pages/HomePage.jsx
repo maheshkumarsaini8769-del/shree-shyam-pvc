@@ -25,12 +25,17 @@ import {
   Building2,
   Palette,
   Camera,
-  ZoomIn
+  ZoomIn,
+  Download,
+  Printer,
+  Share2,
+  FileText
 } from 'lucide-react';
 import { images, getImageByKey } from '../data/images';
 import { useSettings } from '../context/SettingsContext';
 import { api } from '../services/api';
 import { HeroSection } from '../components/HeroSection';
+import logoImg from '../assets/logo.jpg';
 
 export const HomePage = () => {
   const { settings } = useSettings();
@@ -46,6 +51,39 @@ export const HomePage = () => {
   const [selectedRoom, setSelectedRoom] = useState('tv-unit');
   const [selectedFinish, setSelectedFinish] = useState('louver');
   const [sqft, setSqft] = useState(120);
+
+  // Estimate PDF Lead Modal state
+  const [estimateModalOpen, setEstimateModalOpen] = useState(false);
+  const [estimateClientName, setEstimateClientName] = useState('');
+  const [estimateClientPhone, setEstimateClientPhone] = useState('');
+  const [estimateClientArea, setEstimateClientArea] = useState('Vastral, Ahmedabad');
+  const [estimateGenerated, setEstimateGenerated] = useState(false);
+  const [submittingLead, setSubmittingLead] = useState(false);
+  const [estimateQuotationId, setEstimateQuotationId] = useState('');
+
+  const handleOpenEstimateModal = () => {
+    setEstimateQuotationId(`SSP-EST-${Math.floor(100000 + Math.random() * 900000)}`);
+    setEstimateModalOpen(true);
+  };
+
+  const handleGenerateEstimate = async (e) => {
+    e.preventDefault();
+    if (!estimateClientName.trim() || !estimateClientPhone.trim()) return;
+    setSubmittingLead(true);
+    try {
+      await api.submitEnquiry({
+        name: estimateClientName.trim(),
+        phone: estimateClientPhone.trim(),
+        service: `${currentRoom.name} (${currentFinish.name})`,
+        message: `[Generated Estimate] Area: ${sqft} sqft, Approx Rate: ₹${baseRate}/sqft, Total Estimate: ₹${estimatedExact.toLocaleString('en-IN')}, Location: ${estimateClientArea}`
+      });
+    } catch (err) {
+      console.warn('Silent enquiry capture notice:', err);
+    } finally {
+      setSubmittingLead(false);
+      setEstimateGenerated(true);
+    }
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -527,13 +565,38 @@ export const HomePage = () => {
                   </div>
                 </div>
 
-                <Link
-                  to={`/book?service=${selectedRoom}&area=${sqft}`}
-                  className="w-full inline-flex items-center justify-center gap-2 py-3.5 rounded-xl bg-luxury-gold hover:bg-amber-400 text-obsidian text-xs sm:text-sm font-black shadow-gold-glow transition-all active:scale-95"
-                >
-                  <span>Lock This Estimate & Book Visit</span>
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
+                <div className="space-y-2.5">
+                  <Link
+                    to={`/book?service=${selectedRoom}&area=${sqft}`}
+                    className="w-full inline-flex items-center justify-center gap-2 py-3.5 rounded-xl bg-luxury-gold hover:bg-amber-400 text-obsidian text-xs sm:text-sm font-black shadow-gold-glow transition-all active:scale-95"
+                  >
+                    <span>Lock This Estimate & Book Visit</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
+
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={handleOpenEstimateModal}
+                      className="py-2.5 px-3 rounded-xl bg-white/10 hover:bg-white/15 border border-luxury-gold/50 text-luxury-gold text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm active:scale-95"
+                    >
+                      <Download className="w-3.5 h-3.5" />
+                      <span>Download PDF</span>
+                    </button>
+
+                    <a
+                      href={`https://wa.me/918209836370?text=${encodeURIComponent(
+                        `*PVC Interior Estimate Inquiry*\n━━━━━━━━━━━━━━━━━━━━\n🏠 *Room:* ${currentRoom.name}\n🎨 *Finish:* ${currentFinish.name}\n📐 *Area:* ${sqft} Sq. Ft.\n💰 *Calculated Price:* approx ₹${estimatedExact.toLocaleString('en-IN')}\n📍 *Location:* Vastral / Ahmedabad\n\nPlease share design catalog and confirm free site visit.`
+                      )}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="py-2.5 px-3 rounded-xl bg-emerald-600/90 hover:bg-emerald-600 text-white text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm active:scale-95"
+                    >
+                      <MessageCircle className="w-3.5 h-3.5 fill-white" />
+                      <span>WhatsApp Quote</span>
+                    </a>
+                  </div>
+                </div>
 
                 <p className="text-[10px] text-center text-slate-400">
                   Zero advance booking fee. Free home consultation in Vastral & Ahmedabad.
@@ -862,6 +925,220 @@ export const HomePage = () => {
               >
                 Book Free Consultation
               </Link>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 12. ESTIMATE DOWNLOAD MODAL */}
+      {estimateModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md overflow-y-auto animate-fade-in-up">
+          <div className="relative w-full max-w-xl bg-[#141B28] text-white rounded-2xl sm:rounded-3xl border border-white/10 shadow-2xl overflow-hidden my-6">
+            
+            {/* Modal Header */}
+            <div className="flex items-center justify-between p-4 sm:p-5 border-b border-white/10 bg-white/[0.02]">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-full overflow-hidden shrink-0 ring-1 ring-luxury-gold/50">
+                  <img src={logoImg} alt="Logo" className="w-full h-full object-cover" />
+                </div>
+                <div>
+                  <h3 className="font-serif font-bold text-sm sm:text-base text-white">
+                    {estimateGenerated ? 'Official Cost Estimate' : 'Download Official PDF Estimate'}
+                  </h3>
+                  <p className="text-[11px] text-stone-400">Shree Shyam PVC Interior • Vastral, Ahmedabad</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setEstimateModalOpen(false)}
+                className="p-1.5 rounded-lg text-stone-400 hover:text-white hover:bg-white/10 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-4 sm:p-6">
+              {!estimateGenerated ? (
+                <form onSubmit={handleGenerateEstimate} className="space-y-4">
+                  <div className="p-3.5 rounded-xl bg-luxury-gold/10 border border-luxury-gold/30 text-xs text-stone-300 space-y-1">
+                    <p className="font-bold text-luxury-gold flex items-center gap-1.5">
+                      <Sparkles className="w-4 h-4 text-luxury-gold" />
+                      <span>{currentRoom.name} — {sqft} Sq. Ft. ({currentFinish.name})</span>
+                    </p>
+                    <p className="text-[11px] text-stone-400">
+                      Calculated Estimate: <strong className="text-white">approx ₹{estimatedExact.toLocaleString('en-IN')}</strong> (₹{baseRate}/sqft). Enter your details to download your official stamped estimate with 10-year warranty clause.
+                    </p>
+                  </div>
+
+                  <div className="space-y-3">
+                    <div>
+                      <label className="text-xs font-bold text-stone-300 block mb-1">Your Full Name *</label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="e.g. Ramesh Patel"
+                        value={estimateClientName}
+                        onChange={(e) => setEstimateClientName(e.target.value)}
+                        className="w-full p-3 rounded-xl bg-[#0B0F17] border border-white/10 text-white text-xs sm:text-sm focus:ring-2 focus:ring-luxury-gold/50 focus:outline-none"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="text-xs font-bold text-stone-300 block mb-1">WhatsApp / Mobile Number *</label>
+                      <input
+                        type="tel"
+                        required
+                        placeholder="e.g. 98250XXXXX"
+                        value={estimateClientPhone}
+                        onChange={(e) => setEstimateClientPhone(e.target.value)}
+                        className="w-full p-3 rounded-xl bg-[#0B0F17] border border-white/10 text-white text-xs sm:text-sm focus:ring-2 focus:ring-luxury-gold/50 focus:outline-none"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="text-xs font-bold text-stone-300 block mb-1">Area / Location in Ahmedabad</label>
+                      <input
+                        type="text"
+                        placeholder="e.g. Vastral, Maninagar, Nikol, SG Highway"
+                        value={estimateClientArea}
+                        onChange={(e) => setEstimateClientArea(e.target.value)}
+                        className="w-full p-3 rounded-xl bg-[#0B0F17] border border-white/10 text-white text-xs sm:text-sm focus:ring-2 focus:ring-luxury-gold/50 focus:outline-none"
+                      />
+                    </div>
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={submittingLead}
+                    className="w-full py-3.5 rounded-xl bg-luxury-gold hover:bg-luxury-goldDark text-obsidian text-xs sm:text-sm font-black shadow-gold-glow flex items-center justify-center gap-2 transition-all disabled:opacity-50"
+                  >
+                    {submittingLead ? (
+                      <span>Generating Estimate...</span>
+                    ) : (
+                      <>
+                        <Download className="w-4 h-4" />
+                        <span>Generate &amp; Download Stamped Estimate</span>
+                      </>
+                    )}
+                  </button>
+
+                  <p className="text-[10px] text-center text-stone-400">
+                    🔒 Your number is kept strictly confidential. No spam calls.
+                  </p>
+                </form>
+              ) : (
+                <div className="space-y-4">
+                  {/* PRINTABLE LETTERHEAD ESTIMATE */}
+                  <div id="printable-estimate" className="bg-white text-stone-900 p-5 rounded-2xl border border-stone-200 shadow-sm space-y-4 text-xs">
+                    {/* Header */}
+                    <div className="flex items-center justify-between border-b border-stone-200 pb-3 gap-3">
+                      <div className="flex items-center gap-2.5">
+                        <img src={logoImg} alt="Shree Shyam PVC" className="w-12 h-12 rounded-full object-cover shrink-0 ring-1 ring-amber-500" />
+                        <div>
+                          <h4 className="font-serif font-black text-sm text-stone-900 tracking-tight">SHREE SHYAM PVC INTERIOR</h4>
+                          <p className="text-[10px] text-amber-700 font-bold uppercase tracking-wider">KAKA PVC PROFILE &amp; ALL BRANDS CERTIFIED</p>
+                          <p className="text-[10px] text-stone-500">Moti Canal Road, Vastral, Ahmedabad - 382418</p>
+                        </div>
+                      </div>
+                      <div className="text-right text-[10px] text-stone-600">
+                        <p className="font-mono font-bold text-stone-900">{estimateQuotationId}</p>
+                        <p>{new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}</p>
+                        <p className="text-emerald-700 font-bold">10-YR GUARANTEE</p>
+                      </div>
+                    </div>
+
+                    {/* Customer Meta */}
+                    <div className="bg-stone-50 p-2.5 rounded-lg grid grid-cols-2 gap-2 text-[11px]">
+                      <div>
+                        <span className="text-stone-500 block text-[9px] uppercase font-bold">Estimate For:</span>
+                        <strong className="text-stone-900 font-bold">{estimateClientName}</strong>
+                        <span className="text-stone-600 block">{estimateClientPhone}</span>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-stone-500 block text-[9px] uppercase font-bold">Project Location:</span>
+                        <strong className="text-stone-900 font-bold">{estimateClientArea || 'Ahmedabad'}</strong>
+                        <span className="text-stone-600 block">Site Laser Visit: <strong className="text-emerald-700">FREE</strong></span>
+                      </div>
+                    </div>
+
+                    {/* Cost Breakdown Table */}
+                    <table className="w-full text-left border border-stone-200 rounded-lg overflow-hidden text-[11px]">
+                      <thead className="bg-stone-100 text-stone-700 text-[10px] uppercase font-bold">
+                        <tr>
+                          <th className="p-2 border-b border-stone-200">Description</th>
+                          <th className="p-2 border-b border-stone-200 text-center">Area</th>
+                          <th className="p-2 border-b border-stone-200 text-right">Approx Rate</th>
+                          <th className="p-2 border-b border-stone-200 text-right">Estimate Total</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-stone-100">
+                        <tr>
+                          <td className="p-2 font-medium">
+                            <span className="font-bold text-stone-900">{currentRoom.name}</span>
+                            <span className="text-[10px] text-stone-500 block">{currentFinish.name} ({currentFinish.desc})</span>
+                          </td>
+                          <td className="p-2 text-center font-mono">{sqft} sqft</td>
+                          <td className="p-2 text-right font-mono">₹{baseRate}/sqft</td>
+                          <td className="p-2 text-right font-bold text-stone-900 font-mono">₹{estimatedExact.toLocaleString('en-IN')}</td>
+                        </tr>
+                      </tbody>
+                      <tfoot className="bg-amber-50/60 font-bold text-stone-900">
+                        <tr>
+                          <td colSpan="3" className="p-2 text-right text-[10px] uppercase">Estimated Budget:</td>
+                          <td className="p-2 text-right font-mono text-sm text-amber-900 font-black">₹{estimatedExact.toLocaleString('en-IN')}</td>
+                        </tr>
+                      </tfoot>
+                    </table>
+
+                    {/* Guarantees & Terms */}
+                    <div className="p-2.5 rounded-lg bg-emerald-50 border border-emerald-200 text-[10px] text-emerald-900 space-y-1">
+                      <p className="font-bold flex items-center gap-1">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                        <span>Included: 100% Waterproof, 100% Termite Proof, 10-Year Warranty.</span>
+                      </p>
+                      <p className="text-stone-600 pl-4">
+                        * Free laser measurement at your doorstep. Final quotation confirmed on exact site dimensions.
+                      </p>
+                    </div>
+
+                    <div className="flex justify-between items-center text-[9px] text-stone-500 pt-1 border-t border-stone-100">
+                      <span>Helpline: +91 8209836370 • +91 9828448936</span>
+                      <span>Authorized Signatory: Shree Shyam PVC</span>
+                    </div>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-2">
+                    <button
+                      onClick={() => window.print()}
+                      className="py-2.5 px-3 rounded-xl bg-luxury-gold hover:bg-luxury-goldDark text-obsidian text-xs font-black shadow flex items-center justify-center gap-1.5 transition-all"
+                    >
+                      <Printer className="w-4 h-4" />
+                      <span>Print / Save PDF</span>
+                    </button>
+
+                    <a
+                      href={`https://wa.me/918209836370?text=${encodeURIComponent(
+                        `*Hello Shree Shyam PVC Interior,*\nHere is my auto-generated estimate certificate:\n\n*Quotation Ref:* ${estimateQuotationId}\n*Customer:* ${estimateClientName} (${estimateClientPhone})\n*Room/Service:* ${currentRoom.name} - ${currentFinish.name}\n*Area:* ${sqft} sqft\n*Estimated Total:* ₹${estimatedExact.toLocaleString('en-IN')}\n*Location:* ${estimateClientArea}\n\nPlease confirm date for Free On-Site Measurement!`
+                      )}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow flex items-center justify-center gap-1.5 transition-all"
+                    >
+                      <Share2 className="w-4 h-4" />
+                      <span>Share on WhatsApp</span>
+                    </a>
+
+                    <Link
+                      to={`/book?service=${selectedRoom}&area=${sqft}`}
+                      onClick={() => setEstimateModalOpen(false)}
+                      className="py-2.5 px-3 rounded-xl bg-white/10 hover:bg-white/15 text-stone-200 text-xs font-bold flex items-center justify-center gap-1.5 transition-all"
+                    >
+                      <span>Book Free Visit →</span>
+                    </Link>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

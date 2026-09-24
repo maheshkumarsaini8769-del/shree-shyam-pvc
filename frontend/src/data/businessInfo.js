@@ -14,6 +14,7 @@ export const BUSINESS_INFO = {
   phone2Raw: '919828448936',
   whatsappNumber: '918209836370',
   googleMapsDirectionsUrl: 'https://www.google.com/maps/dir/?api=1&destination=Yogeshwar+Residency+Opp+Ashutosh+Tenament+Moti+Canal+Road+Vastral+Ahmedabad',
+  googleReviewUrl: 'https://maps.google.com/?q=Shree+Shyam+PVC+Interior+Vastral+Ahmedabad',
   defaultWhatsAppMessage: (service = 'PVC Interior') => 
     `Hello Shree Shyam PVC Interior, I am interested in ${service}. I would like to request a consultation/site visit.`
 };

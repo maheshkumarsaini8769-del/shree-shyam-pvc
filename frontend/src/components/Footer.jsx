@@ -119,7 +119,7 @@ export const Footer = () => {
                 </div>
               </div>
 
-              <div className="pt-2">
+              <div className="pt-2 space-y-2">
                 <a
                   href={`https://wa.me/918209836370?text=Hello%20Shree%20Shyam%20PVC,%20I%20am%20looking%20for%20an%20interior%20quote`}
                   target="_blank"
@@ -128,6 +128,15 @@ export const Footer = () => {
                 >
                   <MessageCircle className="w-4 h-4 fill-white" />
                   <span>WhatsApp Consultation</span>
+                </a>
+
+                <a
+                  href={settings.googleReviewUrl || 'https://maps.google.com/?q=Shree+Shyam+PVC+Interior+Vastral+Ahmedabad'}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-stone-200 text-xs font-semibold transition-all hover:border-luxury-gold/50"
+                >
+                  <span>⭐ Review us on Google Maps</span>
                 </a>
               </div>
             </div>

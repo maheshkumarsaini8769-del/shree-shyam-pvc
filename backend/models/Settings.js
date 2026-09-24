@@ -56,6 +56,10 @@ const SettingsSchema = new mongoose.Schema({
     type: String,
     default: 'https://maps.google.com/?q=Vastral,+Ahmedabad,+Gujarat+382418'
   },
+  googleReviewUrl: {
+    type: String,
+    default: 'https://maps.google.com/?q=Shree+Shyam+PVC+Interior+Vastral+Ahmedabad'
+  },
 
   // Header & Announcement Bar
   announcementText: {
