@@ -53,14 +53,17 @@ export const ServicesPage = () => {
         </div>
       ) : (
         <div className="space-y-4">
-          {services.map((service) => {
-            const img = getImageByKey(service.imageKey || service.id);
-            const sub = serviceSubtitles[service.title] || service.category || 'High Quality PVC Fabrication';
+          {services.map((service, index) => {
+            const serviceTitle = service.name || service.title || 'PVC Interior Solution';
+            const img = getImageByKey(service.image || service.imageKey || service.slug || service.name);
+            const sub = service.shortDescription || serviceSubtitles[serviceTitle] || serviceSubtitles[service.title] || service.description || 'High Quality PVC Fabrication';
+            const price = service.startingPrice ? `From ₹${service.startingPrice} / sq. ft.` : '₹450 - ₹800 / sq. ft.';
+            const slug = service.slug || service._id || `service-${index}`;
 
             return (
               <Link
-                key={service.id}
-                to={`/services/${service.slug}`}
+                key={service._id || service.slug || index}
+                to={`/services/${slug}`}
                 className="group flex flex-col sm:flex-row sm:items-center justify-between p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-white/10 shadow-soft hover:shadow-elevated transition-all duration-300 gap-4"
               >
                 <div className="flex items-center gap-4 min-w-0">
@@ -68,7 +71,7 @@ export const ServicesPage = () => {
                   <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800 shrink-0 border border-slate-200 dark:border-white/10">
                     <img
                       src={img}
-                      alt={service.title}
+                      alt={serviceTitle}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                   </div>
@@ -79,11 +82,11 @@ export const ServicesPage = () => {
                         KAKA PVC
                       </span>
                       <span className="text-xs font-bold text-slate-400">•</span>
-                      <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">₹450 - ₹800 / sq. ft.</span>
+                      <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">{price}</span>
                     </div>
 
                     <h3 className="font-serif font-bold text-base sm:text-lg text-obsidian dark:text-white group-hover:text-luxury-goldDark dark:group-hover:text-luxury-gold transition-colors">
-                      {service.title}
+                      {serviceTitle}
                     </h3>
                     <p className="text-xs text-charcoal-muted dark:text-slate-400 mt-1 line-clamp-1 sm:line-clamp-2">
                       {sub}

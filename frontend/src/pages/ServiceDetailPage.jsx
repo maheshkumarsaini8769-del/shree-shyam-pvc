@@ -60,11 +60,14 @@ export const ServiceDetailPage = () => {
     );
   }
 
+  const serviceTitle = service.name || service.title || 'PVC Interior Solution';
+  const mainPhoto = getImageByKey(service.image || service.imageKey || service.slug || service.name);
+
   const photoSet = [
-    getImageByKey(service.imageKey || service.id),
+    mainPhoto,
     images.kitchen2,
-    images.kitchen3,
-    images.kitchen4
+    images.wardrobe,
+    images.tvUnit
   ];
 
   const colorSwatches = [
@@ -126,7 +129,7 @@ export const ServiceDetailPage = () => {
           <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-white/10 shadow-soft">
             <img
               src={photoSet[selectedPhotoIndex] || photoSet[0]}
-              alt={service.title}
+              alt={serviceTitle}
               className="w-full h-full object-cover transition-all duration-300"
             />
             <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-obsidian/80 backdrop-blur-md text-white text-[10px] font-bold tracking-wider uppercase">
@@ -180,7 +183,7 @@ export const ServiceDetailPage = () => {
               <span>CUSTOM ARCHITECTURAL FABRICATION</span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-serif font-bold text-obsidian dark:text-white">
-              {service.title}
+              {serviceTitle}
             </h1>
             <p className="text-xs sm:text-sm text-charcoal-muted dark:text-slate-400 mt-2 leading-relaxed">
               {service.description}

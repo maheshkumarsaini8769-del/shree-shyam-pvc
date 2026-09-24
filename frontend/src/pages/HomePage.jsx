@@ -37,9 +37,48 @@ import { api } from '../services/api';
 import { HeroSection } from '../components/HeroSection';
 import logoImg from '../assets/logo.jpg';
 
+const defaultHomeServices = [
+  {
+    slug: 'pvc-modular-kitchen',
+    name: 'PVC Modular Kitchen',
+    shortDescription: 'Modern, termite-proof, and 100% water-resistant modular kitchens tailored to your cooking space.',
+    startingPrice: 480
+  },
+  {
+    slug: 'pvc-wardrobe',
+    name: 'PVC Wardrobe & Lofts',
+    shortDescription: 'Spacious, elegant wardrobes that protect your clothing and valuables from dampness and termites.',
+    startingPrice: 520
+  },
+  {
+    slug: 'pvc-tv-unit',
+    name: 'PVC TV Unit & Acoustic Wall Louvers',
+    shortDescription: 'Designer TV feature walls with fluted louvers, concealed LED channels, and floating consoles.',
+    startingPrice: 420
+  },
+  {
+    slug: 'pvc-doors',
+    name: 'PVC Doors & Frames',
+    shortDescription: 'Heavy-duty waterproof doors for bathrooms, balconies, bedrooms, and utility areas.',
+    startingPrice: 320
+  },
+  {
+    slug: 'pvc-wall-panels',
+    name: 'PVC Wall Panels & Fluted Louvers',
+    shortDescription: 'Designer fluted wall panels, ceiling rafters, and marble sheet claddings.',
+    startingPrice: 180
+  },
+  {
+    slug: 'pvc-office-interior',
+    name: 'Office & Commercial Interior',
+    shortDescription: 'Modular workstation partitions, executive cabins, and reception desks.',
+    startingPrice: 450
+  }
+];
+
 export const HomePage = () => {
   const { settings } = useSettings();
-  const [services, setServices] = useState([]);
+  const [services, setServices] = useState(defaultHomeServices);
   const [showVideoModal, setShowVideoModal] = useState(false);
 
   // Scroll tracking states
@@ -345,17 +384,22 @@ export const HomePage = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-            {services.map((service) => {
-              const photoUrl = getImageByKey(service.imageKey || service.id);
+            {services.map((service, index) => {
+              const serviceSlug = service.slug || service.id || `service-${index}`;
+              const serviceTitle = service.name || service.title || 'PVC Interior Solution';
+              const photoUrl = getImageByKey(service.image || service.imageKey || service.slug || service.name);
+              const priceText = service.startingPrice ? `₹${service.startingPrice} / sq. ft.` : '₹450 - ₹800 / sq. ft.';
+              const descText = service.shortDescription || service.shortDesc || service.description || 'Premium virgin PVC profile fabrication with 10-year warranty.';
+
               return (
                 <div
-                  key={service.id}
+                  key={service._id || service.slug || index}
                   className="group rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-white/10 overflow-hidden shadow-soft hover:shadow-floating transition-all duration-500 flex flex-col hover:-translate-y-1.5"
                 >
                   <div className="relative aspect-[16/11] overflow-hidden bg-slate-100 dark:bg-slate-800">
                     <img
                       src={photoUrl}
-                      alt={service.title}
+                      alt={serviceTitle}
                       className="w-full h-full object-cover group-hover:scale-115 transition-transform duration-700"
                       loading="lazy"
                     />
@@ -369,23 +413,23 @@ export const HomePage = () => {
 
                     <div className="absolute bottom-3 left-3 right-3 text-white">
                       <p className="text-xs font-medium text-luxury-goldLight">Starting at</p>
-                      <p className="text-sm font-serif font-bold text-white">₹450 - ₹800 / sq. ft.</p>
+                      <p className="text-sm font-serif font-bold text-white">{priceText}</p>
                     </div>
                   </div>
 
                   <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
                     <div>
                       <h3 className="text-lg font-serif font-bold text-obsidian dark:text-white group-hover:text-luxury-goldDark dark:group-hover:text-luxury-gold transition-colors">
-                        {service.title}
+                        {serviceTitle}
                       </h3>
                       <p className="text-xs sm:text-sm text-charcoal-muted dark:text-slate-400 mt-1.5 line-clamp-2 leading-relaxed">
-                        {service.shortDesc || service.description}
+                        {descText}
                       </p>
                     </div>
 
                     <div className="pt-2 border-t border-slate-100 dark:border-white/10 flex items-center justify-between">
                       <Link
-                        to={`/services/${service.id}`}
+                        to={`/services/${serviceSlug}`}
                         className="text-xs font-bold text-charcoal dark:text-slate-300 hover:text-luxury-gold inline-flex items-center gap-1 group/btn"
                       >
                         <span>Specifications & Colors</span>
@@ -393,7 +437,7 @@ export const HomePage = () => {
                       </Link>
 
                       <Link
-                        to={`/book?service=${service.id}`}
+                        to={`/book?service=${serviceSlug}`}
                         className="px-3.5 py-1.5 rounded-lg bg-obsidian dark:bg-white/10 hover:bg-charcoal dark:hover:bg-white/20 text-white text-xs font-bold transition-colors"
                       >
                         Book Visit

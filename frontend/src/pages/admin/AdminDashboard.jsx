@@ -762,23 +762,23 @@ ${quotationData.advancePaid > 0 ? `💳 *Advance Received:* ₹${Number(quotatio
   });
 
   const navItems = [
-    { id: 'overview', label: 'Dashboard Overview', icon: LayoutDashboard },
-    { id: 'header', label: 'Header & Announcements', icon: Megaphone },
-    { id: 'hero', label: 'Hero Section CMS', icon: Sparkles },
-    { id: 'contact', label: 'Contact & Socials', icon: PhoneCall },
-    { id: 'about', label: 'About Us CMS', icon: Info },
-    { id: 'services', label: `Services (${services.length})`, icon: Wrench },
-    { id: 'calculator', label: 'Pricing Calculator', icon: Calculator },
-    { id: 'gallery', label: `Gallery & Works (${gallery.length})`, icon: Camera },
-    { id: 'bookings', label: `Bookings (${bookings.length})`, icon: CalendarCheck },
-    { id: 'quotations', label: 'Quotation & Bill Maker', icon: Receipt },
-    { id: 'reviews', label: `Reviews & Replies (${reviews.length})`, icon: Star },
-    { id: 'enquiries', label: `Enquiries (${enquiries.length})`, icon: Inbox },
-    { id: 'faqs', label: `FAQs (${faqs.length})`, icon: HelpCircle },
-    { id: 'locations', label: `Service Areas (${(settingsData.serviceLocations || []).length})`, icon: MapPin },
-    { id: 'brands', label: 'PVC Brands & Materials', icon: Layers },
-    { id: 'legal', label: 'Business & Legal', icon: Building },
-    { id: 'authority', label: `Email Authority (${authorities.length})`, icon: KeyRound }
+    { id: 'overview', label: '📊 Dashboard Overview (होम)', icon: LayoutDashboard },
+    { id: 'bookings', label: `📅 Orders & Bookings (${bookings.length})`, icon: CalendarCheck },
+    { id: 'quotations', label: '🧾 Quotation & Bill (पक्का बिल)', icon: Receipt },
+    { id: 'enquiries', label: `📥 Customer Leads (${enquiries.length})`, icon: Inbox },
+    { id: 'gallery', label: `📸 Photo Gallery (${gallery.length})`, icon: Camera },
+    { id: 'services', label: `🛠️ Services & Rates (${services.length})`, icon: Wrench },
+    { id: 'calculator', label: '🧮 Rate Calculator (प्रति Sq.Ft)', icon: Calculator },
+    { id: 'reviews', label: `⭐ Customer Reviews (${reviews.length})`, icon: Star },
+    { id: 'header', label: '📢 Notice & Top Bar (ऑफर/नोटिस)', icon: Megaphone },
+    { id: 'hero', label: '✨ Home Banner & Tagline', icon: Sparkles },
+    { id: 'contact', label: '📞 Phone & WhatsApp (संपर्क)', icon: PhoneCall },
+    { id: 'about', label: 'ℹ️ About Shop (दुकान जानकारी)', icon: Info },
+    { id: 'locations', label: `📍 Service Areas (${(settingsData.serviceLocations || []).length})`, icon: MapPin },
+    { id: 'brands', label: '🏢 Material Brands (KAKA, TAASA)', icon: Layers },
+    { id: 'faqs', label: `❓ FAQ Questions (${faqs.length})`, icon: HelpCircle },
+    { id: 'legal', label: '📜 Address & GST (दुकान पता)', icon: Building },
+    { id: 'authority', label: `🔑 Admin Login Access (${authorities.length})`, icon: KeyRound }
   ];
 
   return (
@@ -895,17 +895,17 @@ ${quotationData.advancePaid > 0 ? `💳 *Advance Received:* ₹${Number(quotatio
             href="/"
             target="_blank"
             rel="noreferrer"
-            className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs font-bold text-stone-300 hover:text-white bg-white/5 hover:bg-white/10 transition-colors"
+            className="w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-bold text-stone-200 hover:text-white bg-white/5 hover:bg-white/10 transition-colors"
           >
-            <ExternalLink className="w-3.5 h-3.5" />
-            <span>Open Live Website</span>
+            <ExternalLink className="w-3.5 h-3.5 text-luxury-gold" />
+            <span>Open Website (वेबसाइट देखें)</span>
           </a>
           <button
             onClick={handleLogout}
-            className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs font-bold text-red-400 hover:text-red-300 bg-red-950/20 hover:bg-red-950/40 transition-colors"
+            className="w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-bold text-red-400 hover:text-red-300 bg-red-950/20 hover:bg-red-950/40 transition-colors"
           >
             <LogOut className="w-3.5 h-3.5" />
-            <span>Sign Out</span>
+            <span>Logout (लॉगआउट)</span>
           </button>
         </div>
       </aside>
@@ -918,7 +918,7 @@ ${quotationData.advancePaid > 0 ? `💳 *Advance Received:* ₹${Number(quotatio
             <h1 className="text-base sm:text-lg font-bold text-white capitalize font-serif">
               {navItems.find(n => n.id === activeTab)?.label || 'Admin Panel'}
             </h1>
-            <p className="text-[11px] text-stone-400">All data stored in real-time MongoDB Atlas</p>
+            <p className="text-[11px] text-stone-400">Database Active • Real-time Sync</p>
           </div>
 
           <div className="flex items-center gap-2.5">
@@ -926,7 +926,7 @@ ${quotationData.advancePaid > 0 ? `💳 *Advance Received:* ₹${Number(quotatio
               onClick={loadData}
               disabled={loading}
               className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-stone-300 hover:text-white transition-colors"
-              title="Refresh Data"
+              title="Refresh / रीफ्रेश करें"
             >
               <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
             </button>
@@ -937,7 +937,7 @@ ${quotationData.advancePaid > 0 ? `💳 *Advance Received:* ₹${Number(quotatio
                 className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-luxury-gold hover:bg-luxury-goldDark text-obsidian text-xs font-black transition-all shadow-md active:scale-95"
               >
                 <Save className="w-3.5 h-3.5" />
-                <span>Save to MongoDB</span>
+                <span>Save Changes (सेव करें)</span>
               </button>
             )}
           </div>
