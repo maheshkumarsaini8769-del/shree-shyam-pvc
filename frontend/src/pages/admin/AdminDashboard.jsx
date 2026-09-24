@@ -50,6 +50,7 @@ import { api } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import { useSettings } from '../../context/SettingsContext';
 import { exportToCSV, compressImageFile } from '../../utils/exportHelpers';
+import { realWorkImages } from '../../data/realWorkImages';
 import logoImg from '../../assets/logo.jpg';
 
 export const AdminDashboard = () => {
@@ -546,6 +547,18 @@ export const AdminDashboard = () => {
       ...prev,
       serviceLocations: (prev.serviceLocations || []).filter(l => l !== locToRemove)
     }));
+  };
+
+  // Resolve Image Source between Data URL, Vite Bundle, and Static Assets
+  const resolveImageSrc = (url) => {
+    if (!url) return '';
+    if (url.startsWith('data:') || url.startsWith('http://') || url.startsWith('https://')) return url;
+    if (url.includes('real_work_')) {
+      const filename = url.split('/').pop().replace('.jpg', '');
+      const found = realWorkImages.find(r => r.img && r.img.includes(filename));
+      if (found) return found.img;
+    }
+    return url;
   };
 
   // Gallery Direct Image Upload with Client-Side Canvas Compression
@@ -1905,12 +1918,12 @@ ${quotationData.advancePaid > 0 ? `💳 *Advance Received:* ₹${Number(quotatio
                     <div key={item.id || item._id || idx} className="bg-[#141B28] border border-white/5 rounded-2xl overflow-hidden group">
                       <div className="aspect-[4/3] bg-black/40 relative overflow-hidden">
                         <img
-                          src={item.imageUrl}
+                          src={resolveImageSrc(item.imageUrl)}
                           alt={item.title}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                           onError={(e) => {
                             e.target.onerror = null;
-                            e.target.src = 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=600&q=80';
+                            e.target.src = item.imageUrl || '/logo.jpg';
                           }}
                         />
                         <span className="absolute top-2 left-2 px-2 py-0.5 rounded bg-black/70 backdrop-blur-md text-[10px] font-bold text-luxury-gold border border-white/10">
