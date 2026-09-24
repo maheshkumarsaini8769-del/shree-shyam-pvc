@@ -69,22 +69,21 @@ const login = async (req, res) => {
     const cleanDigits = rawIdentifier.replace(/[^0-9]/g, '');
     const emailWithDomain = cleanInput.includes('@') ? cleanInput : `${cleanInput}@gmail.com`;
 
-    // 1. Check if loginIdentifier is an AuthorizedAdmin
+    // 1. Check if loginIdentifier is an AuthorizedAdmin (STRICT exact match only)
     let authAdmin = await AuthorizedAdmin.findOne({
       $or: [
         { email: cleanInput },
-        { email: emailWithDomain },
-        { email: new RegExp(`^${cleanInput}$`, 'i') },
-        ...(cleanDigits.length >= 10 ? [
-          { phone: new RegExp(cleanDigits.slice(-10)) },
-          { email: new RegExp(cleanDigits.slice(-10)) }
-        ] : [])
+        { email: emailWithDomain }
       ]
     });
 
-    // Special superadmin check: if maheshkumarsaini8769 or phone
-    if (!authAdmin && (cleanInput.includes('mahesh') || cleanDigits.includes('8209836370') || cleanDigits.includes('9828448936'))) {
-      authAdmin = await AuthorizedAdmin.findOne({ email: 'maheshkumarsaini8769@gmail.com' });
+    // Special superadmin exact handle or exact official phone check
+    if (!authAdmin) {
+      if (cleanInput === 'maheshkumarsaini8769' || cleanInput === 'maheshkumarsaini8769@gmail.com') {
+        authAdmin = await AuthorizedAdmin.findOne({ email: 'maheshkumarsaini8769@gmail.com' });
+      } else if (cleanDigits.length === 10 && (cleanDigits === '8209836370' || cleanDigits === '9828448936')) {
+        authAdmin = await AuthorizedAdmin.findOne({ email: 'maheshkumarsaini8769@gmail.com' });
+      }
     }
 
     if (authAdmin) {
@@ -134,7 +133,8 @@ const login = async (req, res) => {
         { email: cleanInput },
         { email: emailWithDomain },
         ...(cleanDigits.length >= 10 ? [
-          { phone: new RegExp(cleanDigits.slice(-10)) }
+          { phone: cleanDigits.slice(-10) },
+          { phone: `+91 ${cleanDigits.slice(-10)}` }
         ] : [])
       ]
     });

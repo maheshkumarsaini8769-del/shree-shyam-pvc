@@ -16,12 +16,13 @@ export const AdminLoginPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    // If user is already authenticated as admin, redirect to admin panel
-    if (user && (user.role === 'admin' || user.role === 'superadmin')) {
-      navigate('/admin', { replace: true });
-    }
-  }, [user, navigate]);
+  const handleSwitchAccount = () => {
+    localStorage.removeItem('sspi_token');
+    if (logout) logout();
+    setEmail('');
+    setPassword('');
+    setError('');
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -29,15 +30,22 @@ export const AdminLoginPage = () => {
     setLoading(true);
 
     try {
+      // 1. Clear any old session before authenticating
+      localStorage.removeItem('sspi_token');
+      if (logout) logout();
+
+      // 2. Authenticate credentials against backend MongoDB
       const data = await api.login({ identifier: email.trim(), password });
       
       if (!data.user || (data.user.role !== 'admin' && data.user.role !== 'superadmin')) {
+        localStorage.removeItem('sspi_token');
+        if (logout) logout();
         setError('Yeh account admin panel ke liye authorized nahi hai. Kripya authorized admin email use karein.');
         setLoading(false);
         return;
       }
 
-      // Save token and login in AuthContext
+      // 3. Save new valid token and user
       localStorage.setItem('sspi_token', data.token);
       if (login) {
         await login(data.user, data.token);
@@ -46,6 +54,9 @@ export const AdminLoginPage = () => {
       const destination = location.state?.from?.pathname || '/admin';
       navigate(destination, { replace: true });
     } catch (err) {
+      // Ensure bad login never preserves old token
+      localStorage.removeItem('sspi_token');
+      if (logout) logout();
       setError(err.message || 'Login failed. Kripya apna authorized email aur password check karein.');
     } finally {
       setLoading(false);
@@ -88,6 +99,31 @@ export const AdminLoginPage = () => {
               Authorized Management Portal & CMS Control Center
             </p>
           </div>
+
+          {user && (user.role === 'admin' || user.role === 'superadmin') && (
+            <div className="mb-5 p-3.5 rounded-xl bg-amber-500/10 border border-luxury-gold/40 text-stone-200 text-xs space-y-2">
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                <span>Pehle se logged in hain: <strong className="text-luxury-gold">{user.email}</strong></span>
+              </div>
+              <div className="flex items-center gap-2 pt-1">
+                <button
+                  type="button"
+                  onClick={() => navigate('/admin')}
+                  className="px-3 py-1.5 rounded-lg bg-luxury-gold hover:bg-luxury-goldDark text-obsidian font-bold text-xs shadow-sm transition-all"
+                >
+                  Dashboard Kholein →
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSwitchAccount}
+                  className="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/15 text-stone-300 font-semibold text-xs transition-all"
+                >
+                  Logout / Doosra Account Check Karein
+                </button>
+              </div>
+            </div>
+          )}
 
           {error && (
             <div className="mb-5 p-3.5 rounded-xl bg-red-950/50 border border-red-800/60 text-red-300 text-xs font-medium flex items-start gap-2.5 animate-shake">

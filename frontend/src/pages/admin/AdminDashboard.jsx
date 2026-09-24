@@ -194,8 +194,18 @@ export const AdminDashboard = () => {
   const loadData = async () => {
     setLoading(true);
     try {
-      const [statsRes, settingsRes, bookingsRes, reviewsRes, authRes, servicesRes, enquiriesRes, faqsRes, galleryRes] = await Promise.all([
-        api.adminGetDashboardStats().catch(() => null),
+      let statsRes = null;
+      try {
+        statsRes = await api.adminGetDashboardStats();
+      } catch (authErr) {
+        if (authErr?.status === 401 || authErr?.message?.includes('Authentication') || authErr?.message?.includes('token')) {
+          logout();
+          navigate('/admin/login', { replace: true });
+          return;
+        }
+      }
+
+      const [settingsRes, bookingsRes, reviewsRes, authRes, servicesRes, enquiriesRes, faqsRes, galleryRes] = await Promise.all([
         api.getSettings().catch(() => ({})),
         api.adminGetBookings().catch(() => []),
         api.adminGetReviews().catch(() => []),

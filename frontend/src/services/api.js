@@ -15,7 +15,10 @@ const getHeaders = (isJson = true) => {
 const handleResponse = async (res) => {
   const data = await res.json().catch(() => ({}));
   if (!res.ok) {
-    throw new Error(data.message || 'Something went wrong. Please try again.');
+    const err = new Error(data.message || 'Something went wrong. Please try again.');
+    err.status = res.status;
+    err.data = data;
+    throw err;
   }
   return data;
 };
