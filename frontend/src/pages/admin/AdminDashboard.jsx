@@ -23,6 +23,7 @@ import {
   RefreshCw,
   Eye,
   Shield,
+  ShieldCheck,
   UserCheck,
   Building,
   MapPin,
