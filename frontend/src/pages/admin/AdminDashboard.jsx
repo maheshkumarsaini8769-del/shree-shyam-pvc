@@ -45,11 +45,14 @@ import {
   Share2,
   FileSpreadsheet,
   FileText,
-  Image as ImageIcon
+  Image as ImageIcon,
+  Sun,
+  Moon
 } from 'lucide-react';
 import { api } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import { useSettings } from '../../context/SettingsContext';
+import { useTheme } from '../../context/ThemeContext';
 import { exportToCSV, compressImageFile } from '../../utils/exportHelpers';
 import { realWorkImages } from '../../data/realWorkImages';
 import logoImg from '../../assets/logo.jpg';
@@ -58,6 +61,7 @@ export const AdminDashboard = () => {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
   const { refreshSettings } = useSettings();
+  const { theme, toggleTheme, isDark } = useTheme();
 
   const [activeTab, setActiveTab] = useState('overview');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -783,7 +787,7 @@ ${quotationData.advancePaid > 0 ? `💳 *Advance Received:* ₹${Number(quotatio
   ];
 
   return (
-    <div className="h-screen w-screen bg-[#0F141E] text-stone-200 flex flex-col md:flex-row overflow-hidden">
+    <div className="h-screen w-screen bg-[#0F141E] text-stone-200 flex flex-col md:flex-row overflow-hidden admin-dashboard-container">
       {/* Toast Alerts */}
       {saveSuccess && (
         <div className="fixed top-5 right-5 z-50 px-4 py-3 rounded-xl bg-emerald-900/90 border border-emerald-500 text-emerald-200 text-xs sm:text-sm font-semibold shadow-2xl flex items-center gap-2 backdrop-blur-md animate-fade-in">
@@ -810,12 +814,22 @@ ${quotationData.advancePaid > 0 ? `💳 *Advance Received:* ₹${Number(quotatio
           </div>
         </div>
 
-        <button
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="p-2 rounded-xl bg-white/5 border border-white/10 text-stone-300 hover:text-white"
-        >
-          {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-        </button>
+        <div className="flex items-center gap-1.5">
+          <button
+            onClick={toggleTheme}
+            className="p-2 rounded-xl bg-white/5 border border-white/10 text-stone-300 hover:text-white transition-colors"
+            title={isDark ? "Switch to Light Theme" : "Switch to Dark Theme"}
+            aria-label="Toggle Theme"
+          >
+            {isDark ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-indigo-400" />}
+          </button>
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="p-2 rounded-xl bg-white/5 border border-white/10 text-stone-300 hover:text-white"
+          >
+            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Horizontal Quick Navigation */}
@@ -892,6 +906,20 @@ ${quotationData.advancePaid > 0 ? `💳 *Advance Received:* ₹${Number(quotatio
 
         {/* Footer shortcuts */}
         <div className="p-4 border-t border-white/5 space-y-2 shrink-0">
+          <button
+            onClick={toggleTheme}
+            className="w-full flex items-center justify-between py-2 px-3 rounded-xl text-xs font-bold text-stone-300 hover:text-white bg-white/5 hover:bg-white/10 transition-colors"
+            title="Toggle Light / Dark Mode"
+          >
+            <div className="flex items-center gap-2">
+              {isDark ? <Sun className="w-3.5 h-3.5 text-amber-400" /> : <Moon className="w-3.5 h-3.5 text-indigo-400" />}
+              <span>{isDark ? 'Light Theme' : 'Dark Theme'}</span>
+            </div>
+            <span className="text-[10px] font-mono font-medium px-2 py-0.5 rounded-full bg-white/10 text-stone-300">
+              {isDark ? 'Switch' : 'Switch'}
+            </span>
+          </button>
+
           <a
             href="/"
             target="_blank"
@@ -923,6 +951,24 @@ ${quotationData.advancePaid > 0 ? `💳 *Advance Received:* ₹${Number(quotatio
           </div>
 
           <div className="flex items-center gap-2.5">
+            <button
+              onClick={toggleTheme}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-stone-300 hover:text-white border border-white/10 transition-colors text-xs font-semibold"
+              title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
+            >
+              {isDark ? (
+                <>
+                  <Sun className="w-4 h-4 text-amber-400" />
+                  <span className="hidden sm:inline">Light Mode</span>
+                </>
+              ) : (
+                <>
+                  <Moon className="w-4 h-4 text-indigo-400" />
+                  <span className="hidden sm:inline">Dark Mode</span>
+                </>
+              )}
+            </button>
+
             <button
               onClick={loadData}
               disabled={loading}

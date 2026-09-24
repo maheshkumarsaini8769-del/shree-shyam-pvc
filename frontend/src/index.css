@@ -191,3 +191,131 @@
     size: A4 portrait;
   }
 }
+
+/* ========================================================
+   ADMIN DASHBOARD: LIGHT THEME OVERRIDES (Clean & Elegant)
+   ======================================================== */
+html:not(.dark) .admin-dashboard-container {
+  background-color: #F8FAFC !important;
+  color: #1E293B !important;
+}
+
+html:not(.dark) .admin-dashboard-container aside {
+  background-color: #FFFFFF !important;
+  border-right-color: #E2E8F0 !important;
+}
+
+html:not(.dark) .admin-dashboard-container aside .border-b,
+html:not(.dark) .admin-dashboard-container aside .border-t {
+  border-color: #F1F5F9 !important;
+}
+
+html:not(.dark) .admin-dashboard-container header {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  border-bottom-color: #E2E8F0 !important;
+}
+
+html:not(.dark) .admin-dashboard-container main {
+  background-color: #F1F5F9 !important;
+}
+
+/* Cards & containers */
+html:not(.dark) .admin-dashboard-container .bg-\[\#141B28\],
+html:not(.dark) .admin-dashboard-container .bg-\[\#121824\] {
+  background-color: #FFFFFF !important;
+  border-color: #E2E8F0 !important;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
+}
+
+/* Sub-panels & well backgrounds */
+html:not(.dark) .admin-dashboard-container .bg-\[\#0B0F17\],
+html:not(.dark) .admin-dashboard-container .bg-\[\#1A2232\],
+html:not(.dark) .admin-dashboard-container .bg-\[\#111722\] {
+  background-color: #F8FAFC !important;
+  border-color: #E2E8F0 !important;
+  color: #0F172A !important;
+}
+
+/* Inputs, Textareas, and Selects */
+html:not(.dark) .admin-dashboard-container input:not([type="checkbox"]):not([type="radio"]),
+html:not(.dark) .admin-dashboard-container textarea,
+html:not(.dark) .admin-dashboard-container select {
+  background-color: #FFFFFF !important;
+  border-color: #CBD5E1 !important;
+  color: #0F172A !important;
+}
+
+html:not(.dark) .admin-dashboard-container input::placeholder,
+html:not(.dark) .admin-dashboard-container textarea::placeholder {
+  color: #94A3B8 !important;
+}
+
+/* Text Overrides */
+html:not(.dark) .admin-dashboard-container .text-white {
+  color: #0F172A !important;
+}
+
+html:not(.dark) .admin-dashboard-container .text-stone-200 {
+  color: #1E293B !important;
+}
+
+html:not(.dark) .admin-dashboard-container .text-stone-300 {
+  color: #334155 !important;
+}
+
+html:not(.dark) .admin-dashboard-container .text-stone-400,
+html:not(.dark) .admin-dashboard-container .text-stone-500 {
+  color: #64748B !important;
+}
+
+/* Borders & subtle backgrounds */
+html:not(.dark) .admin-dashboard-container .border-white\/5,
+html:not(.dark) .admin-dashboard-container .border-white\/10,
+html:not(.dark) .admin-dashboard-container .border-white\/20 {
+  border-color: #E2E8F0 !important;
+}
+
+html:not(.dark) .admin-dashboard-container .bg-white\/5 {
+  background-color: #F1F5F9 !important;
+  border-color: #E2E8F0 !important;
+  color: #334155 !important;
+}
+
+html:not(.dark) .admin-dashboard-container .bg-white\/10 {
+  background-color: #E2E8F0 !important;
+  color: #1E293B !important;
+}
+
+html:not(.dark) .admin-dashboard-container .bg-black\/20 {
+  background-color: #F8FAFC !important;
+  border-color: #E2E8F0 !important;
+}
+
+/* Navigation items in sidebar when not active */
+html:not(.dark) .admin-dashboard-container aside nav button:not(.bg-luxury-gold) {
+  color: #475569 !important;
+}
+html:not(.dark) .admin-dashboard-container aside nav button:not(.bg-luxury-gold):hover {
+  background-color: #F1F5F9 !important;
+  color: #0F172A !important;
+}
+
+/* Active navigation item stays gold with dark text */
+html:not(.dark) .admin-dashboard-container aside nav button.bg-luxury-gold {
+  color: #0F172A !important;
+}
+
+/* Tables */
+html:not(.dark) .admin-dashboard-container th {
+  background-color: #F8FAFC !important;
+  color: #475569 !important;
+  border-color: #E2E8F0 !important;
+}
+
+html:not(.dark) .admin-dashboard-container td {
+  border-color: #F1F5F9 !important;
+}
+
+html:not(.dark) .admin-dashboard-container tr:hover td {
+  background-color: #F8FAFC !important;
+}
