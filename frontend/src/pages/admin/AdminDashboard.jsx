@@ -2778,7 +2778,7 @@ ${quotationData.advancePaid > 0 ? `💳 *Advance Received:* ₹${Number(quotatio
                     <label className="text-xs font-bold text-stone-300 block mb-1">Client Full Name *</label>
                     <input
                       type="text"
-                      placeholder="e.g. Ramesh Patel"
+                      placeholder="Enter client name"
                       value={quotationData.clientName}
                       onChange={(e) => setQuotationData(prev => ({ ...prev, clientName: e.target.value }))}
                       className="w-full p-2.5 rounded-xl bg-[#0B0F17] border border-white/10 text-white text-xs focus:ring-2 focus:ring-luxury-gold/50 focus:outline-none"
@@ -2789,7 +2789,7 @@ ${quotationData.advancePaid > 0 ? `💳 *Advance Received:* ₹${Number(quotatio
                     <label className="text-xs font-bold text-stone-300 block mb-1">WhatsApp / Phone *</label>
                     <input
                       type="tel"
-                      placeholder="e.g. 9825012345"
+                      placeholder="Enter phone number"
                       value={quotationData.clientPhone}
                       onChange={(e) => setQuotationData(prev => ({ ...prev, clientPhone: e.target.value }))}
                       className="w-full p-2.5 rounded-xl bg-[#0B0F17] border border-white/10 text-white text-xs focus:ring-2 focus:ring-luxury-gold/50 focus:outline-none"
@@ -2800,7 +2800,7 @@ ${quotationData.advancePaid > 0 ? `💳 *Advance Received:* ₹${Number(quotatio
                     <label className="text-xs font-bold text-stone-300 block mb-1">Site Address / Area</label>
                     <input
                       type="text"
-                      placeholder="e.g. B-402, Shivalik Residency, Vastral"
+                      placeholder="Enter site address"
                       value={quotationData.siteAddress}
                       onChange={(e) => setQuotationData(prev => ({ ...prev, siteAddress: e.target.value }))}
                       className="w-full p-2.5 rounded-xl bg-[#0B0F17] border border-white/10 text-white text-xs focus:ring-2 focus:ring-luxury-gold/50 focus:outline-none"
@@ -3749,7 +3749,7 @@ ${quotationData.advancePaid > 0 ? `💳 *Advance Received:* ₹${Number(quotatio
                     <input
                       type="email"
                       required
-                      placeholder="e.g. partner@gmail.com"
+                      placeholder="Enter admin email"
                       value={newAdminEmail}
                       onChange={(e) => setNewAdminEmail(e.target.value)}
                       className="w-full p-2.5 rounded-xl bg-[#0B0F17] border border-white/10 text-white text-xs focus:ring-2 focus:ring-luxury-gold/50 focus:outline-none"
@@ -3760,7 +3760,7 @@ ${quotationData.advancePaid > 0 ? `💳 *Advance Received:* ₹${Number(quotatio
                     <label className="text-xs font-bold text-stone-300 block mb-1">Admin Name</label>
                     <input
                       type="text"
-                      placeholder="e.g. Partner Name"
+                      placeholder="Enter admin name"
                       value={newAdminName}
                       onChange={(e) => setNewAdminName(e.target.value)}
                       className="w-full p-2.5 rounded-xl bg-[#0B0F17] border border-white/10 text-white text-xs focus:ring-2 focus:ring-luxury-gold/50 focus:outline-none"
@@ -3772,7 +3772,7 @@ ${quotationData.advancePaid > 0 ? `💳 *Advance Received:* ₹${Number(quotatio
                     <input
                       type="text"
                       required
-                      placeholder="Assign password (e.g. secret123)"
+                      placeholder="Enter assigned password"
                       value={newAdminPassword}
                       onChange={(e) => setNewAdminPassword(e.target.value)}
                       className="w-full p-2.5 rounded-xl bg-[#0B0F17] border border-white/10 text-white text-xs focus:ring-2 focus:ring-luxury-gold/50 focus:outline-none font-mono"

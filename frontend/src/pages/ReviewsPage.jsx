@@ -430,7 +430,7 @@ _Visible live on Shree Shyam PVC Website_`;
                   <input
                     type="text"
                     required
-                    placeholder="e.g. Ramesh Patel"
+                    placeholder="Enter your name"
                     value={customerName}
                     onChange={(e) => setCustomerName(e.target.value)}
                     className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 dark:border-white/10 bg-white dark:bg-stone-900 text-obsidian dark:text-white placeholder-stone-400 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-luxury-gold/50"
@@ -446,7 +446,7 @@ _Visible live on Shree Shyam PVC Website_`;
                       type="text"
                       value={location}
                       onChange={(e) => setLocation(e.target.value)}
-                      placeholder="e.g. Vastral"
+                      placeholder="Enter area / city"
                       className="w-full px-3 py-2 rounded-xl border border-stone-200 dark:border-white/10 bg-white dark:bg-stone-900 text-obsidian dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-luxury-gold/50"
                     />
                   </div>

@@ -381,7 +381,7 @@ _Lead from Shree Shyam PVC Website_`;
             </label>
             <input
               type="text"
-              placeholder="e.g. Ramesh Patel"
+              placeholder="Enter your full name"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               className={`w-full p-3 rounded-xl border bg-white dark:bg-slate-800 text-obsidian dark:text-white text-xs font-medium focus:outline-none focus:ring-2 focus:ring-luxury-gold/50 ${
@@ -555,7 +555,7 @@ _Lead from Shree Shyam PVC Website_`;
               <label className="block text-[10px] text-charcoal-muted dark:text-slate-400 font-bold mb-1">House / Flat / Society Address</label>
               <input
                 type="text"
-                placeholder="e.g. Flat B-202, Suryam Elegance"
+                placeholder="Enter house / flat / society address"
                 value={formData.address}
                 onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                 className="w-full p-2.5 rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800 text-obsidian dark:text-white placeholder-slate-400"

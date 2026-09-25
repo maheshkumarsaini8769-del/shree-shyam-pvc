@@ -94,7 +94,7 @@ export const MyBookingsPage = () => {
                 type="tel"
                 maxLength={10}
                 required
-                placeholder="e.g. 9825012345"
+                placeholder="Enter 10-digit mobile number"
                 value={phoneSearch}
                 onChange={(e) => setPhoneSearch(e.target.value.replace(/[^0-9]/g, ''))}
                 className="w-full pl-12 pr-4 py-2.5 rounded-xl border border-warm-border bg-warm-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-red/30"

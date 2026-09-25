@@ -196,7 +196,7 @@ _Sent via Shree Shyam PVC Website_`;
                 <input
                   type="text"
                   required
-                  placeholder="e.g. Ramesh Patel"
+                  placeholder="Enter your full name"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800 text-obsidian dark:text-white placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-luxury-gold/50 focus:border-luxury-gold"

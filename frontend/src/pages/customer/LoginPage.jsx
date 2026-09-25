@@ -67,7 +67,7 @@ export const LoginPage = () => {
               <input
                 type="text"
                 required
-                placeholder="e.g. 9825012345 or email@domain.com"
+                placeholder="Enter 10-digit mobile or email"
                 value={identifier}
                 onChange={(e) => setIdentifier(e.target.value)}
                 className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-warm-border bg-warm-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-red/30"

@@ -1071,7 +1071,7 @@ export const HomePage = () => {
                       <input
                         type="text"
                         required
-                        placeholder="e.g. Ramesh Patel"
+                        placeholder="Enter your full name"
                         value={estimateClientName}
                         onChange={(e) => setEstimateClientName(e.target.value)}
                         className="w-full p-3 rounded-xl bg-[#0B0F17] border border-white/10 text-white text-xs sm:text-sm focus:ring-2 focus:ring-luxury-gold/50 focus:outline-none"
@@ -1083,7 +1083,7 @@ export const HomePage = () => {
                       <input
                         type="tel"
                         required
-                        placeholder="e.g. 98250XXXXX"
+                        placeholder="Enter 10-digit mobile number"
                         value={estimateClientPhone}
                         onChange={(e) => setEstimateClientPhone(e.target.value)}
                         className="w-full p-3 rounded-xl bg-[#0B0F17] border border-white/10 text-white text-xs sm:text-sm focus:ring-2 focus:ring-luxury-gold/50 focus:outline-none"
@@ -1094,7 +1094,7 @@ export const HomePage = () => {
                       <label className="text-xs font-bold text-stone-300 block mb-1">Area / Location in Ahmedabad</label>
                       <input
                         type="text"
-                        placeholder="e.g. Vastral, Maninagar, Nikol, SG Highway"
+                        placeholder="Enter your area / locality"
                         value={estimateClientArea}
                         onChange={(e) => setEstimateClientArea(e.target.value)}
                         className="w-full p-3 rounded-xl bg-[#0B0F17] border border-white/10 text-white text-xs sm:text-sm focus:ring-2 focus:ring-luxury-gold/50 focus:outline-none"
