@@ -10,13 +10,15 @@ const {
   deleteAuthorizedAdmin,
   getAdminSessions,
   revokeAdminSession,
-  revokeAllOtherSessions
+  revokeAllOtherSessions,
+  verifySession
 } = require('../controllers/authController');
 const { requireAuth, requireAdmin } = require('../middleware/auth');
 
 router.post('/register', register);
 router.post('/login', login);
 router.get('/me', requireAuth, getMe);
+router.get('/verify-session', requireAuth, verifySession);
 
 // Admin Email Authority Whitelist Management
 router.get('/admin/authorities', requireAdmin, getAuthorizedAdmins);

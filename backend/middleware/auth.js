@@ -17,17 +17,6 @@ const requireAuth = async (req, res, next) => {
     await connectDB();
     const decoded = jwt.verify(token, JWT_SECRET);
 
-    // If token has a registered session, verify it has not been revoked
-    if (decoded.sessionId) {
-      const session = await AdminSession.findById(decoded.sessionId);
-      if (!session || !session.isValid) {
-        return res.status(401).json({ message: 'Session has been revoked or logged out from this device. Please log in again.' });
-      }
-      req.sessionId = decoded.sessionId;
-      // Asynchronously bump lastActive without blocking response
-      AdminSession.findByIdAndUpdate(decoded.sessionId, { lastActive: new Date() }).exec();
-    }
-    
     // Check if user exists in User or AuthorizedAdmin
     let user = await User.findById(decoded.id);
     if (!user) {
@@ -41,6 +30,22 @@ const requireAuth = async (req, res, next) => {
     // Check if admin is active
     if (user.status && user.status === 'inactive') {
       return res.status(403).json({ message: 'This admin account has been deactivated' });
+    }
+
+    // For admin or superadmin users, verify active session
+    if (user.role === 'admin' || user.role === 'superadmin') {
+      if (decoded.sessionId) {
+        const session = await AdminSession.findById(decoded.sessionId);
+        if (!session || !session.isValid) {
+          return res.status(401).json({ message: 'Session has been revoked or logged out from this device. Please log in again.' });
+        }
+        req.sessionId = decoded.sessionId;
+        // Asynchronously bump lastActive without blocking response
+        AdminSession.findByIdAndUpdate(decoded.sessionId, { lastActive: new Date() }).exec();
+      } else {
+        // Outdated token without session tracking -> force clean login to register device
+        return res.status(401).json({ message: 'Outdated admin security session. Please log in again to register this device.' });
+      }
     }
 
     req.user = user;

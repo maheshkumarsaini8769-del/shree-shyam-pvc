@@ -292,5 +292,8 @@ export const api = {
     fetch(`${API_BASE}/auth/admin/sessions/revoke-others`, {
       method: 'POST',
       headers: getHeaders()
-    }).then(handleResponse)
+    }).then(handleResponse),
+
+  verifySession: () =>
+    fetch(`${API_BASE}/auth/verify-session`, { headers: getHeaders() }).then(handleResponse)
 };

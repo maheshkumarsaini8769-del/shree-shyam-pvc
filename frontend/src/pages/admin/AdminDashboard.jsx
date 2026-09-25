@@ -290,6 +290,54 @@ export const AdminDashboard = () => {
     loadData();
   }, []);
 
+  // Real-time Live Session Heartbeat: Checks every 3.5 seconds if this device has been revoked
+  useEffect(() => {
+    let isChecking = false;
+    const checkLiveSession = async () => {
+      if (isChecking) return;
+      isChecking = true;
+      try {
+        const res = await api.verifySession();
+        if (res && res.revoked) {
+          logout();
+          window.location.href = '/admin/login?revoked=true';
+        }
+      } catch (err) {
+        if (err?.status === 401 || err?.message?.includes('revoked') || err?.message?.includes('Session') || err?.message?.includes('token')) {
+          logout();
+          window.location.href = '/admin/login?revoked=true';
+        }
+      } finally {
+        isChecking = false;
+      }
+    };
+
+    // Auto heartbeat every 3.5 seconds
+    const heartbeatTimer = setInterval(checkLiveSession, 3500);
+
+    // Also check immediately when window gains focus or phone screen turns on
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') checkLiveSession();
+    };
+    window.addEventListener('focus', checkLiveSession);
+    document.addEventListener('visibilitychange', handleVisibility);
+
+    return () => {
+      clearInterval(heartbeatTimer);
+      window.removeEventListener('focus', checkLiveSession);
+      document.removeEventListener('visibilitychange', handleVisibility);
+    };
+  }, [logout]);
+
+  // Auto-refresh sessions list whenever on the sessions tab or periodically
+  useEffect(() => {
+    if (activeTab === 'sessions') {
+      handleRefreshSessions();
+      const pollTimer = setInterval(handleRefreshSessions, 5000);
+      return () => clearInterval(pollTimer);
+    }
+  }, [activeTab]);
+
   const showNotification = (msg, isErr = false) => {
     if (isErr) {
       setSaveError(msg);
@@ -568,10 +616,20 @@ export const AdminDashboard = () => {
 
   // Device Sessions & Remote Logout
   const handleRevokeSession = async (sessionId, deviceName) => {
-    if (!window.confirm(`Are you sure you want to log out and revoke access for "${deviceName}"? That device will immediately be forced back to the login screen and will have to enter email & password again.`)) return;
+    const isCurrent = sessions.find(s => (s.id || s._id) === sessionId)?.isCurrent;
+    const confirmMsg = isCurrent
+      ? `Are you sure you want to log out THIS device? You will immediately be redirected to the login screen and will need to log in again.`
+      : `Are you sure you want to log out and revoke access for "${deviceName}"? That device will immediately be kicked back to the login screen and forced to re-enter email & password.`;
+
+    if (!window.confirm(confirmMsg)) return;
     setRevokingSessionId(sessionId);
     try {
       const res = await api.adminRevokeSession(sessionId);
+      if (isCurrent) {
+        logout();
+        window.location.href = '/admin/login';
+        return;
+      }
       setSessions(prev => prev.filter(s => (s.id || s._id) !== sessionId));
       showNotification(res.message || 'Device session revoked successfully!');
     } catch (err) {
@@ -883,6 +941,8 @@ ${quotationData.advancePaid > 0 ? `💳 *Advance Received:* ₹${Number(quotatio
 
   const navItems = [
     { id: 'overview', label: '📊 Dashboard Overview', icon: LayoutDashboard },
+    { id: 'sessions', label: `💻 Active Devices (${sessions.length})`, icon: Laptop },
+    { id: 'authority', label: `🔑 Email Authority (${authorities.length})`, icon: KeyRound },
     { id: 'festival', label: `🎉 Festival & Offers (${settingsData.festivalMode?.activeFestival && settingsData.festivalMode?.activeFestival !== 'normal' ? 'Active' : 'Normal'})`, icon: Sparkles },
     { id: 'bookings', label: `📅 Orders & Bookings (${bookings.length})`, icon: CalendarCheck },
     { id: 'quotations', label: '🧾 Quotation & Bill Maker', icon: Receipt },
@@ -898,9 +958,7 @@ ${quotationData.advancePaid > 0 ? `💳 *Advance Received:* ₹${Number(quotatio
     { id: 'locations', label: `📍 Service Areas (${(settingsData.serviceLocations || []).length})`, icon: MapPin },
     { id: 'brands', label: '🏢 Material Brands (KAKA, TAASA)', icon: Layers },
     { id: 'faqs', label: `❓ FAQ Questions (${faqs.length})`, icon: HelpCircle },
-    { id: 'legal', label: '📜 Business Address & GST', icon: Building },
-    { id: 'authority', label: `🔑 Email Authority (${authorities.length})`, icon: KeyRound },
-    { id: 'sessions', label: `💻 Active Devices (${sessions.length})`, icon: Laptop }
+    { id: 'legal', label: '📜 Business Address & GST', icon: Building }
   ];
 
   return (
@@ -1254,6 +1312,51 @@ ${quotationData.advancePaid > 0 ? `💳 *Advance Received:* ₹${Number(quotatio
                       <Laptop className="w-3.5 h-3.5" />
                       <span>Devices ({sessions.length})</span>
                     </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Connected Devices & Active Login Sessions Banner */}
+              <div className="bg-gradient-to-r from-emerald-950/50 via-[#141B28] to-[#141B28] border-2 border-emerald-500/40 rounded-2xl p-5 shadow-xl">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <div className="flex items-start gap-3.5">
+                    <div className="p-3 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 shrink-0 shadow-inner">
+                      <Laptop className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <h4 className="font-serif font-bold text-base text-white">
+                          💻 Logged-in Devices &amp; Security Control
+                        </h4>
+                        <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 flex items-center gap-1.5">
+                          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                          <span>{sessions.length} {sessions.length === 1 ? 'Device Online' : 'Devices Online'}</span>
+                        </span>
+                      </div>
+                      <p className="text-xs text-stone-300 mt-1 max-w-2xl leading-relaxed">
+                        Track every phone, tablet, and computer where this admin panel is open. You can revoke any device instantly, which immediately locks it out and forces it to re-enter email &amp; password.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2.5 shrink-0 flex-wrap">
+                    <button
+                      onClick={() => setActiveTab('sessions')}
+                      className="px-4 py-2.5 rounded-xl bg-luxury-gold hover:bg-luxury-goldDark text-obsidian text-xs font-black shadow-lg shadow-luxury-gold/15 transition-all flex items-center gap-2 active:scale-95"
+                    >
+                      <Laptop className="w-4 h-4" />
+                      <span>Manage &amp; Remove Devices ({sessions.length})</span>
+                    </button>
+                    {sessions.filter(s => !s.isCurrent).length > 0 && (
+                      <button
+                        onClick={handleRevokeAllOtherSessions}
+                        disabled={revokingAllOthers}
+                        className="px-3.5 py-2.5 rounded-xl bg-red-950/50 hover:bg-red-900/70 text-red-200 border border-red-700/60 text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm active:scale-95"
+                      >
+                        <Power className="w-3.5 h-3.5" />
+                        <span>Log Out All Other Devices</span>
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
@@ -4022,9 +4125,15 @@ ${quotationData.advancePaid > 0 ? `💳 *Advance Received:* ₹${Number(quotatio
                                 <span>{revokingSessionId === (s.id || s._id) ? 'Revoking...' : 'Log Out Device'}</span>
                               </button>
                             ) : (
-                              <span className="text-[10px] font-mono text-emerald-400/80 bg-emerald-950/30 px-2 py-1 rounded-lg border border-emerald-900/40 shrink-0">
-                                This Browser
-                              </span>
+                              <button
+                                onClick={() => handleRevokeSession(s.id || s._id, 'This Device')}
+                                disabled={revokingSessionId === (s.id || s._id)}
+                                className="px-3 py-1.5 rounded-xl bg-red-950/40 hover:bg-red-900/60 text-red-300 border border-red-800/60 text-xs font-bold transition-all flex items-center gap-1.5 shrink-0 active:scale-95 shadow-sm"
+                                title="Log out this device"
+                              >
+                                <Power className="w-3.5 h-3.5" />
+                                <span>{revokingSessionId === (s.id || s._id) ? 'Logging out...' : 'Log Out This Device'}</span>
+                              </button>
                             )}
                           </div>
 

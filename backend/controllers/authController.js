@@ -462,6 +462,41 @@ const revokeAllOtherSessions = async (req, res) => {
   }
 };
 
+// Real-time Heartbeat: Verify if current device session is still valid
+const verifySession = async (req, res) => {
+  try {
+    await connectDB();
+    if (!req.sessionId) {
+      return res.status(401).json({
+        valid: false,
+        revoked: true,
+        message: 'No registered session found. Please log in again.'
+      });
+    }
+
+    const session = await AdminSession.findById(req.sessionId);
+    if (!session || !session.isValid) {
+      return res.status(401).json({
+        valid: false,
+        revoked: true,
+        message: 'This device session has been revoked or logged out remotely. Please log in again.'
+      });
+    }
+
+    // Bump lastActive asynchronously
+    AdminSession.findByIdAndUpdate(req.sessionId, { lastActive: new Date() }).exec();
+
+    res.json({
+      valid: true,
+      revoked: false,
+      sessionId: session._id,
+      device: session.device
+    });
+  } catch (err) {
+    res.status(500).json({ valid: false, message: err.message });
+  }
+};
+
 module.exports = {
   register,
   login,
@@ -472,5 +507,6 @@ module.exports = {
   deleteAuthorizedAdmin,
   getAdminSessions,
   revokeAdminSession,
-  revokeAllOtherSessions
+  revokeAllOtherSessions,
+  verifySession
 };
