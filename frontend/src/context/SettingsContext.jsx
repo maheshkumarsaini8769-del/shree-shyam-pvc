@@ -8,6 +8,8 @@ const SettingsContext = createContext();
 export const SettingsProvider = ({ children }) => {
   const [settings, setSettings] = useState(() => ({
     ...BUSINESS_INFO,
+    heroHeading: 'Fluted TV Units & Acoustic Louvers',
+    heroSubheading: 'Architectural charcoal & teak louvers with Italian Statuario marble PVC backings and floating consoles.',
     effectiveFestival: getEffectiveFestival(BUSINESS_INFO.festivalMode)
   }));
   const [loading, setLoading] = useState(true);

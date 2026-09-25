@@ -82,11 +82,11 @@ const SettingsSchema = new mongoose.Schema({
   // Hero Section Customizer
   heroHeading: {
     type: String,
-    default: "Ahmedabad's #1 Certified KAKA PVC Modular Furniture"
+    default: "Fluted TV Units & Acoustic Louvers"
   },
   heroSubheading: {
     type: String,
-    default: "100% Waterproof, 100% Termite-Proof Modern Interiors Fabricated in Vastral"
+    default: "Architectural charcoal & teak louvers with Italian Statuario marble PVC backings and floating consoles."
   },
   heroCtaPrimary: {
     type: String,

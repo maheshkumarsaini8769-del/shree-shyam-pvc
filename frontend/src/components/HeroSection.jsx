@@ -251,7 +251,7 @@ export const HeroSection = ({ onOpenShowreel }) => {
 
             {/* Headline */}
             <h1 className="text-2xl sm:text-4xl lg:text-5xl font-serif font-bold text-obsidian dark:text-white tracking-tight leading-[1.2] sm:leading-[1.14]">
-              {((activeSlide === 0 && settings?.heroHeading) ? settings.heroHeading : current.title).split('&').map((part, i) => (
+              {current.title.split('&').map((part, i) => (
                 <React.Fragment key={i}>
                   {i === 0 ? (
                     part
@@ -298,7 +298,7 @@ export const HeroSection = ({ onOpenShowreel }) => {
 
             {/* Subtitle */}
             <p className="text-xs sm:text-base text-stone-600 dark:text-stone-300 font-normal leading-relaxed max-w-xl">
-              {(activeSlide === 0 && settings?.heroSubheading) ? settings.heroSubheading : current.subtitle}
+              {current.subtitle}
             </p>
 
             {/* Feature Checklist (Desktop only) */}
