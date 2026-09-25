@@ -76,7 +76,7 @@ const SettingsSchema = new mongoose.Schema({
   },
   heroBadgeText: {
     type: String,
-    default: 'Ahmedabad Direct: All Companies PVC Material Work Available (KAKA, TAASA & Major Brands)'
+    default: 'All Companies PVC Material Work Available (KAKA, TAASA & Major Brands)'
   },
 
   // Hero Section Customizer

@@ -80,7 +80,7 @@ const seedData = async () => {
         announcementText: 'All Company PVC Material Work Available • KAKA, TAASA & All Major Brands • 10-Yr Guarantee • Free Ahmedabad Site Visit',
         announcementActive: true,
         emergencyNotice: '',
-        heroBadgeText: 'Ahmedabad Direct: All Companies PVC Material Work Available (KAKA, TAASA & Major Brands)',
+        heroBadgeText: 'All Companies PVC Material Work Available (KAKA, TAASA & Major Brands)',
         aboutHeading: 'Crafting 100% Waterproof & Termite-Proof PVC Interiors Across Ahmedabad',
         aboutSubheading: 'Leading certified PVC interior artisans specializing in heavy-duty KAKA & TAASA profiles for residential and commercial spaces.',
         aboutStory: 'Shree Shyam PVC Interior was established with a singular vision: to eliminate the headaches of traditional wood interiors—water damage, termites, and frequent repainting. Based in Vastral, Ahmedabad, our experienced team provides end-to-end design, precision fabrication, and flawless on-site installation using certified PVC profiles.',

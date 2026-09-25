@@ -210,7 +210,7 @@ export const HeroSection = ({ onOpenShowreel }) => {
               <>
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
                 <span>
-                  <strong className="text-obsidian dark:text-white">Ahmedabad Direct:</strong> {settings?.heroBadgeText || 'All Companies PVC Material Work Available (KAKA, TAASA & Major Brands)'}
+                  <strong className="text-obsidian dark:text-white">Ahmedabad Direct:</strong> {(settings?.heroBadgeText || 'All Companies PVC Material Work Available (KAKA, TAASA & Major Brands)').replace(/^Ahmedabad Direct:\s*/i, '')}
                 </span>
               </>
             )}

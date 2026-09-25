@@ -97,7 +97,7 @@ export const Header = () => {
 
   return (
     <>
-      <header className="sticky top-0 z-40 w-full transition-all duration-300">
+      <header className="sticky top-0 z-40 w-full bg-white dark:bg-[#161514] shadow-sm">
         {/* EMERGENCY TOP NOTICE (Controlled via Admin) */}
         {settings.emergencyNotice && (
           <div className="bg-amber-600 text-white text-xs font-bold py-1 px-4 text-center tracking-wide flex items-center justify-center gap-2 shadow-sm">
@@ -112,12 +112,12 @@ export const Header = () => {
           const isFestiveActive = fest.id && fest.id !== 'normal';
 
           return (
-            <div className={`hidden md:block text-[10.5px] font-medium py-1 px-4 transition-all duration-300 border-b ${
+            <div className={`hidden md:block text-[10.5px] font-medium transition-all duration-200 border-b overflow-hidden ${
               isFestiveActive
                 ? (fest.themeClasses?.barBg || 'bg-gradient-to-r from-[#1c0f02] via-[#381e05] to-[#190901] border-amber-500/50 text-amber-200')
                 : 'bg-[#161514] border-white/5 text-stone-200'
             } ${
-              isScrolled ? 'h-0 py-0 opacity-0 overflow-hidden border-none' : 'opacity-100'
+              isScrolled ? 'max-h-0 py-0 px-4 opacity-0 border-none' : 'max-h-12 py-1 px-4 opacity-100'
             }`}>
               <div className="max-w-7xl mx-auto flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -131,7 +131,7 @@ export const Header = () => {
                   ) : (
                     <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-luxury-gold/15 text-luxury-gold font-bold border border-luxury-gold/30">
                       <Sparkles className="w-3 h-3 text-luxury-gold" />
-                      <span>All Company PVC Material Work Available</span>
+                      <span>Certified Quality</span>
                     </span>
                   )}
                   <span className="text-white/20">•</span>
@@ -182,10 +182,10 @@ export const Header = () => {
         })()}
 
         {/* MAIN HEADER BAR */}
-        <div className={`w-full transition-all duration-300 ${
+        <div className={`w-full transition-all duration-200 ${
           isScrolled
-            ? 'bg-white/95 dark:bg-[#161514]/95 backdrop-blur-xl shadow-sm py-2 border-b border-stone-200/80 dark:border-white/10'
-            : 'bg-white/95 dark:bg-[#161514]/95 backdrop-blur-md py-2.5 border-b border-stone-200/80 dark:border-white/10'
+            ? 'bg-white/98 dark:bg-[#161514]/98 backdrop-blur-md shadow-sm py-2 border-b border-stone-200/80 dark:border-white/10'
+            : 'bg-white dark:bg-[#161514] py-2.5 border-b border-stone-200/80 dark:border-white/10'
         }`}>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
