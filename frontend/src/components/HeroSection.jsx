@@ -189,8 +189,8 @@ export const HeroSection = ({ onOpenShowreel }) => {
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
-      {/* Background Architectural Square Grid (Darkened in Light Mode for proper visibility) */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(0,0,0,0.12)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.12)_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,rgba(255,255,255,0.06)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.06)_1px,transparent_1px)] bg-[size:3rem_3rem] pointer-events-none" />
+      {/* Background Architectural Square Grid */}
+      <div className="absolute inset-0 architectural-grid pointer-events-none" />
 
       {/* Ambient Lighting Atmosphere */}
       <div className="absolute top-12 left-1/2 -translate-x-1/2 w-[300px] sm:w-[500px] h-[300px] sm:h-[500px] bg-luxury-gold/10 dark:bg-luxury-gold/5 blur-[90px] sm:blur-[130px] rounded-full pointer-events-none" />

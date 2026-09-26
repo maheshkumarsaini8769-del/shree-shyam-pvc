@@ -17,6 +17,9 @@ export const PublicLayout = () => {
     <div className={`min-h-screen flex flex-col bg-[#FAF8F5] dark:bg-[#121212] text-obsidian dark:text-[#F5F4F0] transition-colors duration-300 relative ${
       fest?.isFestive ? `festive-active festive-theme-${fest.id}` : ''
     }`}>
+      {/* Full Website Background Architectural Square Box Grid */}
+      <div className="fixed inset-0 architectural-grid pointer-events-none z-0" aria-hidden="true" />
+
       {/* Subtle Atmospheric Festival Aura for Diwali / Holi / Navratri */}
       {fest?.isFestive && (
         <div
