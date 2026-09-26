@@ -10,6 +10,14 @@ export const FestiveOfferModal = () => {
 
   const [isOpen, setIsOpen] = useState(false);
   const [minimized, setMinimized] = useState(false);
+  const [isPermanentlyDismissed, setIsPermanentlyDismissed] = useState(() => {
+    try {
+      const storageKey = `shree_shyam_fest_popup_dismissed_${fest?.id || 'default'}`;
+      return sessionStorage.getItem(storageKey) === 'true';
+    } catch {
+      return false;
+    }
+  });
   const [couponRevealed, setCouponRevealed] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -17,6 +25,14 @@ export const FestiveOfferModal = () => {
   useEffect(() => {
     if (!fest || !fest.isFestive || fest.showPopup === false) {
       setIsOpen(false);
+      return;
+    }
+
+    const dismissedKey = `shree_shyam_fest_popup_dismissed_${fest.id || 'default'}`;
+    if (sessionStorage.getItem(dismissedKey) === 'true') {
+      setIsOpen(false);
+      setMinimized(false);
+      setIsPermanentlyDismissed(true);
       return;
     }
 
@@ -44,6 +60,17 @@ export const FestiveOfferModal = () => {
     }
   };
 
+  const handleDismissCompletely = (e) => {
+    if (e) e.stopPropagation();
+    setIsOpen(false);
+    setMinimized(false);
+    setIsPermanentlyDismissed(true);
+    try {
+      const dismissedKey = `shree_shyam_fest_popup_dismissed_${fest?.id || 'default'}`;
+      sessionStorage.setItem(dismissedKey, 'true');
+    } catch {}
+  };
+
   const handleReopen = () => {
     setIsOpen(true);
   };
@@ -59,7 +86,7 @@ export const FestiveOfferModal = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen]);
 
-  if (!fest || !fest.isFestive || fest.showPopup === false) {
+  if (!fest || !fest.isFestive || fest.showPopup === false || isPermanentlyDismissed) {
     return null;
   }
 
@@ -81,16 +108,28 @@ export const FestiveOfferModal = () => {
   return (
     <>
       {/* 1. FLOATING MINIMIZED FESTIVE BADGE (When popup is closed) */}
-      {!isOpen && minimized && (
-        <button
-          onClick={handleReopen}
-          aria-label="View Festive Offer"
-          className="fixed bottom-20 left-4 z-40 flex items-center gap-2 px-3.5 py-2 rounded-full bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 text-stone-950 font-black text-xs shadow-2xl hover:scale-105 active:scale-95 transition-transform border border-amber-300 animate-bounce"
-        >
-          <span className="text-base">{fest.icon || '🎁'}</span>
-          <span className="hidden sm:inline font-serif tracking-wide">{fest.name}:</span>
-          <span>{fest.discountPercent > 0 ? `Claim ${fest.discountPercent}% OFF` : 'Festive Offer'}</span>
-        </button>
+      {!isOpen && minimized && !isPermanentlyDismissed && (
+        <div className="fixed bottom-20 left-3 sm:left-4 z-40 flex items-center shadow-2xl rounded-full overflow-hidden border border-amber-400/80 bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600">
+          <button
+            onClick={handleReopen}
+            aria-label="View Festive Offer"
+            className="flex items-center gap-2 pl-3.5 pr-2.5 py-2 text-stone-950 font-black text-xs hover:brightness-105 active:scale-95 transition-all"
+          >
+            <span className="text-base">{fest.icon || '🎁'}</span>
+            <span className="hidden sm:inline font-serif tracking-wide">{fest.name}:</span>
+            <span>{fest.discountPercent > 0 ? `Claim ${fest.discountPercent}% OFF` : 'Festive Offer'}</span>
+          </button>
+
+          {/* Explicit Cut / Close Button */}
+          <button
+            onClick={handleDismissCompletely}
+            title="Cut / Close Offer Popup"
+            aria-label="Cut and close offer popup completely"
+            className="px-2.5 py-2 bg-amber-600/90 hover:bg-black text-stone-950 hover:text-white transition-colors flex items-center justify-center border-l border-amber-400/60"
+          >
+            <X className="w-3.5 h-3.5 stroke-[2.5]" />
+          </button>
+        </div>
       )}
 
       {/* 2. FULL FESTIVE OFFER POPUP MODAL */}
@@ -277,14 +316,21 @@ export const FestiveOfferModal = () => {
             </div>
 
             {/* Bottom Guaranteed Mobile Close Bar (Makes sure mobile users NEVER get stuck!) */}
-            <div className="p-3 bg-black/40 border-t border-white/10 text-center shrink-0">
+            <div className="p-3 bg-black/60 border-t border-white/10 shrink-0 flex flex-col sm:flex-row items-center gap-2">
               <button
                 type="button"
                 onClick={handleClose}
-                className="w-full py-2.5 px-4 rounded-xl text-xs font-bold text-stone-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 transition-colors flex items-center justify-center gap-1.5 active:scale-98"
+                className="w-full sm:flex-1 py-2 px-3 rounded-xl text-xs font-semibold text-stone-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 transition-colors flex items-center justify-center gap-1.5 active:scale-98"
               >
-                <X className="w-4 h-4 text-stone-400" />
-                <span>Dismiss &amp; Continue to Website</span>
+                <X className="w-3.5 h-3.5 text-stone-400" />
+                <span>Minimize to Corner</span>
+              </button>
+              <button
+                type="button"
+                onClick={handleDismissCompletely}
+                className="w-full sm:flex-1 py-2 px-3 rounded-xl text-xs font-bold text-amber-300 hover:text-amber-200 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 transition-colors flex items-center justify-center gap-1.5 active:scale-98"
+              >
+                <span>🚫 Cut / Don't Show Again</span>
               </button>
             </div>
           </div>

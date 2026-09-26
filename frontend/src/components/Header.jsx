@@ -29,6 +29,13 @@ const searchablePages = [
 
 export const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [topBarDismissed, setTopBarDismissed] = useState(() => {
+    try {
+      return sessionStorage.getItem('sspi_top_bar_dismissed') === 'true';
+    } catch {
+      return false;
+    }
+  });
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
@@ -38,8 +45,31 @@ export const Header = () => {
   const { settings } = useSettings();
   const { toggleTheme, isDark } = useTheme();
 
+  const handleDismissTopBar = (e) => {
+    if (e) e.stopPropagation();
+    setTopBarDismissed(true);
+    try {
+      sessionStorage.setItem('sspi_top_bar_dismissed', 'true');
+    } catch {}
+  };
+
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 20);
+    let ticking = false;
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const sy = window.scrollY;
+          // Hysteresis deadband: activate at 65px, deactivate when near top (< 20px) to prevent vibration
+          if (sy > 65) {
+            setIsScrolled(true);
+          } else if (sy < 20) {
+            setIsScrolled(false);
+          }
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -97,95 +127,131 @@ export const Header = () => {
 
   return (
     <>
-      <header className="sticky top-0 z-40 w-full bg-white dark:bg-[#161514] shadow-sm">
-        {/* EMERGENCY TOP NOTICE (Controlled via Admin) */}
-        {settings.emergencyNotice && (
-          <div className="bg-amber-600 text-white text-xs font-bold py-1 px-4 text-center tracking-wide flex items-center justify-center gap-2 shadow-sm">
-            <span>📢</span>
-            <span>{settings.emergencyNotice}</span>
-          </div>
-        )}
+      {/* ── TOP ANNOUNCEMENT / FESTIVAL BAR (Scrolls with page, cut option included) ── */}
+      {!topBarDismissed && (
+        <div className="w-full relative z-30">
+          {/* EMERGENCY TOP NOTICE (Controlled via Admin) */}
+          {settings.emergencyNotice && (
+            <div className="bg-amber-600 text-white text-xs font-bold py-1 px-4 text-center tracking-wide flex items-center justify-between gap-2 shadow-sm">
+              <div className="flex-1 flex items-center justify-center gap-2">
+                <span>📢</span>
+                <span>{settings.emergencyNotice}</span>
+              </div>
+              <button
+                onClick={handleDismissTopBar}
+                title="Cut / Close Notice"
+                aria-label="Close Notice"
+                className="w-5 h-5 rounded-full hover:bg-black/20 flex items-center justify-center text-white/90 hover:text-white transition-colors shrink-0"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          )}
 
-        {/* TOP ANNOUNCEMENT / FESTIVAL BAR — Desktop only */}
-        {settings.announcementActive !== false && (() => {
-          const fest = settings.effectiveFestival || {};
-          const isFestiveActive = fest.id && fest.id !== 'normal';
+          {/* TOP ANNOUNCEMENT / FESTIVAL BAR — Desktop only */}
+          {settings.announcementActive !== false && (() => {
+            const fest = settings.effectiveFestival || {};
+            const isFestiveActive = fest.id && fest.id !== 'normal';
 
-          return (
-            <div className={`hidden md:block text-[10.5px] font-medium transition-all duration-200 border-b overflow-hidden ${
-              isFestiveActive
-                ? (fest.themeClasses?.barBg || 'bg-gradient-to-r from-[#1c0f02] via-[#381e05] to-[#190901] border-amber-500/50 text-amber-200')
-                : 'bg-[#161514] border-white/5 text-stone-200'
-            } ${
-              isScrolled ? 'max-h-0 py-0 px-4 opacity-0 border-none' : 'max-h-12 py-1 px-4 opacity-100'
-            }`}>
-              <div className="max-w-7xl mx-auto flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  {isFestiveActive ? (
-                    <span className={`flex items-center gap-1.5 px-2.5 py-0.5 rounded-full font-bold text-[10.5px] shadow-sm ${
-                      fest.themeClasses?.badgeBg || 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
-                    }`}>
-                      <span>{fest.icon || '🪔'}</span>
-                      <span>{fest.greeting || fest.name}</span>
+            return (
+              <div className={`hidden md:block text-[10.5px] font-medium py-1 px-4 border-b ${
+                isFestiveActive
+                  ? (fest.themeClasses?.barBg || 'bg-gradient-to-r from-[#1c0f02] via-[#381e05] to-[#190901] border-amber-500/50 text-amber-200')
+                  : 'bg-[#161514] border-white/5 text-stone-200'
+              }`}>
+                <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-3 min-w-0 truncate">
+                    {isFestiveActive ? (
+                      <span className={`flex items-center gap-1.5 px-2.5 py-0.5 rounded-full font-bold text-[10.5px] shadow-sm shrink-0 ${
+                        fest.themeClasses?.badgeBg || 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
+                      }`}>
+                        <span>{fest.icon || '🪔'}</span>
+                        <span>{fest.greeting || fest.name}</span>
+                      </span>
+                    ) : (
+                      <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-luxury-gold/15 text-luxury-gold font-bold border border-luxury-gold/30 shrink-0">
+                        <Sparkles className="w-3 h-3 text-luxury-gold" />
+                        <span>Certified Quality</span>
+                      </span>
+                    )}
+                    <span className="text-white/20 shrink-0">•</span>
+                    <span className={`truncate ${isFestiveActive ? 'text-amber-100 dark:text-amber-200 font-semibold' : 'text-stone-300'}`}>
+                      {isFestiveActive ? fest.announcement : (settings.announcementText || 'All Company PVC Material Work Available • KAKA, TAASA & All Major Brands')}
                     </span>
-                  ) : (
-                    <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-luxury-gold/15 text-luxury-gold font-bold border border-luxury-gold/30">
-                      <Sparkles className="w-3 h-3 text-luxury-gold" />
-                      <span>Certified Quality</span>
-                    </span>
-                  )}
-                  <span className="text-white/20">•</span>
-                  <span className={isFestiveActive ? 'text-amber-100 dark:text-amber-200 font-semibold' : 'text-stone-300'}>
-                    {isFestiveActive ? fest.announcement : (settings.announcementText || 'All Company PVC Material Work Available • KAKA, TAASA & All Major Brands')}
-                  </span>
-                </div>
-                <div className="flex items-center gap-4 text-stone-300">
-                  <div className="flex items-center gap-1.5">
-                    <Clock className="w-3 h-3 text-luxury-gold" />
-                    <span>{settings.workingHours || 'Mon - Sat: 9:00 AM - 8:30 PM'}</span>
                   </div>
-                  <span className="text-white/20">|</span>
-                  <a
-                    href={`tel:${settings.phone1}`}
-                    className="hover:text-luxury-gold font-bold flex items-center gap-1 transition-colors text-white"
-                  >
-                    <Phone className="w-3 h-3 text-luxury-gold" />
-                    <span>{settings.phone1}</span>
-                  </a>
+                  <div className="flex items-center gap-4 text-stone-300 shrink-0">
+                    <div className="flex items-center gap-1.5">
+                      <Clock className="w-3 h-3 text-luxury-gold" />
+                      <span>{settings.workingHours || 'Mon - Sat: 9:00 AM - 8:30 PM'}</span>
+                    </div>
+                    <span className="text-white/20">|</span>
+                    <a
+                      href={`tel:${settings.phone1}`}
+                      className="hover:text-luxury-gold font-bold flex items-center gap-1 transition-colors text-white"
+                    >
+                      <Phone className="w-3 h-3 text-luxury-gold" />
+                      <span>{settings.phone1}</span>
+                    </a>
+                    <span className="text-white/20">|</span>
+                    {/* Cut / Close Button */}
+                    <button
+                      onClick={handleDismissTopBar}
+                      title="Cut / Close Bar"
+                      aria-label="Close Announcement Bar"
+                      className="w-5 h-5 rounded-full hover:bg-white/10 flex items-center justify-center text-stone-400 hover:text-white transition-colors"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          );
-        })()}
+            );
+          })()}
 
-        {/* Mobile Festive Announcement Strip */}
-        {(() => {
-          const fest = settings.effectiveFestival || {};
-          if (!fest.id || fest.id === 'normal') return null;
-          return (
-            <div className={`md:hidden text-[10.5px] font-bold py-1.5 px-3 flex items-center justify-between border-b shadow-sm ${
-              fest.themeClasses?.barBg || 'bg-gradient-to-r from-amber-950 via-amber-900 to-amber-950 text-amber-200 border-amber-500/30'
-            }`}>
-              <span className="flex items-center gap-1.5 truncate">
-                <span className="text-xs">{fest.icon || '🪔'}</span>
-                <span className="truncate">{fest.greeting || fest.announcement}</span>
-              </span>
-              {fest.discountPercent > 0 && (
-                <span className={`px-1.5 py-0.5 rounded font-black text-[9px] shrink-0 ml-1.5 ${
-                  fest.themeClasses?.badgeBg || 'bg-amber-500 text-obsidian'
-                }`}>
-                  {fest.discountPercent}% OFF
+          {/* Mobile Festive Announcement Strip */}
+          {(() => {
+            const fest = settings.effectiveFestival || {};
+            if (!fest.id || fest.id === 'normal') return null;
+            return (
+              <div className={`md:hidden text-[10.5px] font-bold py-1.5 px-3 flex items-center justify-between border-b shadow-sm ${
+                fest.themeClasses?.barBg || 'bg-gradient-to-r from-amber-950 via-amber-900 to-amber-950 text-amber-200 border-amber-500/30'
+              }`}>
+                <span className="flex items-center gap-1.5 truncate">
+                  <span className="text-xs">{fest.icon || '🪔'}</span>
+                  <span className="truncate">{fest.greeting || fest.announcement}</span>
                 </span>
-              )}
-            </div>
-          );
-        })()}
+                <div className="flex items-center gap-2 shrink-0 ml-1.5">
+                  {fest.discountPercent > 0 && (
+                    <span className={`px-1.5 py-0.5 rounded font-black text-[9px] ${
+                      fest.themeClasses?.badgeBg || 'bg-amber-500 text-obsidian'
+                    }`}>
+                      {fest.discountPercent}% OFF
+                    </span>
+                  )}
+                  {/* Cut / Close Button */}
+                  <button
+                    onClick={handleDismissTopBar}
+                    aria-label="Close Festive Bar"
+                    className="w-5 h-5 rounded-full bg-black/30 flex items-center justify-center text-white/80 active:scale-90"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </div>
+              </div>
+            );
+          })()}
+        </div>
+      )}
 
+      {/* ── STICKY MAIN NAVBAR — Rock Solid, Zero Height Changes, Zero Vibration ── */}
+      <header className={`sticky top-0 z-40 w-full transition-colors duration-200 ${
+        isScrolled
+          ? 'bg-white/98 dark:bg-[#161514]/98 backdrop-blur-md shadow-md border-b border-stone-200/80 dark:border-white/10'
+          : 'bg-white dark:bg-[#161514] border-b border-stone-200/80 dark:border-white/10'
+      }`}>
         {/* MAIN HEADER BAR */}
         <div className={`w-full transition-all duration-200 ${
-          isScrolled
-            ? 'bg-white/98 dark:bg-[#161514]/98 backdrop-blur-md shadow-sm py-2 border-b border-stone-200/80 dark:border-white/10'
-            : 'bg-white dark:bg-[#161514] py-2.5 border-b border-stone-200/80 dark:border-white/10'
+          isScrolled ? 'py-2' : 'py-2.5'
         }`}>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
