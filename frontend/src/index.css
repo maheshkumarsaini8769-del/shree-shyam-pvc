@@ -34,6 +34,21 @@
   padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
 }
 
+/* Architectural Square Box Grid lines (Darkened in Light Mode for crisp visibility) */
+.architectural-grid {
+  background-image: 
+    linear-gradient(to right, rgba(0, 0, 0, 0.12) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.12) 1px, transparent 1px);
+  background-size: 3rem 3rem;
+}
+html.dark .architectural-grid,
+.dark .architectural-grid {
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+  background-size: 3rem 3rem;
+}
+
 /* Hide scrollbar cleanly while preserving scroll capability */
 .no-scrollbar::-webkit-scrollbar,
 .scrollbar-none::-webkit-scrollbar {
